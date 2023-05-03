@@ -8,9 +8,10 @@ List some of the awesome features of this app
 
 ### Built With
 
-![HTML]
-![CSS]
-![JavaScript]
+![html]
+![css]
+![javascript]
+![typescript]
 ![vite]
 ![react]
 ![mongodb]
@@ -103,6 +104,7 @@ git clone https://github.com/creppyfm/done-task-manager-BE.git
 [html]: https://img.shields.io/badge/HTML-20232A?style=for-the-badge&logo=html5
 [css]: https://img.shields.io/badge/CSS-20232A?style=for-the-badge&logo=css3
 [javascript]: https://img.shields.io/badge/Javascript-20232A?style=for-the-badge&logo=javascript
+[typescript]: https://img.shields.io/badge/Typescript-20232A?style=for-the-badge&logo=typescript
 [vite]: https://img.shields.io/badge/Vite-20232A?style=for-the-badge&logo=vite
 [react]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react
 [mongodb]: https://img.shields.io/badge/MongoDB-20232A?style=for-the-badge&logo=mongodb
