@@ -37,7 +37,7 @@ To get a local copy up and running follow these simple example steps.
 Clone the repo:
 
 ```sh
-git clone https://github.com/creppyfm/done-task-manager-BE.git
+git clone https://github.com/creppyfm/DeleGate.git
 ```
 
 &nbsp;
