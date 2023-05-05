@@ -6,7 +6,7 @@ function App() {
     <>
       <Header />
       <main>Main here</main>
-      <footer>
+      <footer className="mt-auto">
         <h1>Footer Here</h1>
       </footer>
     </>
