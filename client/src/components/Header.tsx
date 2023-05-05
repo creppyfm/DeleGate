@@ -1,4 +1,3 @@
-import "./Header.module.css";
 import { Nav, Navbar, Container, Button } from "react-bootstrap";
 
 export function Header() {
