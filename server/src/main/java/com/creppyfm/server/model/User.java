@@ -1,12 +1,13 @@
 package com.creppyfm.server.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Document(collection = "User")
 @Data
@@ -15,15 +16,54 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
     @Id
     private ObjectId id;
+    private String token;
+    private String openAIKey;
     private String firstName;
     private String lastName;
-    private String username;
-    private String password;
     private String email;
-    private String birthday;
-    private int workload;
-    @JsonProperty("isAdmin")
-    private boolean isAdmin;
+    private String source;
+    private List<String> projectIds;
+    private List<String> strengths;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getOpenAIKey() {
+        return openAIKey;
+    }
+
+    public void setOpenAIKey(String openAIKey) {
+        this.openAIKey = openAIKey;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public List<String> getProjectIds() {
+        return projectIds;
+    }
+
+    public void setProjectIds(List<String> projectIds) {
+        this.projectIds = projectIds;
+    }
+
+    public List<String> getStrengths() {
+        return strengths;
+    }
+
+    public void setStrengths(List<String> strengths) {
+        this.strengths = strengths;
+    }
 
     public ObjectId getId() {
         return id;
@@ -49,22 +89,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -73,20 +97,8 @@ public class User {
         this.email = email;
     }
 
-    public String getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
-    }
-
-    public void setAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
+    public int getWorkload(List<String> projectIDList) {
+        return projectIDList.size();
     }
 
 }
