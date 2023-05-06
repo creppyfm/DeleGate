@@ -20,7 +20,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private String birthday;
+    private String source;
     private int workload;
     @JsonProperty("isAdmin")
     private boolean isAdmin;
@@ -71,14 +71,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
     }
 
     public void setAdmin(boolean isAdmin) {

@@ -14,14 +14,19 @@ public class HelloApplication {
 
     {
         Dotenv dotenv = Dotenv.load();
+        // MongoDB Credentials
         System.setProperty("MONGO_USER", dotenv.get("MONGO_USER"));
         System.setProperty("MONGO_PASSWORD", dotenv.get("MONGO_PASSWORD"));
         System.setProperty("MONGO_CLUSTER", dotenv.get("MONGO_CLUSTER"));
         System.setProperty("MONGO_DATABASE", dotenv.get("MONGO_DATABASE"));
+        // OpenAI Credentials
         System.setProperty("OPENAI_API_KEY", dotenv.get("OPENAI_API_KEY"));
-
-        //TODO: remove test print statement below
-        System.out.println(dotenv.get("MONGO_USER"));
+        // Google OAuth2 Credentials
+        System.setProperty("GOOGLE_CLIENT_ID", dotenv.get("GOOGLE_CLIENT_ID"));
+        System.setProperty("GOOGLE_CLIENT_SECRET", dotenv.get("GOOGLE_CLIENT_SECRET"));
+        // GitHub OAuth2 Credentials
+        System.setProperty("GITHUB_CLIENT_ID", dotenv.get("GITHUB_CLIENT_ID"));
+        System.setProperty("GITHUB_CLIENT_SECRET", dotenv.get("GITHUB_CLIENT_SECRET"));
 
         SpringApplication.run(HelloApplication.class, args);
     }
