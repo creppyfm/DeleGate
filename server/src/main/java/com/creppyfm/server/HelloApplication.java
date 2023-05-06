@@ -15,10 +15,8 @@ public class HelloApplication {
     {
         Dotenv dotenv = Dotenv.load();
         // MongoDB Credentials
-        System.setProperty("MONGO_USER", dotenv.get("MONGO_USER"));
-        System.setProperty("MONGO_PASSWORD", dotenv.get("MONGO_PASSWORD"));
-        System.setProperty("MONGO_CLUSTER", dotenv.get("MONGO_CLUSTER"));
         System.setProperty("MONGO_DATABASE", dotenv.get("MONGO_DATABASE"));
+        System.setProperty("MONGO_URI", dotenv.get("MONGO_URI"));
         // OpenAI Credentials
         System.setProperty("OPENAI_API_KEY", dotenv.get("OPENAI_API_KEY"));
         // Google OAuth2 Credentials
