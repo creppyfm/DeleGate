@@ -1,8 +1,9 @@
 import { Nav, Navbar, Container, Button } from "react-bootstrap";
+import styles from "./Header.module.css";
 
 export function Header() {
   return (
-    <header>
+    <header className={styles.header}>
       <Navbar bg="dark" variant="dark">
         <Container fluid>
           <Navbar.Brand href="#home">DeleGate</Navbar.Brand>
