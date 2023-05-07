@@ -1,0 +1,4 @@
+.featurette-divider {
+  margin: 2rem var(--horizontal-rule-spacing); /* Space out the Bootstrap <hr> more */
+  color: var(--bs-secondary);
+}
