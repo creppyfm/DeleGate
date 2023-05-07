@@ -1,13 +1,13 @@
 package com.creppyfm.server.repository;
 
 import com.creppyfm.server.model.Project;
-import com.creppyfm.server.model.User;
+import com.creppyfm.server.model.Task;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends MongoRepository<User, String> {
-    User findUserById(String id);
+public interface ProjectRepository extends MongoRepository<Project, String> {
+    Project findProjectById(String id);
 
-    User findByProjectIdsContaining(String projectId);
+    Project findByTaskListContaining(Task task);
 }
