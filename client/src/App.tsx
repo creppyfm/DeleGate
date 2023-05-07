@@ -1,15 +1,12 @@
 import "./App.css";
-import { Example } from "./components/Example";
+import { Header } from "./components/Header";
 
 function App() {
   return (
     <>
-      <header>
-        <h1>Header Here</h1>
-      </header>
+      <Header />
       <main>Main here</main>
-      <Example />
-      <footer>
+      <footer className="mt-auto">
         <h1>Footer Here</h1>
       </footer>
     </>
