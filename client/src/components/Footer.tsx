@@ -1,4 +1,4 @@
-import { Container, Row, Col, Nav } from "react-bootstrap";
+import { Nav } from "react-bootstrap";
 
 export function Footer() {
   return (
