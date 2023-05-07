@@ -5,9 +5,9 @@ export function Hero() {
     <div className={styles.hero}>
       <h1 className="text-light">Some Catchy Headline</h1>
       <p className="lead text-light">
-        DeleGate is the future of project managment. Powered by AI and
+        DeleGate is the future of project management. Powered by AI and
         delivering contextual team management tools for simplifying your work
-        envinronment.
+        environment.
       </p>
       <p className="lead">
         <a
