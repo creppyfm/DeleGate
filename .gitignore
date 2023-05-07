@@ -51,6 +51,8 @@ client/dist-ssr
 *.local
 
 # Editor directories and files
+server/.vscode/*
+client/.vscode/*
 .vscode/*
 !.vscode/extensions.json
 .idea
