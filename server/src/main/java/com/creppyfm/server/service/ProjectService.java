@@ -1,6 +1,7 @@
 package com.creppyfm.server.service;
 
 import com.creppyfm.server.model.Project;
+import com.creppyfm.server.model.ProjectMembers;
 import com.creppyfm.server.model.User;
 import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.TaskRepository;
@@ -37,13 +38,36 @@ public class ProjectService {
         return projectRepository.findProjectById(id);
     }
 
+    public List<ProjectMembers> findProjectMembersById(String id) {
+        Project project = projectRepository.findProjectById(id);
+        return project.getProjectMembers();
+    }
+
     public Project createProject(String userId, String title, String description, String status) {
         Project project = projectRepository.insert(new Project(userId, title, description, status, LocalDateTime.now(), LocalDateTime.now()));
         mongoTemplate.update(User.class)
                 .matching(Criteria.where("id").is(userId))
-                .apply(new Update().push("projects").value(project))
+                .apply(new Update().push("projectIds").value(project.getId()))
                 .first();
         return project;
+    }
+
+    public Project addProjectMember(String projectId, ProjectMembers projectMembers) {
+        Project project = projectRepository.findProjectById(projectId);
+        if (project != null) {
+            project.getProjectMembers().add(projectMembers);
+        }
+        assert project != null;
+        return projectRepository.save(project);
+    }
+
+    public boolean updateProjectMemberRoleByUserId(String projectId, String userId, String newRole) {
+        Project project = projectRepository.findProjectById(projectId);
+        boolean isUpdated = project.updateProjectMemberRoleByUserId(userId, newRole);
+        if (isUpdated) {
+            projectRepository.save(project);
+        }
+        return isUpdated;
     }
 
     public Project updateProject(String id, Project updatedProject) {
@@ -56,9 +80,9 @@ public class ProjectService {
             existingProject.setUpdated(LocalDateTime.now());
 
             // Update project in the user's projects list
-            User user = userRepository.findByProjectIdsContaining(existingProject.getId());
+            User user = userRepository.findByProjectIdsContaining(id);
             if (user != null) {
-                int projectIndex = user.getProjectIds().indexOf(existingProject.getId());
+                int projectIndex = user.getProjectIds().indexOf(id);
                 if (projectIndex >= 0) { // Check if the index is within bounds
                     user.getProjectIds().set(projectIndex, existingProject.getId());
                     userRepository.save(user);
@@ -71,15 +95,20 @@ public class ProjectService {
         }
     }
 
+    public boolean removeProjectMemberByUserId(String projectId, String userId) {
+        Project project = projectRepository.findProjectById(projectId);
+        return project.removeProjectMemberByUserId(userId) && projectRepository.save(project) != null;
+    }
+
     public boolean deleteProject(String id) {
         Optional<Project> optionalProject = projectRepository.findById(id);
         if (optionalProject.isPresent()) {
             Project existingProject = optionalProject.get();
 
             // Remove project from the user's projects list
-            User user = userRepository.findByProjectIdsContaining(existingProject.getId());
+            User user = userRepository.findByProjectIdsContaining(id);
             if (user != null) {
-                user.getProjectIds().remove(existingProject.getId());
+                user.getProjectIds().remove(id);
                 userRepository.save(user);
             }
 

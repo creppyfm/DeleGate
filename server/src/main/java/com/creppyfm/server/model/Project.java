@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "Project")
@@ -23,7 +24,7 @@ public class Project {
     private String phase; //ex: yet to begin, working on it, finished
     private LocalDateTime created;
     private LocalDateTime updated;
-    private List<ProjectMembers> projectMembers;
+    private List<ProjectMembers> projectMembers = new ArrayList<>();
     @DocumentReference
     private List<Task> taskList;
 
@@ -93,12 +94,36 @@ public class Project {
         return projectMembers;
     }
 
+    public void addProjectMember (ProjectMembers projectMember) {
+        projectMembers.add(projectMember);
+    }
+
     public void setProjectMembers(List<ProjectMembers> projectMembers) {
         this.projectMembers = projectMembers;
     }
 
+    public boolean removeProjectMemberByUserId(String userId) {
+        return projectMembers.removeIf(projectMember ->
+            projectMember.getUserId().equals(userId)
+        );
+    }
+
+    public boolean updateProjectMemberRoleByUserId(String userId, String newRole) {
+        for (ProjectMembers projectMember : projectMembers) {
+            if (projectMember.getUserId().equals(userId)) {
+                projectMember.setRole(newRole);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Task> getTaskList() {
         return taskList;
+    }
+
+    public void addTask(Task task) {
+        taskList.add(task);
     }
 
     public void setTaskList(List<Task> taskList) {
