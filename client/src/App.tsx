@@ -3,6 +3,7 @@ import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { Main } from "./components/Main";
 import { FeaturetteDivider } from "./components/FeaturetteDivider";
+import { Footer } from "./components/Footer";
 
 function App() {
   return (
@@ -12,9 +13,7 @@ function App() {
       <FeaturetteDivider />
       <Main />
       <FeaturetteDivider />
-      <footer className="mt-auto">
-        <h1>Footer Here</h1>
-      </footer>
+      <Footer />
     </>
   );
 }
