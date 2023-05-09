@@ -50,13 +50,11 @@ public class ProjectController {
         return new ResponseEntity<>(updatedProject, HttpStatus.OK);
     }
 
-/* --for openai task gen
     @PostMapping("/{id}/tasks/generate")
     public ResponseEntity<Project> generateTasksForProject(@PathVariable String id) throws IOException {
         projectService.generateTasksForProject(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-*/
 
     @PutMapping("/{id}")
     public ResponseEntity<Project> updateProject(@PathVariable("id") String id, @RequestBody Project updatedProject) {
