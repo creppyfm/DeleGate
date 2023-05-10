@@ -1,6 +1,7 @@
 package com.creppyfm.server.controller;
 
 import com.creppyfm.server.model.Project;
+import com.creppyfm.server.model.ProjectMembers;
 import com.creppyfm.server.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,11 @@ public class ProjectController {
         return new ResponseEntity<Project>(projectService.findProjectById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/project-members")
+    public ResponseEntity<List<ProjectMembers>> getProjectMembers(@PathVariable String id) {
+        return new ResponseEntity<List<ProjectMembers>>(projectService.findProjectMembersById(id), HttpStatus.OK);
+    }
+
     @PostMapping()
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
         String userId = project.getUserId();
@@ -36,6 +42,12 @@ public class ProjectController {
         String phase = project.getPhase();
         return new ResponseEntity<Project>(projectService.
                 createProject(userId, title, description, phase), HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/project-members/add")
+    public ResponseEntity<Project> addProjectMember(@PathVariable String id, @RequestBody ProjectMembers projectMember) {
+        Project updatedProject = projectService.addProjectMember(id, projectMember);
+        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
     }
 
 /* --for openai task gen
@@ -51,6 +63,26 @@ public class ProjectController {
         Project project = projectService.updateProject(id, updatedProject);
         if (project != null) {
             return new ResponseEntity<>(project, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/{projectId}/project-members/{userId}/role")
+    public ResponseEntity<Void> updateProjectMemberRole(@PathVariable String projectId, @PathVariable String userId, String newRole) {
+        boolean isUpdated = projectService.updateProjectMemberRoleByUserId(projectId, userId, newRole);
+        if (isUpdated) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{projectId}/project-members/{userId}")
+    public ResponseEntity<Void> removeProjectMember(@PathVariable String projectId, @PathVariable String userId) {
+        boolean isRemoved = projectService.removeProjectMemberByUserId(projectId, userId);
+        if (isRemoved) {
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

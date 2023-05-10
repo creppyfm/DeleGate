@@ -16,8 +16,11 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                //delete below line (.csrf().disable() when not testing
+                .csrf().disable()
                 .authorizeHttpRequests( auth -> {
-                    auth.requestMatchers("/").permitAll();
+                    //remove '**' to resume proper filtering (testing)
+                    auth.requestMatchers("/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 //.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
