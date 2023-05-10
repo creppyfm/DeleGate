@@ -2,7 +2,9 @@ package com.creppyfm.server.service;
 
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.ProjectMembers;
+import com.creppyfm.server.model.Task;
 import com.creppyfm.server.model.User;
+import com.creppyfm.server.openai_chat_handlers.OpenAIChatAPIManager;
 import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.TaskRepository;
 import com.creppyfm.server.repository.UserRepository;
@@ -12,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +53,50 @@ public class ProjectService {
                 .apply(new Update().push("projectIds").value(project.getId()))
                 .first();
         return project;
+    }
+
+    public void generateTasksForProject(String id) throws IOException {
+        Project project = findProjectById(id);
+
+        String projectInfo = String.format("Title: %s\nDescription: %s\n\nList of tasks to complete the project:", project.getTitle(), project.getDescription());
+        String prompt =
+                "Read the project title and description included below, and generate a list " +
+                        "of no more than 10 steps to complete the project. Each step must be " +
+                        "on its own line. Each step should be presented in the form of a key:value pair " +
+                        "containing the title of the step as the key, and a concise, 3 to 5 sentence description " +
+                        "of the step as the value. The format of each step should match the following example:\n " +
+                        "1. Setup Java & Spring Boot: Value: Install the Java runtime environment. Download and configure " +
+                        "the Spring Boot application using the Spring Initializer, making sure to add the necessary dependencies. " +
+                        "Confirm the file structure of the Spring Boot application matches the needs of your project.\n " +
+                        "NOTE: Do not include any extra words, phrases, or sentences unrelated to the tasks you are generating." +
+                        "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
+                        "or ending your response. ONLY return the list of generated tasks in the format requested above.\n" +
+                        "Here is the project information:\n"
+                        + projectInfo;
+
+        // Call the OpenAIAPIManager to get the list of tasks
+        OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
+        List<String> tasks;
+        try {
+            tasks = openAIChatAPIManager.buildsTaskList(prompt);
+        } catch (IOException | InterruptedException e) {
+            throw new IOException(e);
+        }
+
+        for (String response : tasks) {
+            if (response.length() > 0) {
+                System.out.println(response);
+                String[] taskAndDescription = response.split(": Value: ");
+                if (taskAndDescription.length > 1) {
+                    String taskTitle = taskAndDescription[0];
+                    String taskDescription = taskAndDescription[1];
+                    Task task = taskService.createTask(id, taskTitle, taskDescription, 0, "in-progress");
+                    project.getTaskList().add(task);
+                }
+            }
+        }
+
+        projectRepository.save(project);
     }
 
     public Project addProjectMember(String projectId, ProjectMembers projectMembers) {
