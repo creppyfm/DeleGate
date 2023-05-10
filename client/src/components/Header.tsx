@@ -1,4 +1,5 @@
-import { Nav, Navbar, Container, Button } from "react-bootstrap";
+import { Nav, Navbar, Container } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import styles from "./Header.module.css";
 
 export function Header() {
@@ -10,12 +11,16 @@ export function Header() {
             DeleGate
           </Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#link">Link</Nav.Link>
+            <Link to={"/"} className="nav-link">
+              Home
+            </Link>
+            <Link to={"/about-us"} className="nav-link">
+              About Us
+            </Link>
           </Nav>
-          <Button className="me-2" variant="outline-info">
+          <Link to={"/login"} className="me-2 btn btn-outline-info">
             Login
-          </Button>
+          </Link>
         </Container>
       </Navbar>
     </header>
