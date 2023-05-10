@@ -41,9 +41,9 @@ public class TaskService {
     }
 
     public Task getTaskById(String id) {
-        Optional<Task> task = taskRepository.findById(id);
-        if (task.isPresent()) {
-            return task.get();
+        Task task = taskRepository.findTaskById(id);
+        if (task != null) {
+            return task;
         } else {
             throw new RuntimeException("Task not found with id: " + id);
         }

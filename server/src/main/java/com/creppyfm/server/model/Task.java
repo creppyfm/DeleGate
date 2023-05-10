@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "Task")
@@ -23,7 +24,7 @@ public class Task {
     private String status;
     private LocalDateTime created;
     private LocalDateTime updated;
-    private List<User> assignedUsers;
+    private List<User> assignedUsers = new ArrayList<>();
 
     //manual constructor for associating 'Task' with 'Project'
     public Task(String projectId, String title, String description, int weight, String status, LocalDateTime created, LocalDateTime updated) {
