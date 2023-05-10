@@ -44,15 +44,6 @@ public class OpenAIChatAPIManager {
                 String choiceString = choice.getMessage().getContent();
                 choices = Arrays.stream(choiceString.split("\n")).toList();
 
-/*
-                for (OpenAIChatResponse.ChatMessageWrapper messageWrapper : openAIChatResponse.getChoices()) {
-                    ChatMessage message = messageWrapper.getMessage();
-                    if ("assistant".equalsIgnoreCase(message.getRole())) {
-                        String task = message.getContent().replace("\n", "").trim();
-                        choices.add(task);
-                    }
-                }
-*/
             } else {
                 choices.add("Sorry. I'm unable to think of any relevant tasks to complete your project. " +
                         "Try adding a bit more detail to your Project Description.");
