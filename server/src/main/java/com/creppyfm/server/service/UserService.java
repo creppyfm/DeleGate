@@ -1,6 +1,7 @@
 package com.creppyfm.server.service;
 
 import com.creppyfm.server.model.Project;
+import com.creppyfm.server.model.Task;
 import com.creppyfm.server.model.User;
 import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.TaskRepository;
@@ -32,6 +33,16 @@ public class UserService {
         return userRepository.findUserById(id);
     }
 
+    public List<Task> findCurrentTasksById(String id) {
+        User user = userRepository.findUserById(id);
+        return user.getCurrentTasks();
+    }
+
+    public List<String> findStrengthsById(String id) {
+        User user = userRepository.findUserById(id);
+        return user.getStrengths();
+    }
+
     public User createUser(User user) {
         return userRepository.save(user);
     }
@@ -46,6 +57,9 @@ public class UserService {
             existingUser.setLastName(updatedUser.getLastName());
             existingUser.setEmail(updatedUser.getEmail());
             existingUser.setSource(updatedUser.getSource());
+            existingUser.setProjectIds(updatedUser.getProjectIds());
+            existingUser.setStrengths(updatedUser.getStrengths());
+            existingUser.setCurrentTasks(updatedUser.getCurrentTasks());
 
             return userRepository.save(existingUser);
         } else {

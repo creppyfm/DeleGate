@@ -1,5 +1,6 @@
 package com.creppyfm.server.controller;
 
+import com.creppyfm.server.model.Task;
 import com.creppyfm.server.model.User;
 import com.creppyfm.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,16 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getSingleUser(@PathVariable String id) {
         return new ResponseEntity<User>(userService.findUserById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/current-tasks")
+    public ResponseEntity<List<Task>> getAllCurrentTasks(@PathVariable String id) {
+        return new ResponseEntity<List<Task>>(userService.findCurrentTasksById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/strengths")
+    public ResponseEntity<List<String>> getAllStrengths(@PathVariable String id) {
+        return new ResponseEntity<List<String>>(userService.findStrengthsById(id), HttpStatus.OK);
     }
 
     @PostMapping()

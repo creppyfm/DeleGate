@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class User {
     private String source;
     private List<String> projectIds;
     private List<String> strengths;
+    @DocumentReference(collection = "Task")
+    private List<Task> currentTasks;
 
     public String getToken() {
         return token;
@@ -99,6 +102,14 @@ public class User {
 
     public int getWorkload(List<String> projectIDList) {
         return projectIDList.size();
+    }
+
+    public List<Task> getCurrentTasks() {
+        return currentTasks;
+    }
+
+    public void setCurrentTasks(List<Task> currentTasks) {
+        this.currentTasks = currentTasks;
     }
 
 }
