@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -97,6 +99,38 @@ public class ProjectService {
         }
 
         projectRepository.save(project);
+    }
+
+    public void assignTasksAutomatically(String projectId) throws IOException, InterruptedException {
+        Project project = findProjectById(projectId);
+        List<ProjectMembers> projectMembers = project.getProjectMembers();
+        List<Task> tasks = project.getTaskList();
+
+        // Map project members' strengths and tasks to send to the AI
+        Map<String, List<String>> memberStrengths = new HashMap<>();
+        for (ProjectMembers projectMember : projectMembers) {
+            User user = userRepository.findUserById(projectMember.getUserId());
+            memberStrengths.put(projectMember.getUserId(), user.getStrengths());
+        }
+
+        OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
+        Map<String, String> taskIdToUserId = openAIChatAPIManager.delegateTasks(memberStrengths, tasks);
+
+        // Assign tasks to users based on AI recommendations
+        for (Map.Entry<String, String> entry : taskIdToUserId.entrySet()) {
+            String taskId = entry.getKey();
+            String userId = entry.getValue();
+
+            Task task = taskRepository.findTaskById(taskId);
+            User user = userRepository.findUserById(userId);
+
+            if (task != null && user != null) {
+                user.getCurrentTasks().add(task);
+                task.getAssignedUsers().add(user);
+                userRepository.save(user);
+                taskRepository.save(task);
+            }
+        }
     }
 
     public Project addProjectMember(String projectId, ProjectMembers projectMembers) {

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "User")
@@ -26,7 +27,7 @@ public class User {
     private List<String> projectIds;
     private List<String> strengths;
     @DocumentReference(collection = "Task")
-    private List<Task> currentTasks;
+    private List<Task> currentTasks = new ArrayList<>();
 
     public String getToken() {
         return token;
