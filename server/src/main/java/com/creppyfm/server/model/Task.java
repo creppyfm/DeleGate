@@ -1,5 +1,6 @@
 package com.creppyfm.server.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class Task {
     private String status;
     private LocalDateTime created;
     private LocalDateTime updated;
+    @JsonManagedReference
     private List<User> assignedUsers = new ArrayList<>();
 
     //manual constructor for associating 'Task' with 'Project'
