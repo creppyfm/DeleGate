@@ -1,5 +1,6 @@
 package com.creppyfm.server.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class User {
     private List<String> projectIds;
     private List<String> strengths;
     @DocumentReference(collection = "Task")
+    @JsonBackReference
     private List<Task> currentTasks = new ArrayList<>();
 
     public String getToken() {
