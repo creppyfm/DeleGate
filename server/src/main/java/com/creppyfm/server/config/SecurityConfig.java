@@ -24,7 +24,10 @@ public class SecurityConfig {
                     auth.anyRequest().authenticated();
                 })
                 //.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .oauth2Login(withDefaults())
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/login/oauth2/authorization")))
                 .formLogin(withDefaults())
                 .build();
     }
