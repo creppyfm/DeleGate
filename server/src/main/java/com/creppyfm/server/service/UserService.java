@@ -56,7 +56,7 @@ public class UserService {
             existingUser.setFirstName(updatedUser.getFirstName());
             existingUser.setLastName(updatedUser.getLastName());
             existingUser.setEmail(updatedUser.getEmail());
-            existingUser.setSource(updatedUser.getSource());
+            existingUser.setProvider(updatedUser.getProvider());
             existingUser.setProjectIds(updatedUser.getProjectIds());
             existingUser.setStrengths(updatedUser.getStrengths());
             existingUser.setCurrentTasks(updatedUser.getCurrentTasks());

@@ -1,10 +1,10 @@
 package com.creppyfm.server.model;
 
+import com.creppyfm.server.enumerated.Provider;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
@@ -24,7 +24,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private String source;
+    private Provider provider;
     private List<String> projectIds;
     private List<String> strengths;
     @DocumentReference(collection = "Task")
@@ -47,12 +47,12 @@ public class User {
         this.openAIKey = openAIKey;
     }
 
-    public String getSource() {
-        return source;
+    public Provider getProvider() {
+        return provider;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 
     public List<String> getProjectIds() {
