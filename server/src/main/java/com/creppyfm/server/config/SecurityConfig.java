@@ -1,5 +1,7 @@
 package com.creppyfm.server.config;
 
+import com.creppyfm.server.authentication.CustomOAuth2UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,23 +15,27 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private CustomOAuth2UserService oauth2UserService;
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        httpSecurity
                 //delete below line (.csrf().disable() when not testing
-                .csrf().disable()
+                //.csrf().disable()
                 .authorizeHttpRequests( auth -> {
-                    //remove '**' to resume proper filtering (testing)
-                    auth.requestMatchers("/**").permitAll();
+                    auth.requestMatchers("/", "/login", "/oauth/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
-                //.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .formLogin().permitAll()
+                .and()
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .authorizationEndpoint(authorization -> authorization
-                                .baseUri("/login/oauth2/authorization")))
-                .formLogin(withDefaults())
-                .build();
+                                .baseUri("/login/oauth2/authorization"))
+                        .userInfoEndpoint()
+                        .userService(oauth2UserService));
+
+        return httpSecurity.build();
     }
 
 
