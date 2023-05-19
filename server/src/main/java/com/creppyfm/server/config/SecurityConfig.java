@@ -6,10 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -17,26 +16,23 @@ public class SecurityConfig {
 
     @Autowired
     private CustomOAuth2UserService oauth2UserService;
+
+    //delete below
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                //delete below line (.csrf().disable() when not testing
-                //.csrf().disable()
-                .authorizeHttpRequests( auth -> {
-                    auth.requestMatchers("/", "/login", "/oauth/**").permitAll();
-                    auth.anyRequest().authenticated();
-                })
-                .formLogin().permitAll()
-                .and()
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
                         .authorizationEndpoint(authorization -> authorization
-                                .baseUri("/login/oauth2/authorization"))
-                        .userInfoEndpoint()
-                        .userService(oauth2UserService));
-
-        return httpSecurity.build();
+                                .baseUri("/oauth2"))
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(oauth2UserService)))
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .invalidSessionUrl("/session-invalid"))
+                .csrf().disable();
+        return http.build();
     }
-
 
 }

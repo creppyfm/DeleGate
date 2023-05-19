@@ -22,29 +22,53 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String providerString = userRequest.getClientRegistration().getRegistrationId();
         Provider provider = providerString.equalsIgnoreCase("google") ?
-                Provider.GOOGLE :
-                Provider.GITHUB;
+                Provider.GOOGLE : Provider.GITHUB;
 
-        String providerId = oAuth2User.getAttribute("id");
+        String providerId = provider == Provider.GOOGLE ?
+                oAuth2User.getAttribute("sub") : oAuth2User.getAttribute("id");
 
         User user = userRepository.findByProviderAndProviderId(provider, providerId);
 
         if(user == null) {
             user = new User();
             user.setProviderId(providerId);
-            String[] names = oAuth2User.getName().split(" ");
-            user.setFirstName(names[0]);
-            user.setLastName(names[1]);
-            user.setEmail(oAuth2User.getEmail());
-            if(provider.equals(Provider.GOOGLE)) {
-                user.setProvider(Provider.GOOGLE);
-            } else {
-                user.setProvider(Provider.GITHUB);
-            }
+
+            processOAuth2User(userRequest, oAuth2User, user, provider, providerId);
 
             userRepository.save(user);
         }
 
         return new CustomOAuth2User(oAuth2User);
     }
+
+    private void processOAuth2User(OAuth2UserRequest userRequest, CustomOAuth2User oAuth2User, User user, Provider provider, String providerId) {
+        String fullName = oAuth2User.getAttribute("name");
+
+        if (provider == Provider.GOOGLE) {
+            if (fullName != null) {
+                String[] names = fullName.split(" ");
+                user.setFirstName(names[0]);
+                user.setLastName(names[1]);
+            } else {
+                if (oAuth2User.getAttribute("given_name") != null) {
+                    user.setFirstName(oAuth2User.getAttribute("given_name"));
+                }
+                if (oAuth2User.getAttribute("family_name") != null) {
+                    user.setLastName(oAuth2User.getAttribute("family_name"));
+                }
+            }
+        } else {
+            if (fullName != null) {
+                String[] names = fullName.split(" ");
+                user.setFirstName(names[0]);
+                user.setLastName(names[1]);
+            } else {
+                user.setFirstName(oAuth2User.getAttribute("login"));
+            }
+        }
+        user.setEmail(oAuth2User.getEmail());
+        user.setProvider(provider);
+        user.setProviderId(providerId);
+    }
+
 }
