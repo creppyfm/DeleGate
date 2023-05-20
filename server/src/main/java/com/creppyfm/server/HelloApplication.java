@@ -1,11 +1,15 @@
 package com.creppyfm.server;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.servlet.SessionTrackingMode;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Set;
 
 @SpringBootApplication
 public class HelloApplication {
@@ -27,6 +31,12 @@ public class HelloApplication {
         System.setProperty("GITHUB_CLIENT_SECRET", dotenv.get("GITHUB_CLIENT_SECRET"));
 
         SpringApplication.run(HelloApplication.class, args);
+    }
+
+    @Bean
+    public ServletContextInitializer servletContextInitializer() {
+        return servletContext -> servletContext.setSessionTrackingModes(
+                Set.of(SessionTrackingMode.COOKIE));
     }
 
     @Bean
