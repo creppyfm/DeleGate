@@ -26,6 +26,7 @@ public class User {
     private String email;
     private Provider provider;
     private String providerId;
+    private String sessionId;
     private List<String> projectIds;
     private List<String> strengths;
     @DocumentReference(collection = "Task")
@@ -122,5 +123,13 @@ public class User {
 
     public String getProviderId() {
         return providerId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }

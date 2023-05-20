@@ -10,22 +10,29 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomOAuth2UserService.class);
+
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private GitHubEmailFetcher gitHubEmailFetcher;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        CustomOAuth2User oAuth2User = (CustomOAuth2User) super.loadUser(userRequest);
+        OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String providerString = userRequest.getClientRegistration().getRegistrationId();
         Provider provider = providerString.equalsIgnoreCase("google") ?
                 Provider.GOOGLE : Provider.GITHUB;
 
         String providerId = provider == Provider.GOOGLE ?
-                oAuth2User.getAttribute("sub") : oAuth2User.getAttribute("id");
+                oAuth2User.getAttribute("sub").toString() : oAuth2User.getAttribute("id").toString();
 
         User user = userRepository.findByProviderAndProviderId(provider, providerId);
 
@@ -41,11 +48,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return new CustomOAuth2User(oAuth2User);
     }
 
-    private void processOAuth2User(OAuth2UserRequest userRequest, CustomOAuth2User oAuth2User, User user, Provider provider, String providerId) {
+    private void processOAuth2User(OAuth2UserRequest userRequest, OAuth2User oAuth2User, User user, Provider provider, String providerId) {
         String fullName = oAuth2User.getAttribute("name");
 
         if (provider == Provider.GOOGLE) {
             if (fullName != null) {
+
                 String[] names = fullName.split(" ");
                 user.setFirstName(names[0]);
                 user.setLastName(names[1]);
@@ -57,6 +65,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     user.setLastName(oAuth2User.getAttribute("family_name"));
                 }
             }
+            user.setEmail(oAuth2User.getAttribute("email"));
+
         } else {
             if (fullName != null) {
                 String[] names = fullName.split(" ");
@@ -65,10 +75,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             } else {
                 user.setFirstName(oAuth2User.getAttribute("login"));
             }
+            String userEmail = gitHubEmailFetcher.fetchGitHubEmail(userRequest.getAccessToken().getTokenValue());
+            user.setEmail(userEmail);
         }
-        user.setEmail(oAuth2User.getEmail());
         user.setProvider(provider);
         user.setProviderId(providerId);
     }
+
 
 }
