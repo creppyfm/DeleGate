@@ -46,23 +46,21 @@ export function LoginPage({ setUser, provider }: LoginPageProps) {
     }
   }, []);
 
+  if (provider) {
+    return (
+      <main className="d-flex flex-column align-items-center gap-3">
+        <h2 className="mb-3 fw-normal text-light">Loading Profile...</h2>
+      </main>
+    );
+  }
+
   return (
     <main className="d-flex flex-column align-items-center gap-3">
       <h2 className="mb-3 fw-normal text-light">Please Sign In</h2>
-      <Button
-        className={styles["sso-button"]}
-        onClick={() => {
-          redirect("/auth/github");
-        }}
-      >
+      <Button className={styles["sso-button"]} as="a" href="/auth/github">
         Github
       </Button>
-      <Button
-        className={styles["sso-button"]}
-        onClick={() => {
-          redirect("/auth/google");
-        }}
-      >
+      <Button className={styles["sso-button"]} as="a" href="/auth/google">
         Google
       </Button>
     </main>
