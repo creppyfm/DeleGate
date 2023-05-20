@@ -1,8 +1,25 @@
-import { Nav, Navbar, Container } from "react-bootstrap";
+import { Nav, Navbar, Container, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import styles from "./Header.module.css";
 
-export function Header() {
+import { User, SetUser } from "../App";
+
+type HeaderProps = {
+  user: User;
+  setUser: SetUser;
+};
+
+export function Header({ user, setUser }: HeaderProps) {
+  function logoutUser() {
+    setUser({
+      firstName: "",
+      lastName: "",
+      email: "",
+      sessionId: "",
+      loggedIn: false,
+    });
+  }
+
   return (
     <header className={styles.header}>
       <Navbar bg="dark" variant="dark">
@@ -18,9 +35,15 @@ export function Header() {
               About Us
             </Link>
           </Nav>
-          <Link to={"/login"} className="me-2 btn btn-outline-info">
-            Login
-          </Link>
+          {user.loggedIn ? (
+            <Button variant="outline-info" onClick={logoutUser}>
+              Logout
+            </Button>
+          ) : (
+            <Link to={"/login"} className="me-2 btn btn-outline-info">
+              Login
+            </Link>
+          )}
         </Container>
       </Navbar>
     </header>
