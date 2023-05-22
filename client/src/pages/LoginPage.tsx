@@ -25,22 +25,34 @@ export function LoginPage({ setUser, provider }: LoginPageProps) {
         body: body,
       });
 
-      if (!response.ok) {
-        throw new Error("HTTP status " + response.status);
+      // if (!response.ok) {
+      //   throw new Error("HTTP status " + response.status);
+      // }
+
+      if (response.ok) {
+        setUser({
+          firstName: "John",
+          lastName: "Smith",
+          email: "test@test.com",
+          sessionId: "21",
+          loggedIn: true,
+        });
+        return true;
       }
 
-      const data = await response.json();
+      // const data = await response.json();
 
-      return data.user;
+      // return data.user;
+      return false;
     } catch (error) {
       console.log(error);
+      return false;
     }
   }
 
   useEffect(() => {
     if (provider) {
       getUser().then((user) => {
-        setUser({ ...user, loggedIn: true });
         redirect("/");
       });
     }
@@ -57,10 +69,18 @@ export function LoginPage({ setUser, provider }: LoginPageProps) {
   return (
     <main className="d-flex flex-column align-items-center gap-3">
       <h2 className="mb-3 fw-normal text-light">Please Sign In</h2>
-      <Button className={styles["sso-button"]} as="a" href="/auth/github">
+      <Button
+        className={styles["sso-button"]}
+        as="a"
+        href="/oauth2/authorization/github"
+      >
         Github
       </Button>
-      <Button className={styles["sso-button"]} as="a" href="/auth/google">
+      <Button
+        className={styles["sso-button"]}
+        as="a"
+        href="/oauth2/authorization/google"
+      >
         Google
       </Button>
     </main>

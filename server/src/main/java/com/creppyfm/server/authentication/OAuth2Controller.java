@@ -18,13 +18,13 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 import java.security.Principal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 @Controller
 @AllArgsConstructor
@@ -48,7 +48,7 @@ public class OAuth2Controller {
     @GetMapping("/user")
     public ResponseEntity<User> getUser(Principal principal) {
         User user = userRepository.findByEmail(principal.getName());
-        if(user != null) {
+        if (user != null) {
             return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -56,7 +56,8 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/auth/{provider}")
-    public void login(@PathVariable String provider, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void login(@PathVariable String provider, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
         ClientRegistration clientRegistration = getRegistration(provider);
 
         if (clientRegistration != null) {
@@ -77,10 +78,20 @@ public class OAuth2Controller {
         }
     }
 
+    // This is in place to redirect the user back to the frontend after successful
+    // login.
+    // This should be removed from production build.
+
+    @GetMapping("/")
+    public RedirectView redirectToExternalUrl() {
+        String externalUrl = "http://localhost:5173";
+        return new RedirectView(externalUrl);
+    }
+
     @GetMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
+        if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
         return ResponseEntity.ok().build();
