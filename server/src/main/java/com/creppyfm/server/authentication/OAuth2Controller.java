@@ -1,7 +1,9 @@
 package com.creppyfm.server.authentication;
 
+import org.springframework.web.bind.annotation.RestController;
 import com.creppyfm.server.model.User;
 import com.creppyfm.server.repository.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -15,22 +17,16 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 import java.security.Principal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-@Controller
+@RestController
 @AllArgsConstructor
+@Tag(name = "OAuth2 Controller")
 public class OAuth2Controller {
-
-    private static final Logger log = LoggerFactory.getLogger(CustomOAuth2UserService.class);
 
     @Autowired
     private ClientRegistrationRepository clientRegistrationRepository;

@@ -3,6 +3,7 @@ package com.creppyfm.server.controller;
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.ProjectMembers;
 import com.creppyfm.server.service.ProjectService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/api/projects")
+@Tag(name = "Project Controller")
 public class ProjectController {
 
     @Autowired
