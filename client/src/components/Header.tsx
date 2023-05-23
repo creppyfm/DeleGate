@@ -15,7 +15,6 @@ export function Header({ user, setUser }: HeaderProps) {
       firstName: "",
       lastName: "",
       email: "",
-      sessionId: "",
       loggedIn: false,
     });
   }

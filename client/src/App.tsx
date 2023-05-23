@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { LoginPage } from "./pages/LoginPage";
 import { AboutUsPage } from "./pages/AboutUsPage";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export type User = {
   firstName: string;
@@ -19,7 +19,6 @@ export type SetUser = React.Dispatch<
     firstName: string;
     lastName: string;
     email: string;
-    sessionId: string;
     loggedIn: boolean;
   }>
 >;
@@ -29,26 +28,17 @@ function App() {
     firstName: "",
     lastName: "",
     email: "",
-    sessionId: "",
     loggedIn: false,
   });
+
+  useEffect(() => {});
 
   return (
     <>
       <Header user={user} setUser={setUser} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login">
-          <Route index element={<LoginPage setUser={setUser} />} />
-          <Route
-            path="github"
-            element={<LoginPage setUser={setUser} provider="github" />}
-          />
-          <Route
-            path="google"
-            element={<LoginPage setUser={setUser} provider="google" />}
-          />
-        </Route>
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
       </Routes>
       <Footer />
