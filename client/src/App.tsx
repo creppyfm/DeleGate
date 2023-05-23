@@ -6,6 +6,7 @@ import { Home } from "./pages/Home";
 import { LoginPage } from "./pages/LoginPage";
 import { AboutUsPage } from "./pages/AboutUsPage";
 import { useState, useEffect } from "react";
+import { AppContext } from "./utils/SessionContext";
 
 export type User = {
   firstName: string;
@@ -23,6 +24,11 @@ export type SetUser = React.Dispatch<
   }>
 >;
 
+export interface AppContextProps {
+  user: User;
+  setUser: (user: User) => void;
+}
+
 function App() {
   const [user, setUser] = useState({
     firstName: "",
@@ -34,7 +40,7 @@ function App() {
   useEffect(() => {});
 
   return (
-    <>
+    <AppContext.Provider value={{ user, setUser }}>
       <Header user={user} setUser={setUser} />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -42,7 +48,7 @@ function App() {
         <Route path="/about-us" element={<AboutUsPage />} />
       </Routes>
       <Footer />
-    </>
+    </AppContext.Provider>
   );
 }
 
