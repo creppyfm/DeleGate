@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { LoginPage } from "./pages/LoginPage";
 import { AboutUsPage } from "./pages/AboutUsPage";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AppContext } from "./utils/SessionContext";
 
 export type User = {
@@ -36,8 +36,6 @@ function App() {
     email: "",
     loggedIn: false,
   });
-
-  useEffect(() => {});
 
   return (
     <AppContext.Provider value={{ user, setUser }}>
