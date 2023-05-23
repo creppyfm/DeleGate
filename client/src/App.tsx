@@ -38,8 +38,8 @@ function App() {
   });
 
   return (
-    <AppContext.Provider value={{ user, setUser }}>
-      <Header user={user} setUser={setUser} />
+    <AppContext.Provider value={{ user: user, setUser: setUser }}>
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
