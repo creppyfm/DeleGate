@@ -1,21 +1,15 @@
 import { Nav, Navbar, Container, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import styles from "./Header.module.css";
+import { useAppContext } from "../utils/SessionContext";
 
-import { User, SetUser } from "../App";
-
-type HeaderProps = {
-  user: User;
-  setUser: SetUser;
-};
-
-export function Header({ user, setUser }: HeaderProps) {
+export function Header() {
+  const { user, setUser } = useAppContext();
   function logoutUser() {
     setUser({
       firstName: "",
       lastName: "",
       email: "",
-      sessionId: "",
       loggedIn: false,
     });
   }

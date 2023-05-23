@@ -6,6 +6,7 @@ import { Home } from "./pages/Home";
 import { LoginPage } from "./pages/LoginPage";
 import { AboutUsPage } from "./pages/AboutUsPage";
 import { useState } from "react";
+import { AppContext } from "./utils/SessionContext";
 
 export type User = {
   firstName: string;
@@ -19,40 +20,33 @@ export type SetUser = React.Dispatch<
     firstName: string;
     lastName: string;
     email: string;
-    sessionId: string;
     loggedIn: boolean;
   }>
 >;
+
+export interface AppContextProps {
+  user: User;
+  setUser: (user: User) => void;
+}
 
 function App() {
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    sessionId: "",
     loggedIn: false,
   });
 
   return (
-    <>
-      <Header user={user} setUser={setUser} />
+    <AppContext.Provider value={{ user: user, setUser: setUser }}>
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login">
-          <Route index element={<LoginPage setUser={setUser} />} />
-          <Route
-            path="github"
-            element={<LoginPage setUser={setUser} provider="github" />}
-          />
-          <Route
-            path="google"
-            element={<LoginPage setUser={setUser} provider="google" />}
-          />
-        </Route>
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
       </Routes>
       <Footer />
-    </>
+    </AppContext.Provider>
   );
 }
 
