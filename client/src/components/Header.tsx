@@ -1,5 +1,5 @@
 import { Nav, Navbar, Container, Button } from "react-bootstrap";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import styles from "./Header.module.css";
 import { useAppContext } from "../utils/SessionContext";
 
