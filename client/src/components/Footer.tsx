@@ -3,7 +3,6 @@ import { Nav } from "react-bootstrap";
 export function Footer() {
   return (
     <footer className="d-flex justify-content-start align-items-center pb-3 mb-4 w-100">
-      M
       <div className="ms-5">
         <a
           href="#"
