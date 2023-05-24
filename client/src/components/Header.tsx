@@ -29,8 +29,16 @@ export function Header() {
               About Us
             </Link>
           </Nav>
+          <Button
+            variant="outline-success"
+            as="a"
+            href="/dashboard"
+            className="me-3"
+          >
+            Dashboard
+          </Button>
           {user.loggedIn ? (
-            <Button variant="outline-info" onClick={logoutUser}>
+            <Button variant="outline-danger" onClick={logoutUser}>
               Logout
             </Button>
           ) : (
