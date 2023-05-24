@@ -1,5 +1,5 @@
 import { Nav, Navbar, Container, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import styles from "./Header.module.css";
 import { useAppContext } from "../utils/SessionContext";
 
@@ -22,29 +22,24 @@ export function Header() {
             DeleGate
           </Navbar.Brand>
           <Nav className="me-auto">
-            <Link to={"/"} className="nav-link">
+            <NavLink to={"/"} className="nav-link">
               Home
-            </Link>
-            <Link to={"/about-us"} className="nav-link">
+            </NavLink>
+            <NavLink to={"/about-us"} className="nav-link">
               About Us
-            </Link>
+            </NavLink>
           </Nav>
-          <Button
-            variant="outline-success"
-            as="a"
-            href="/dashboard"
-            className="me-3"
-          >
+          <NavLink to="/dashboard" className="me-3 btn btn-outline-success">
             Dashboard
-          </Button>
+          </NavLink>
           {user.loggedIn ? (
             <Button variant="outline-danger" onClick={logoutUser}>
               Logout
             </Button>
           ) : (
-            <Link to={"/login"} className="me-2 btn btn-outline-info">
+            <NavLink to={"/login"} className="me-2 btn btn-outline-info">
               Login
-            </Link>
+            </NavLink>
           )}
         </Container>
       </Navbar>
