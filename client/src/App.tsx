@@ -7,6 +7,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { AboutUsPage } from "./pages/AboutUsPage";
 import { useState } from "react";
 import { AppContext } from "./utils/SessionContext";
+import { DashboardPage } from "./pages/DashboardPage";
 
 export type User = {
   firstName: string;
@@ -44,6 +45,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
       <Footer />
     </AppContext.Provider>
