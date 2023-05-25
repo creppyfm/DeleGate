@@ -12,7 +12,7 @@ import org.springframework.session.data.mongo.config.annotation.web.http.EnableM
 import java.time.Duration;
 
 @Configuration(proxyBeanMethods = false)
-@EnableMongoHttpSession
+@EnableMongoHttpSession(maxInactiveIntervalInSeconds = 2592000)
 public class HttpSessionConfig {
 
     Dotenv dotenv = Dotenv.load();

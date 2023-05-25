@@ -1,19 +1,21 @@
 package com.creppyfm.server.controller;
 
+import com.creppyfm.server.authentication.SessionService;
+import com.creppyfm.server.dto_model.UserDTO;
 import com.creppyfm.server.model.Task;
 import com.creppyfm.server.model.User;
 import com.creppyfm.server.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.links.Link;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.session.Session;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +26,12 @@ import java.util.List;
 @Tag(name = "User Controller")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
+    @Autowired
+    private SessionService sessionService;
 
     @Operation(
             description = "GET endpoint to fetch all users in 'User' MongoDB collection.",
@@ -50,6 +56,31 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<User> getSingleUser(@PathVariable String userId) {
         return new ResponseEntity<User>(userService.findUserById(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<UserDTO> getAuthenticatedUser(HttpServletRequest request) {
+
+        if (request != null) {
+            String sessionId = request.getRequestedSessionId();
+
+            logger.info("Session Object: {}", sessionId);
+
+            Session session = sessionService.findSession(sessionId);
+            String userId = session.getAttribute("userId");
+            User user = userService.findUserById(userId);
+
+            logger.info("User Object: {}", user);
+
+            UserDTO userDTO = new UserDTO();
+            userDTO.setFirstName(user.getFirstName());
+            userDTO.setLastName(user.getLastName());
+            userDTO.setEmail(user.getEmail());
+
+            return ResponseEntity.ok(userDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @Operation(

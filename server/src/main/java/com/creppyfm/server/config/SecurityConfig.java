@@ -45,7 +45,7 @@ public class SecurityConfig {
                         .successHandler(new OAuth2LoginSuccessHandler())
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .sessionCreationPolicy(SessionCreationPolicy.NEVER)
                         .invalidSessionUrl("/login")
                         .maximumSessions(1)
                 )

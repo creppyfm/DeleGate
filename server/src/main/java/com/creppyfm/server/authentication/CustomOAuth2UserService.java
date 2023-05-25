@@ -3,6 +3,7 @@ package com.creppyfm.server.authentication;
 import com.creppyfm.server.enumerated.Provider;
 import com.creppyfm.server.model.User;
 import com.creppyfm.server.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -22,6 +23,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private UserRepository userRepository;
     @Autowired
     private GitHubEmailFetcher gitHubEmailFetcher;
+    @Autowired
+    private HttpSession httpSession;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -34,17 +37,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String providerId = provider == Provider.GOOGLE ?
                 oAuth2User.getAttribute("sub").toString() : oAuth2User.getAttribute("id").toString();
 
-        User user = userRepository.findByProviderAndProviderId(provider, providerId);
+        User user = userRepository.findByProviderAndId(provider, providerId);
 
         if(user == null) {
             user = new User();
-            user.setProviderId(providerId);
-
+            user.setId(providerId);
             processOAuth2User(userRequest, oAuth2User, user, provider, providerId);
-
             userRepository.save(user);
         }
 
+        httpSession.setAttribute("userId", user.getId());
         return new CustomOAuth2User(oAuth2User);
     }
 
@@ -79,7 +81,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setEmail(userEmail);
         }
         user.setProvider(provider);
-        user.setProviderId(providerId);
+
     }
 
 
