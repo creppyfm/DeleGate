@@ -1,12 +1,14 @@
 import "./App.css";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { LoginPage } from "./pages/LoginPage";
 import { AboutUsPage } from "./pages/AboutUsPage";
 import { useState } from "react";
 import { AppContext } from "./utils/SessionContext";
+import { DashboardRouter } from "./pages/dashboard/DashboardRouter";
+import { PageNotFound } from "./pages/PageNotFound";
 
 export type User = {
   firstName: string;
@@ -44,6 +46,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
+        <Route path="/dashboard/*" element={<DashboardRouter />} />
+        <Route path="/404" element={<PageNotFound />} />
+        <Route path="*" element={<Navigate to="/404" />} />
       </Routes>
       <Footer />
     </AppContext.Provider>
