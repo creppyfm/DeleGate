@@ -7,7 +7,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { AboutUsPage } from "./pages/AboutUsPage";
 import { useState } from "react";
 import { AppContext } from "./utils/SessionContext";
-import { DashboardPage } from "./pages/dashboard/DashboardPage";
+import { DashboardRouter } from "./pages/dashboard/DashboardRouter";
 import { PageNotFound } from "./pages/PageNotFound";
 
 export type User = {
@@ -46,7 +46,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
-        <Route path="/dashboard/*" element={<DashboardPage />} />
+        <Route path="/dashboard/*" element={<DashboardRouter />} />
         <Route path="/404" element={<PageNotFound />} />
         <Route path="*" element={<Navigate to="/404" />} />
       </Routes>
