@@ -4,6 +4,7 @@ import com.creppyfm.server.model.Task;
 import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.TaskRepository;
 import com.creppyfm.server.service.TaskService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/tasks")
+@Tag(name = "Task Controller")
 public class TaskController {
 
     @Autowired

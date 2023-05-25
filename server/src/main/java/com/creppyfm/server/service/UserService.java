@@ -7,7 +7,6 @@ import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.TaskRepository;
 import com.creppyfm.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +21,6 @@ public class UserService {
     private TaskRepository taskRepository;
     @Autowired
     private ProjectRepository projectRepository;
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
     public List<User> findAllUsers() {
         return userRepository.findAll();

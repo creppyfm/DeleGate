@@ -1,12 +1,11 @@
 package com.creppyfm.server.authentication;
 
-import com.creppyfm.server.model.User;
-import com.creppyfm.server.repository.UserRepository;
+import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,22 +14,15 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
-import java.security.Principal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-@Controller
+@RestController
 @AllArgsConstructor
+@Tag(name = "OAuth2 Controller")
 public class OAuth2Controller {
-
-    private static final Logger log = LoggerFactory.getLogger(CustomOAuth2UserService.class);
 
     @Autowired
     private ClientRegistrationRepository clientRegistrationRepository;
@@ -40,19 +32,6 @@ public class OAuth2Controller {
 
     private ClientRegistration getRegistration(String provider) {
         return this.clientRegistrationRepository.findByRegistrationId(provider);
-    }
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @GetMapping("/user")
-    public ResponseEntity<User> getUser(Principal principal) {
-        User user = userRepository.findByEmail(principal.getName());
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
     }
 
     @GetMapping("/auth/{provider}")

@@ -11,8 +11,9 @@ import org.springframework.session.data.mongo.JdkMongoSessionConverter;
 import org.springframework.session.data.mongo.config.annotation.web.http.EnableMongoHttpSession;
 import java.time.Duration;
 
+
 @Configuration(proxyBeanMethods = false)
-@EnableMongoHttpSession
+@EnableMongoHttpSession(maxInactiveIntervalInSeconds = 2592000) //30 days converted to seconds
 public class HttpSessionConfig {
 
     Dotenv dotenv = Dotenv.load();
@@ -28,4 +29,5 @@ public class HttpSessionConfig {
     public MongoOperations mongoTemplate() {
         return new MongoTemplate(mongoClient, dotenv.get("MONGO_DATABASE"));
     }
+
 }

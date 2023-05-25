@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    @Id
     private String id;
     private String token;
     private String openAIKey;
@@ -25,8 +24,6 @@ public class User {
     private String lastName;
     private String email;
     private Provider provider;
-    private String providerId;
-    private String sessionId;
     private List<String> projectIds;
     private List<String> strengths;
     @DocumentReference(collection = "Task")
@@ -117,19 +114,4 @@ public class User {
         this.currentTasks = currentTasks;
     }
 
-    public void setProviderId(String providerId) {
-        this.providerId = providerId;
-    }
-
-    public String getProviderId() {
-        return providerId;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
 }
