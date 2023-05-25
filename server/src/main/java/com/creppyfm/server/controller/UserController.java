@@ -1,7 +1,7 @@
 package com.creppyfm.server.controller;
 
 import com.creppyfm.server.authentication.SessionService;
-import com.creppyfm.server.dto_model.UserDTO;
+import com.creppyfm.server.data_transfer_object_model.UserDataTransferObject;
 import com.creppyfm.server.model.Task;
 import com.creppyfm.server.model.User;
 import com.creppyfm.server.service.UserService;
@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @Tag(name = "User Controller")
 public class UserController {
 
@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<UserDTO> getAuthenticatedUser(HttpServletRequest request) {
+    public ResponseEntity<UserDataTransferObject> getAuthenticatedUser(HttpServletRequest request) {
 
         if (request != null) {
             String sessionId = request.getRequestedSessionId();
@@ -72,12 +72,12 @@ public class UserController {
 
             logger.info("User Object: {}", user);
 
-            UserDTO userDTO = new UserDTO();
-            userDTO.setFirstName(user.getFirstName());
-            userDTO.setLastName(user.getLastName());
-            userDTO.setEmail(user.getEmail());
+            UserDataTransferObject userDataTransferObject = new UserDataTransferObject();
+            userDataTransferObject.setFirstName(user.getFirstName());
+            userDataTransferObject.setLastName(user.getLastName());
+            userDataTransferObject.setEmail(user.getEmail());
 
-            return ResponseEntity.ok(userDTO);
+            return ResponseEntity.ok(userDataTransferObject);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
