@@ -40,6 +40,15 @@ export function Header() {
               About Us
             </NavLink>
           </Nav>
+          {user.loggedIn && (
+            <NavLink
+              target="_blank"
+              to="/swagger-ui/index.html#/"
+              className="btn btn-outline-info me-3"
+            >
+              Docs
+            </NavLink>
+          )}
           {user.loggedIn ? (
             <NavLink to="/dashboard" className="btn btn-outline-success me-3">
               Dashboard
