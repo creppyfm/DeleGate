@@ -53,7 +53,7 @@ public class OAuth2Controller {
             String url = builder.build().getAuthorizationRequestUri();
             response.sendRedirect(url);
         } else {
-            response.sendRedirect("/login");
+            response.sendRedirect("/");
         }
     }
 
