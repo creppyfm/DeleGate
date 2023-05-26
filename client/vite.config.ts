@@ -10,6 +10,7 @@ export default defineConfig({
       "/oauth2/authorization/github": "http://localhost:8080",
       "/oauth/authorization/google": "http://localhost:8080",
       "/logout": "http://localhost:8080",
+      "/swagger-ui/index.html#/": "http://localhost:8080/",
     },
   },
 });
