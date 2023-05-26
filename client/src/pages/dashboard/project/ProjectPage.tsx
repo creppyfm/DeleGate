@@ -1,6 +1,12 @@
 import { Card, Container } from "react-bootstrap";
+import { User } from "../../../App";
 
-export function ProjectPage() {
+type ProjectPageProps = {
+  user: User;
+};
+
+export function ProjectPage({ user }: ProjectPageProps) {
+  console.log("Project Page user present: ", user.loggedIn);
   return (
     <Container>
       <Card bg="light" className="rounded-4">

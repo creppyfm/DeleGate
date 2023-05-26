@@ -2,8 +2,15 @@
 import { Container, Row } from "react-bootstrap";
 import { ProjectCard } from "./ProjectCard";
 import { v4 as uuidv4 } from "uuid";
+import { User } from "../../../App";
 
-export function DashboardPage() {
+type DashboardPageProps = {
+  user: User;
+};
+
+export function DashboardPage({ user }: DashboardPageProps) {
+  console.log("Dashboard Page user present: ", user.loggedIn);
+
   return (
     <Container className="mt-3">
       <Row xs={1} md={2} xl={3} className="g-4">
