@@ -23,6 +23,8 @@ export function Header() {
       email: "",
       loggedIn: false,
     });
+
+    fetch("/users/logout");
   }
 
   return (
@@ -43,7 +45,7 @@ export function Header() {
           {user.loggedIn && (
             <NavLink
               target="_blank"
-              to="/swagger-ui/index.html#/"
+              to="http://localhost:8080/swagger-ui/index.html#/"
               className="btn btn-outline-info me-3"
             >
               Docs
