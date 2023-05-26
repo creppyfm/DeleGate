@@ -8,11 +8,12 @@ export function Home() {
   const { user, setUser } = useAppContext();
 
   async function getUserDataIfExists() {
-    const response = await fetch("/user"); // attempt to find user data
+    const response = await fetch("/users/user"); // attempt to find user data
     if (response.ok) {
       // if user found (becuase session in httpOnly cookie) then process JSON
       const data = await response.json();
       setUser({ ...data, loggedIn: true }); // finally, log in user
+      console.log(data);
     }
   }
 

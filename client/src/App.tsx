@@ -5,6 +5,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { LoginPage } from "./pages/LoginPage";
 import { AboutUsPage } from "./pages/AboutUsPage";
+import { ProtectedRoute } from "./utils/routeProtection";
 import { useState } from "react";
 import { AppContext } from "./utils/SessionContext";
 import { DashboardRouter } from "./pages/dashboard/DashboardRouter";
@@ -46,7 +47,14 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
-        <Route path="/dashboard/*" element={<DashboardRouter />} />
+        <Route
+          path="/dashboard/*"
+          element={
+            <ProtectedRoute user={user}>
+              <DashboardRouter user={user} />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/404" element={<PageNotFound />} />
         <Route path="*" element={<Navigate to="/404" />} />
       </Routes>

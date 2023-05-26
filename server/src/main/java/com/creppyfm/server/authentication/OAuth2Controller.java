@@ -57,8 +57,7 @@ public class OAuth2Controller {
         }
     }
 
-
-    @GetMapping("/logout")
+    @GetMapping("/users/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
