@@ -16,7 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -29,30 +28,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                //.csrf().disable()
+                // .csrf().disable()
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .oauth2Login(oauth2Login -> oauth2Login
-                        //.loginPage("/login") <- need to add url to react login
+                        // .loginPage("/login") <- need to add url to react login
                         .authorizationEndpoint()
                         .authorizationRequestRepository(authorizationRequestRepository())
                         .and()
                         .userInfoEndpoint()
                         .userService(oauth2UserService)
                         .and()
-                        .successHandler(new OAuth2LoginSuccessHandler())
-                )
+                        .successHandler(new OAuth2LoginSuccessHandler()))
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.NEVER)
                         .invalidSessionUrl("/login")
-                        .maximumSessions(1)
-                )
+                        .maximumSessions(1))
                 .logout()
-                    .logoutUrl("/logout")
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID");
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID");
 
         return http.build();
     }
