@@ -10,27 +10,29 @@ export function DashboardPage() {
   const [list, setList] = useState<ProjectList>([]);
 
   async function getProjectList() {
-    try {
-      const response = await fetch("/projects");
-      if (response.ok) {
-        const data: ProjectList = await response.json();
-        const fetchedList: ProjectList = [];
-        data.forEach((project) => {
-          if (
-            project &&
-            project.projectId &&
-            project.title &&
-            project.phase &&
-            project.updated
-          ) {
-            fetchedList.push(project);
-          }
-        });
-        console.log(projectList);
-        // setList(projectList);
+    if (list.length === 0) {
+      try {
+        const response = await fetch("/projects");
+        if (response.ok) {
+          const data: ProjectList = await response.json();
+          const fetchedList: ProjectList = [];
+          data.forEach((project) => {
+            if (
+              project &&
+              project.projectId &&
+              project.title &&
+              project.phase &&
+              project.updated
+            ) {
+              fetchedList.push(project);
+            }
+          });
+          console.log(projectList);
+          // setList(projectList);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   }
 
