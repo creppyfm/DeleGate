@@ -26,7 +26,9 @@ public class Project {
     private LocalDateTime updated;
     private List<ProjectMembers> projectMembers = new ArrayList<>();
     @DocumentReference
-    private List<Task> taskList;
+    private List<Task> taskList; //to be deleted
+    @DocumentReference
+    private List<Step> stepList;
 
     //manual constructor for associating 'Project' with 'User'
     public Project(String userId, String title, String description, String phase, LocalDateTime created, LocalDateTime updated) {
@@ -128,5 +130,13 @@ public class Project {
 
     public void setTaskList(List<Task> taskList) {
         this.taskList = taskList;
+    }
+
+    public List<Step> getStepList() {
+        return stepList;
+    }
+
+    public void setStepList(List<Step> stepList) {
+        this.stepList = stepList;
     }
 }

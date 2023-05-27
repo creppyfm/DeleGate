@@ -1,5 +1,6 @@
 package com.creppyfm.server.openai_chat_handlers;
 
+import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
 import com.creppyfm.server.model.Task;
 //import com.fasterxml.jackson.datatype.jsr310.*;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -56,6 +57,11 @@ public class OpenAIChatAPIManager {
         }
 
         return choices;
+    }
+
+    public ProjectDataTransferObject buildsProjectDataTransferObject(String prompt) {
+        ProjectDataTransferObject projectDTO = new ProjectDataTransferObject();
+        return projectDTO;
     }
 
     public Map<String, String> delegateTasks(Map<String, List<String>> memberStrengths, List<Task> tasks) throws IOException, InterruptedException {

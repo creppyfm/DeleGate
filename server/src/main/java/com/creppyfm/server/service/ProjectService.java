@@ -1,11 +1,12 @@
 package com.creppyfm.server.service;
 
-import com.creppyfm.server.model.Project;
-import com.creppyfm.server.model.ProjectMembers;
-import com.creppyfm.server.model.Task;
-import com.creppyfm.server.model.User;
+import com.creppyfm.server.controller.StepService;
+import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
+import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
+import com.creppyfm.server.model.*;
 import com.creppyfm.server.openai_chat_handlers.OpenAIChatAPIManager;
 import com.creppyfm.server.repository.ProjectRepository;
+import com.creppyfm.server.repository.StepRepository;
 import com.creppyfm.server.repository.TaskRepository;
 import com.creppyfm.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,9 @@ public class ProjectService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private TaskService taskService;
+    private StepService stepService;
     @Autowired
-    private TaskRepository taskRepository;
+    private StepRepository stepRepository;
 
     public List<Project> findAllProjects() {
         return projectRepository.findAll();
@@ -57,80 +58,23 @@ public class ProjectService {
         return project;
     }
 
-    public void generateTasksForProject(String id) throws IOException {
-        Project project = findProjectById(id);
-
-        String projectInfo = String.format("Title: %s\nDescription: %s\n\nList of tasks to complete the project:", project.getTitle(), project.getDescription());
-        String prompt =
-                "Read the project title and description included below, and generate a list " +
-                        "of no more than 10 steps to complete the project. Each step must be " +
-                        "on its own line. Each step should be presented in the form of a key:value pair " +
-                        "containing the title of the step as the key, and a concise, 3 to 5 sentence description " +
-                        "of the step as the value. The format of each step should match the following example:\n " +
-                        "1. Setup Java & Spring Boot: Value: Install the Java runtime environment. Download and configure " +
-                        "the Spring Boot application using the Spring Initializer, making sure to add the necessary dependencies. " +
-                        "Confirm the file structure of the Spring Boot application matches the needs of your project.\n " +
-                        "NOTE: Do not include any extra words, phrases, or sentences unrelated to the tasks you are generating." +
-                        "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
-                        "or ending your response. ONLY return the list of generated tasks in the format requested above.\n" +
-                        "Here is the project information:\n"
-                        + projectInfo;
-
-        // Call the OpenAIAPIManager to get the list of tasks
+    public Project createsProjectAndGeneratesSteps(String userId, String prompt) throws IOException {
         OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
-        List<String> tasks;
-        try {
-            tasks = openAIChatAPIManager.buildsTaskList(prompt);
-        } catch (IOException | InterruptedException e) {
-            throw new IOException(e);
+        ProjectDataTransferObject projectDTO = new ProjectDataTransferObject();
+        projectDTO = openAIChatAPIManager.buildsProjectDataTransferObject(prompt);
+
+        String title = projectDTO.getTitle();
+        String description = projectDTO.getDescription();
+        List<StepDataTransferObject> stepDTOList = projectDTO.getSteps();
+
+        Project project = createProject(userId, title, description, "in-progress");
+
+        for (StepDataTransferObject stepDTO : stepDTOList) {
+            Step step = stepService.createStep(project.getId(), stepDTO.getTitle(), stepDTO.getDescription());
+            project.getStepList().add(step);
         }
 
-        for (String response : tasks) {
-            if (response.length() > 0) {
-                System.out.println(response);
-                String[] taskAndDescription = response.split(": Value: ");
-                if (taskAndDescription.length > 1) {
-                    String taskTitle = taskAndDescription[0];
-                    String taskDescription = taskAndDescription[1];
-                    Task task = taskService.createTask(id, taskTitle, taskDescription, 0, "in-progress");
-                    project.getTaskList().add(task);
-                }
-            }
-        }
-
-        projectRepository.save(project);
-    }
-
-    public void assignTasksAutomatically(String projectId) throws IOException, InterruptedException {
-        Project project = findProjectById(projectId);
-        List<ProjectMembers> projectMembers = project.getProjectMembers();
-        List<Task> tasks = project.getTaskList();
-
-        // Map project members' strengths and tasks to send to the AI
-        Map<String, List<String>> memberStrengths = new HashMap<>();
-        for (ProjectMembers projectMember : projectMembers) {
-            User user = userRepository.findUserById(projectMember.getUserId());
-            memberStrengths.put(projectMember.getUserId(), user.getStrengths());
-        }
-
-        OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
-        Map<String, String> taskIdToUserId = openAIChatAPIManager.delegateTasks(memberStrengths, tasks);
-
-        // Assign tasks to users based on AI recommendations
-        for (Map.Entry<String, String> entry : taskIdToUserId.entrySet()) {
-            String taskId = entry.getKey();
-            String userId = entry.getValue();
-
-            Task task = taskRepository.findTaskById(taskId);
-            User user = userRepository.findUserById(userId);
-
-            if (task != null && user != null) {
-                user.getCurrentTasks().add(task);
-                task.getAssignedUsers().add(user);
-                userRepository.save(user);
-                taskRepository.save(task);
-            }
-        }
+        return projectRepository.save(project);
     }
 
     public Project addProjectMember(String projectId, ProjectMembers projectMembers) {
@@ -193,8 +137,7 @@ public class ProjectService {
                 userRepository.save(user);
             }
 
-            // Remove associated tasks from the Task collection
-            taskRepository.deleteAll(existingProject.getTaskList());
+            stepRepository.deleteAll(existingProject.getStepList());
 
             projectRepository.deleteById(id);
             return true;

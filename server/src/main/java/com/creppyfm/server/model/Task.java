@@ -18,7 +18,8 @@ import java.util.List;
 public class Task {
     @Id
     private String id;
-    private String projectId;
+    private String projectId; //to be deleted
+    private String stepId;
     private String title;
     private String description;
     private int weight;

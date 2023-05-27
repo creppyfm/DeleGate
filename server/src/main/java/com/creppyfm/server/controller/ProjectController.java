@@ -54,13 +54,13 @@ public class ProjectController {
 
     @PostMapping("/{id}/tasks/delegate")
     public ResponseEntity<Project> delegateTasksForProject(@PathVariable String id) throws IOException, InterruptedException {
-        projectService.assignTasksAutomatically(id);
+        //projectService.assignTasksAutomatically(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/{id}/tasks/generate")
     public ResponseEntity<Project> generateTasksForProject(@PathVariable String id) throws IOException {
-        projectService.generateTasksForProject(id);
+        //projectService.generateTasksForProject(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
