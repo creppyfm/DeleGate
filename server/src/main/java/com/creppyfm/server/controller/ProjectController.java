@@ -1,5 +1,6 @@
 package com.creppyfm.server.controller;
 
+import com.creppyfm.server.data_transfer_object_model.ProjectResponse;
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.ProjectMembers;
 import com.creppyfm.server.service.ProjectService;
@@ -22,8 +23,8 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping
-    public ResponseEntity<List<Project>> getAllProjects() {
-        return new ResponseEntity<List<Project>>(projectService.findAllProjects(), HttpStatus.OK);
+    public ResponseEntity<List<ProjectResponse>> getAllProjects() {
+        return new ResponseEntity<List<ProjectResponse>>(projectService.findAllProjects(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -46,22 +47,16 @@ public class ProjectController {
                 createProject(userId, title, description, phase), HttpStatus.OK);
     }
 
+    @PostMapping("/new")
+    public ResponseEntity<Project> generateProjectWithSteps(@SessionAttribute("userId") String userId, @RequestBody String prompt) throws IOException {
+        Project project = projectService.createsProjectAndGeneratesSteps(userId, prompt);
+        return new ResponseEntity<>(project, HttpStatus.OK);
+    }
+
     @PostMapping("/{id}/project-members/add")
     public ResponseEntity<Project> addProjectMember(@PathVariable String id, @RequestBody ProjectMembers projectMember) {
         Project updatedProject = projectService.addProjectMember(id, projectMember);
         return new ResponseEntity<>(updatedProject, HttpStatus.OK);
-    }
-
-    @PostMapping("/{id}/tasks/delegate")
-    public ResponseEntity<Project> delegateTasksForProject(@PathVariable String id) throws IOException, InterruptedException {
-        //projectService.assignTasksAutomatically(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping("/{id}/tasks/generate")
-    public ResponseEntity<Project> generateTasksForProject(@PathVariable String id) throws IOException {
-        //projectService.generateTasksForProject(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

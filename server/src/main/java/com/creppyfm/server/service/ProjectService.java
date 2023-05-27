@@ -2,6 +2,7 @@ package com.creppyfm.server.service;
 
 import com.creppyfm.server.controller.StepService;
 import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
+import com.creppyfm.server.data_transfer_object_model.ProjectResponse;
 import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
 import com.creppyfm.server.model.*;
 import com.creppyfm.server.openai_chat_handlers.OpenAIChatAPIManager;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProjectService {
@@ -36,8 +34,21 @@ public class ProjectService {
     @Autowired
     private StepRepository stepRepository;
 
-    public List<Project> findAllProjects() {
-        return projectRepository.findAll();
+    public List<ProjectResponse> findAllProjects() {
+        List<Project> projects = projectRepository.findAll();
+        List<ProjectResponse> projectResponses = new ArrayList<>();
+
+        for (Project project : projects) {
+            ProjectResponse projectResponse = new ProjectResponse(
+                    project.getId(),
+                    project.getTitle(),
+                    project.getDescription(),
+                    project.getPhase(),
+                    project.getUpdated().toString()
+            );
+            projectResponses.add(projectResponse);
+        }
+        return projectResponses;
     }
 
     public Project findProjectById(String id) {
