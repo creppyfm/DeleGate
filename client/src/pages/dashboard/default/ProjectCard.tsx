@@ -1,5 +1,12 @@
+import styles from "./ProjectCard.module.css";
 import { useEffect, useState } from "react";
-import { NavLink, ListGroupItem, Badge, Fade } from "react-bootstrap";
+import {
+  NavLink,
+  ListGroupItem,
+  Badge,
+  Fade,
+  ListGroup,
+} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
 // export type Project = {
@@ -38,17 +45,23 @@ export function ProjectCard({
     }, timeout);
   }, []);
   return (
-    <Fade in={open} timeout={500}>
-      <ListGroupItem as="li" className="bg-light rounded mb-3 p-3">
+    <Fade in={open} className={styles.fade}>
+      <ListGroupItem as="li" className="bg-light p-3 mb-3 rounded">
         <LinkContainer to="/dashboard/project">
           <NavLink className="d-flex justify-content-between align-items-center">
-            <div className="fw-bold fs-4">{title}</div>
-            <div className="d-flex align-items-center gap-2">
-              <div className={`${phaseColor}`}>{phase}</div>
-              <div>
-                Updated <Badge bg="primary">{updated}</Badge>
-              </div>
-            </div>
+            <ListGroup variant="flush" className="w-100">
+              <ListGroupItem>
+                <div className="fw-bold fs-4">{title}</div>
+              </ListGroupItem>
+              <ListGroupItem>
+                <div className={`${phaseColor}`}>{phase}</div>
+              </ListGroupItem>
+              <ListGroupItem>
+                <div>
+                  Updated <Badge bg="primary">{updated}</Badge>
+                </div>
+              </ListGroupItem>
+            </ListGroup>
           </NavLink>
         </LinkContainer>
       </ListGroupItem>
