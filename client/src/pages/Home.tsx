@@ -1,27 +1,10 @@
 import { Hero } from "../components/Hero";
 import { FeaturetteDivider } from "../components/FeaturetteDivider";
 import { Main } from "../components/Main";
-import { useAppContext } from "../utils/SessionContext";
-import { useEffect } from "react";
+import { useGetUserDataIfExists } from "../utils/GetUserData";
 
 export function Home() {
-  const { user, setUser } = useAppContext();
-
-  async function getUserDataIfExists() {
-    const response = await fetch("/users/user"); // attempt to find user data
-    if (response.ok) {
-      // if user found (becuase session in httpOnly cookie) then process JSON
-      const data = await response.json();
-      setUser({ ...data, loggedIn: true }); // finally, log in user
-      console.log(data);
-    }
-  }
-
-  useEffect(() => {
-    if (!user.loggedIn) {
-      getUserDataIfExists();
-    }
-  }, []);
+  useGetUserDataIfExists();
 
   return (
     <>

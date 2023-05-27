@@ -1,7 +1,7 @@
 import { Nav, Navbar, Container, Button } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import styles from "./Header.module.css";
-import { useAppContext } from "../utils/SessionContext";
+import { useAppContext } from "../utils/GetUserData";
 import { LinkContainer } from "react-router-bootstrap";
 
 export function Header() {
