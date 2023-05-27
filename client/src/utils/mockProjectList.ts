@@ -1,7 +1,31 @@
 export const projectList = [
   {
     projectId: "123",
-    title: "Add Logout Button",
+    title: "Rework Landing Page",
+    phase: "Not Started",
+    updated: "Nov 5, 1605",
+  },
+  {
+    projectId: "456",
+    title: "Add Profile Picture Upload to Profile View",
+    phase: "Not Started",
+    updated: "Nov 5, 1605",
+  },
+  {
+    projectId: "789",
+    title: "Update Documentation on useGetProfile Hook",
+    phase: "In Review",
+    updated: "May 22, 2023",
+  },
+  {
+    projectId: "abc",
+    title: "Organize Quarterly Profit Sharing Meeting",
+    phase: "In Progress",
+    updated: "May 5, 2023",
+  },
+  {
+    projectId: "123",
+    title: "Rework Landing Page",
     phase: "Not Started",
     updated: "Nov 5, 1605",
   },
@@ -25,7 +49,7 @@ export const projectList = [
   },
   {
     projectId: "123",
-    title: "Add Logout Button",
+    title: "Rework Landing Page",
     phase: "Not Started",
     updated: "Nov 5, 1605",
   },
@@ -49,7 +73,7 @@ export const projectList = [
   },
   {
     projectId: "123",
-    title: "Add Logout Button",
+    title: "Rework Landing Page",
     phase: "Not Started",
     updated: "Nov 5, 1605",
   },
@@ -73,31 +97,7 @@ export const projectList = [
   },
   {
     projectId: "123",
-    title: "Add Logout Button",
-    phase: "Not Started",
-    updated: "Nov 5, 1605",
-  },
-  {
-    projectId: "456",
-    title: "Add Profile Pic Upload",
-    phase: "Not Started",
-    updated: "Nov 5, 1605",
-  },
-  {
-    projectId: "789",
-    title: "Update Documentation",
-    phase: "In Review",
-    updated: "May 22, 2023",
-  },
-  {
-    projectId: "abc",
-    title: "Organize Quarterly Profit Sharing Meeting",
-    phase: "In Progress",
-    updated: "May 5, 2023",
-  },
-  {
-    projectId: "123",
-    title: "Add Logout Button",
+    title: "Rework Landing Page",
     phase: "Not Started",
     updated: "Nov 5, 1605",
   },
