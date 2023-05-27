@@ -54,12 +54,7 @@ public class StepService {
     }
 
     public Step getStepById(String id) {
-        Step step = stepRepository.findStepById(id);
-        if (step != null) {
-            return step;
-        } else {
-            throw new RuntimeException("Step not found with id: " + id);
-        }
+        return stepRepository.findStepById(id);
     }
 
     public Step updateStep(String id, Step updatedStep) {
