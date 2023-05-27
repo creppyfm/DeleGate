@@ -1,4 +1,5 @@
-import { Col, Card, NavLink } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { NavLink, ListGroupItem, Badge, Fade } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
 // export type Project = {
@@ -18,33 +19,39 @@ export type Project = {
   updated: string;
 };
 
-export function ProjectCard({ project }: { project: Project }) {
-  const { projectId, title, phase, updated } = project;
+export function ProjectCard({
+  project,
+  timeout,
+}: {
+  project: Project;
+  timeout: number;
+}) {
+  const { title, phase, updated } = project;
+  const [open, setOpen] = useState(false);
+  let phaseColor = "";
+  if (phase === "In Review") {
+    phaseColor = "text-info";
+  }
+  useEffect(() => {
+    setTimeout(() => {
+      setOpen(true);
+    }, timeout);
+  }, []);
   return (
-    <Col className="text-light">
-      <LinkContainer to="/dashboard/project">
-        <NavLink>
-          <Card
-            bg="secondary"
-            border="secondary"
-            className="h-100 mx-auto rounded-4"
-          >
-            <Card.Header as="h3">{title}</Card.Header>
-            <Card.Body className="bg-light bg-opacity-25">
-              <Card.Title className="text-info">{phase}</Card.Title>
-            </Card.Body>
-            <Card.Footer as="div" className="d-flex fs-5">
-              <span className="text-primary">
-                <i className="bi-clock-history" />{" "}
-                <span className="fw-bold">{updated}</span>
-              </span>
-              <span className="ms-auto fs-4">
-                <i className="bi-person text-primary"></i>{" "}
-              </span>
-            </Card.Footer>
-          </Card>
-        </NavLink>
-      </LinkContainer>
-    </Col>
+    <Fade in={open} timeout={500}>
+      <ListGroupItem as="li" className="bg-light rounded mb-3 p-3">
+        <LinkContainer to="/dashboard/project">
+          <NavLink className="d-flex justify-content-between align-items-center">
+            <div className="fw-bold fs-4">{title}</div>
+            <div className="d-flex align-items-center gap-2">
+              <div className={`${phaseColor}`}>{phase}</div>
+              <div>
+                Updated <Badge bg="primary">{updated}</Badge>
+              </div>
+            </div>
+          </NavLink>
+        </LinkContainer>
+      </ListGroupItem>
+    </Fade>
   );
 }

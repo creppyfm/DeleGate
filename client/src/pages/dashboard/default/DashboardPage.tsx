@@ -1,4 +1,4 @@
-import { Container, Row } from "react-bootstrap";
+import { Container, ListGroup, Row } from "react-bootstrap";
 import { Project, ProjectCard } from "./ProjectCard";
 import { v4 as uuidv4 } from "uuid";
 import { projectList } from "../../../utils/mockProjectList";
@@ -34,11 +34,19 @@ export function DashboardPage() {
   }, []);
 
   return (
-    <Container className="mt-3">
+    <Container className="mt-3 rounded">
       <Row xs={1} md={2} xl={3} className="g-4">
-        {list.map((project) => {
-          return <ProjectCard key={uuidv4()} project={project} />;
-        })}
+        <ul className="w-100">
+          {list.map((project, index) => {
+            return (
+              <ProjectCard
+                key={uuidv4()}
+                project={project}
+                timeout={30 * index}
+              />
+            );
+          })}
+        </ul>
       </Row>
     </Container>
   );
