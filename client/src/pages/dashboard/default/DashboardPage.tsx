@@ -1,34 +1,42 @@
-// import styles from "./Home.module.css";
 import { Container, Row } from "react-bootstrap";
 import { Project, ProjectCard } from "./ProjectCard";
 import { v4 as uuidv4 } from "uuid";
-import { User } from "../../../App";
 import { projectList } from "../../../utils/mockProjectList";
-
-type DashboardPageProps = {
-  user: User;
-};
+import { useEffect, useState } from "react";
 
 type ProjectList = Project[];
 
-export function DashboardPage({ user }: DashboardPageProps) {
-  console.log("Dashboard Page user present: ", user.loggedIn);
+export function DashboardPage() {
+  const [list, setList] = useState<ProjectList>([]);
+
+  // async function getProjectList() {
+  //   const response = await fetch("/projects");
+  //   if (response.ok) {
+  //     const data: ProjectList = await response.json();
+  //     const fetchedList: ProjectList = [];
+  //     data.forEach((project) => {
+  //       if (
+  //         project &&
+  //         project.projectId &&
+  //         project.title &&
+  //         project.phase &&
+  //         project.updated
+  //       ) {
+  //         fetchedList.push(project);
+  //       }
+  //     });
+  //     setList(projectList);
+  //   }
+  // }
+
+  useEffect(() => {
+    setList(projectList);
+  }, []);
 
   return (
     <Container className="mt-3">
       <Row xs={1} md={2} xl={3} className="g-4">
-        {projectList.map((project) => {
-          // const randomKey = uuidv4();
-          // const project = {
-          //   projectId: randomKey.slice(randomKey.length / 1.5),
-          //   title: "Project: " + randomKey.slice(randomKey.length / 1.5),
-          //   subtitle: null,
-          //   description:
-          //     "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-          //   phase: "Not Started",
-          //   projectMembers: ["Bill", "Joanne"],
-          //   updated: "November 5, 1605",
-          // };
+        {list.map((project) => {
           return <ProjectCard key={uuidv4()} project={project} />;
         })}
       </Row>
