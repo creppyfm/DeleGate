@@ -17,5 +17,6 @@ public class Step {
     private String id;
     private String projectId;
     private String title;
+    private String description;
     private List<Task> taskList;
 }
