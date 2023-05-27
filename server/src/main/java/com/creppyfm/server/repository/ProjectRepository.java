@@ -10,4 +10,5 @@ public interface ProjectRepository extends MongoRepository<Project, String> {
     Project findProjectById(String id);
 
     Project findByTaskListContaining(Task task);
+
 }
