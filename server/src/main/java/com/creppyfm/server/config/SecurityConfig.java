@@ -28,9 +28,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // .csrf().disable()
+                //.csrf().disable() //COMMENT WHEN NOT TESTING, UNCOMMENT WHEN TESTING
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll() //REMOVE '/**' WHEN NOT TESTING, ADD '/*' WHEN TESTING
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2Login -> oauth2Login
                         // .loginPage("/login") <- need to add url to react login

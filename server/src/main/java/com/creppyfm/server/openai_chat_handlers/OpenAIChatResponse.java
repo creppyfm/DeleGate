@@ -38,6 +38,14 @@ public class OpenAIChatResponse {
             this.message = message;
         }
     }
+
+    /*
+    * To see raw output for testing purposes.
+    * */
+    @Override
+    public String toString() {
+        return this.choices.get(0).getMessage().getContent();
+    }
 }
 
 @Data

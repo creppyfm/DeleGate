@@ -1,6 +1,5 @@
 package com.creppyfm.server.service;
 
-import com.creppyfm.server.controller.StepService;
 import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
 import com.creppyfm.server.data_transfer_object_model.ProjectResponse;
 import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
@@ -8,7 +7,6 @@ import com.creppyfm.server.model.*;
 import com.creppyfm.server.openai_chat_handlers.OpenAIChatAPIManager;
 import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.StepRepository;
-import com.creppyfm.server.repository.TaskRepository;
 import com.creppyfm.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -69,7 +68,14 @@ public class ProjectService {
         return project;
     }
 
-    public Project createsProjectAndGeneratesSteps(String userId, String prompt) throws IOException {
+
+    /*
+    * FOR TESTING:
+    * COMMENT userId PARAMETER, userId IN createProject CALL
+    *   ADD HARD-CODED userId
+    * UNCOMMENT, REMOVE HARD-CODED ID WHEN NOT TESTING
+    * */
+    public Project createsProjectAndGeneratesSteps(String userId, String prompt) throws IOException, URISyntaxException, InterruptedException {
         OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
         ProjectDataTransferObject projectDTO = new ProjectDataTransferObject();
         projectDTO = openAIChatAPIManager.buildsProjectDataTransferObject(prompt);
@@ -80,10 +86,12 @@ public class ProjectService {
 
         Project project = createProject(userId, title, description, "in-progress");
 
+        List<Step> stepList = new ArrayList<>();
         for (StepDataTransferObject stepDTO : stepDTOList) {
             Step step = stepService.createStep(project.getId(), stepDTO.getTitle(), stepDTO.getDescription());
-            project.getStepList().add(step);
+            stepList.add(step);
         }
+        project.setStepList(stepList);
 
         return projectRepository.save(project);
     }

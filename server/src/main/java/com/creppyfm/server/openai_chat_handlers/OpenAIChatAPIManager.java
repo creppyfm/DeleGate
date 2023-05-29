@@ -1,6 +1,7 @@
 package com.creppyfm.server.openai_chat_handlers;
 
 import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
+import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
 import com.creppyfm.server.model.Task;
 //import com.fasterxml.jackson.datatype.jsr310.*;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -10,12 +11,15 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class OpenAIChatAPIManager {
+    private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
     Dotenv dotenv = Dotenv.load();
 
     public List<String> buildsTaskList(String prompt) throws IOException, InterruptedException {
@@ -29,7 +33,7 @@ public class OpenAIChatAPIManager {
         String input = objectMapper.writeValueAsString(openAIChatRequest);
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.openai.com/v1/chat/completions")) // Use the /chat/completions endpoint
+                .uri(URI.create(OPENAI_URL)) // Use the /chat/completions endpoint
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
                 .POST(HttpRequest.BodyPublishers.ofString(input))
@@ -59,9 +63,88 @@ public class OpenAIChatAPIManager {
         return choices;
     }
 
-    public ProjectDataTransferObject buildsProjectDataTransferObject(String prompt) {
+    public ProjectDataTransferObject buildsProjectDataTransferObject(String prompt) throws IOException, URISyntaxException, InterruptedException {
+        OpenAIChatResponse openAIChatResponse = sendChatMessageToOpenAI(prompt);
+
+        //TESTING
+        System.out.println(openAIChatResponse.toString());
+
         ProjectDataTransferObject projectDTO = new ProjectDataTransferObject();
+        projectDTO.setTitle(openAIChatResponse.getChoices()
+                .get(0)
+                .getMessage()
+                .getContent()
+                .split("\n")[0]);
+        projectDTO.setDescription(openAIChatResponse.getChoices()
+                .get(0)
+                .getMessage()
+                .getContent()
+                .split("\n")[1]);
+
+        List<StepDataTransferObject> steps = Arrays.stream(
+                openAIChatResponse.getChoices()
+                        .get(0)
+                        .getMessage()
+                        .getContent()
+                        .split("\n"))
+                .skip(2).map(stepStr -> {
+                    StepDataTransferObject stepDTO = new StepDataTransferObject();
+                    stepDTO.setTitle(stepStr.split(":")[0].trim());
+                    stepDTO.setDescription(stepStr.split(":")[1].trim());
+                    return stepDTO;
+                }).collect(Collectors.toList());
+
+        projectDTO.setSteps(steps);
+
         return projectDTO;
+    }
+
+    private OpenAIChatResponse sendChatMessageToOpenAI(String prompt) throws IOException, InterruptedException, URISyntaxException {
+        String promptToSend = "You are the world's best project manager. You specialize in " +
+                "analyzing brief prompts containing needs and requirements, and producing project titles, " +
+                "project descriptions, and high-level steps necessary to complete the project. " +
+                "Your task is to analyze the prompt provided below, create a project title, create a project description, " +
+                "and create a list of no more than 10 high-level steps to complete the project. " +
+                "The format by which you return your response must match the following criteria: " +
+                "Each section of the response must be on a new line. The project title must be line 1 and can only contain " +
+                "the project title, and the project description must be on line 2 and can only contain the " +
+                "project description. Starting on line 3, each step must be on it's own line. Each step must " +
+                "match the following example: \"1. Setup Java & Spring Boot: Install the Java runtime environment.\" " +
+                "Below is an example of the required format for your response: \n" +
+                "Example project title\n" +
+                "Example project description\n" +
+                "1. Step one title: Step one description.\n" +
+                "2. Step two title: Step two description.\n" +
+                "3. Step three title: Step three description\n" +
+                "etc...\n" +
+                "\"NOTE: Do not include any conversational phrases or sentences in your response. " +
+                "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
+                "or ending your response. ONLY return the project title, description and steps in the required format. " +
+                "Here is your prompt:\n" + prompt;
+
+        //TESTING
+        System.out.println(promptToSend);
+
+        ChatMessage chatMessage = new ChatMessage();
+        List<ChatMessage> messages = new ArrayList<>();
+        chatMessage.setRole("user");
+        chatMessage.setContent(promptToSend);
+        messages.add(chatMessage);
+        OpenAIChatRequest chatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 3000, 0);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(chatRequest);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(OPENAI_URL))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+        return objectMapper.readValue(response.body(), OpenAIChatResponse.class);
     }
 
     public Map<String, String> delegateTasks(Map<String, List<String>> memberStrengths, List<Task> tasks) throws IOException, InterruptedException {
@@ -93,7 +176,7 @@ public class OpenAIChatAPIManager {
         String input = objectMapper.writeValueAsString(openAIChatRequest);
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.openai.com/v1/chat/completions"))
+                .uri(URI.create(OPENAI_URL))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
                 .POST(HttpRequest.BodyPublishers.ofString(input))
