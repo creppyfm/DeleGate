@@ -3,10 +3,12 @@ package com.creppyfm.server.openai_chat_handlers;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class OpenAIChatResponse {
@@ -23,54 +25,6 @@ public class OpenAIChatResponse {
     @JsonProperty("choices")
     private List<ChatMessageWrapper> choices;
 
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public int getCreated() {
-        return created;
-    }
-
-    public void setCreated(int created) {
-        this.created = created;
-    }
-
-    public Usage getUsage() {
-        return usage;
-    }
-
-    public void setUsage(Usage usage) {
-        this.usage = usage;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getObject() {
-        return object;
-    }
-
-    public void setObject(String object) {
-        this.object = object;
-    }
-
-    public List<ChatMessageWrapper> getChoices() {
-        return choices;
-    }
-
-    public void setChoices(List<ChatMessageWrapper> choices) {
-        this.choices = choices;
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ChatMessageWrapper {
         @JsonProperty("message")
@@ -86,6 +40,7 @@ public class OpenAIChatResponse {
     }
 }
 
+@Data
 class Usage {
     @JsonProperty("prompt_tokens")
     private int promptTokens;
@@ -96,28 +51,5 @@ class Usage {
     @JsonProperty("total_tokens")
     private int totalTokens;
 
-    public int getPromptTokens() {
-        return promptTokens;
-    }
-
-    public void setPromptTokens(int promptTokens) {
-        this.promptTokens = promptTokens;
-    }
-
-    public int getCompletionTokens() {
-        return completionTokens;
-    }
-
-    public void setCompletionTokens(int completionTokens) {
-        this.completionTokens = completionTokens;
-    }
-
-    public int getTotalTokens() {
-        return totalTokens;
-    }
-
-    public void setTotalTokens(int totalTokens) {
-        this.totalTokens = totalTokens;
-    }
 
 }
