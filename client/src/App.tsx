@@ -51,7 +51,7 @@ function App() {
           path="/dashboard/*"
           element={
             <ProtectedRoute user={user}>
-              <DashboardRouter user={user} />
+              <DashboardRouter />
             </ProtectedRoute>
           }
         />
