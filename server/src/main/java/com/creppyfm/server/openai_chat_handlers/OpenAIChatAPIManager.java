@@ -5,6 +5,7 @@ import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
 import com.creppyfm.server.model.Task;
 //import com.fasterxml.jackson.datatype.jsr310.*;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -69,30 +70,24 @@ public class OpenAIChatAPIManager {
         //TESTING
         System.out.println(openAIChatResponse.toString());
 
-        ProjectDataTransferObject projectDTO = new ProjectDataTransferObject();
-        projectDTO.setTitle(openAIChatResponse.getChoices()
-                .get(0)
-                .getMessage()
-                .getContent()
-                .split("\n")[0]);
-        projectDTO.setDescription(openAIChatResponse.getChoices()
-                .get(0)
-                .getMessage()
-                .getContent()
-                .split("\n")[1]);
+        //get the responseMessage as a JSON string
+        String responseMessage = openAIChatResponse.getChoices().get(0).getMessage().getContent();
 
-        List<StepDataTransferObject> steps = Arrays.stream(
-                openAIChatResponse.getChoices()
-                        .get(0)
-                        .getMessage()
-                        .getContent()
-                        .split("\n"))
-                .skip(2).map(stepStr -> {
-                    StepDataTransferObject stepDTO = new StepDataTransferObject();
-                    stepDTO.setTitle(stepStr.split(":")[0].trim());
-                    stepDTO.setDescription(stepStr.split(":")[1].trim());
-                    return stepDTO;
-                }).collect(Collectors.toList());
+        //parse the JSON string into a JSON object
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode responseJson = objectMapper.readTree(responseMessage);
+
+        ProjectDataTransferObject projectDTO = new ProjectDataTransferObject();
+
+        projectDTO.setTitle(responseJson.get("title").asText());
+        projectDTO.setDescription(responseJson.get("description").asText());
+
+        List<StepDataTransferObject> steps = new ArrayList<>();
+        for (JsonNode stepArray : responseJson.get("steps")) {
+            String stepTitle = stepArray.get(0).asText();
+            String stepDescription = stepArray.get(1).asText();
+            steps.add(new StepDataTransferObject(stepTitle, stepDescription));
+        }
 
         projectDTO.setSteps(steps);
 
@@ -100,26 +95,33 @@ public class OpenAIChatAPIManager {
     }
 
     private OpenAIChatResponse sendChatMessageToOpenAI(String prompt) throws IOException, InterruptedException, URISyntaxException {
-        String promptToSend = "You are the world's best project manager. You specialize in " +
+        String promptToSend = "You are the world's best project manager AI. You specialize in " +
                 "analyzing brief prompts containing needs and requirements, and producing project titles, " +
                 "project descriptions, and high-level steps necessary to complete the project. " +
                 "Your task is to analyze the prompt provided below, create a project title, create a project description, " +
                 "and create a list of no more than 10 high-level steps to complete the project. " +
-                "The format by which you return your response must match the following criteria: " +
-                "Each section of the response must be on a new line. The project title must be line 1 and can only contain " +
-                "the project title, and the project description must be on line 2 and can only contain the " +
-                "project description. Starting on line 3, each step must be on it's own line. Each step must " +
-                "match the following example: \"1. Setup Java & Spring Boot: Install the Java runtime environment.\" " +
+                "The format by which you return your response must match the following JSON structure:\n " +
+                "{\"title\": \"Your project title\",\n" +
+                " \"description\": \"Your project description\", \n" +
+                "\"steps\": [\n" +
+                "[\"Step one title\", \"Step one description\"],\n" +
+                "[\"Step two title\", \"Step two description\"],\n" +
+                "...]}.\n" +
+                "In the steps array, each subarray should contain two elements. The first element of the subarray should be the step's title, " +
+                "and the second should be the step's description. " +
                 "Below is an example of the required format for your response: \n" +
-                "Example project title\n" +
-                "Example project description\n" +
-                "1. Step one title: Step one description.\n" +
-                "2. Step two title: Step two description.\n" +
-                "3. Step three title: Step three description\n" +
-                "etc...\n" +
+                "{\"title\": \"Example project title\",\n" +
+                "\"description\": \"Example project description\", \n" +
+                "\"steps\": [\n" +
+                "[\"Step one title\", \"Step one description\"],\n" +
+                "[\"Step two title\", \"Step two description\"],\n" +
+                "[\"Step three title\", \"Step three description\"]\n" +
+                "...]\n" +
+                "}." +
                 "\"NOTE: Do not include any conversational phrases or sentences in your response. " +
                 "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
-                "or ending your response. ONLY return the project title, description and steps in the required format. " +
+                "or ending your response. Do not include numbering for the steps. " +
+                "ONLY return the project title, description, and steps in the required format. " +
                 "Here is your prompt:\n" + prompt;
 
         //TESTING
