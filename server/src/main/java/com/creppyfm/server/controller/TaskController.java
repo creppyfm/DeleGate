@@ -22,14 +22,14 @@ public class TaskController {
 
     @PostMapping()
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        String projectId = task.getProjectId();
+        String stepId = task.getStepId();
         String title = task.getTitle();
         String description = task.getDescription();
         int weight = task.getWeight();
         String status = task.getStatus();
 
         return new ResponseEntity<Task>(taskService.
-                createTask(projectId, title, description, weight, status), HttpStatus.OK);
+                createTask(stepId, title, description, weight, status), HttpStatus.OK);
     }
 
     @GetMapping
