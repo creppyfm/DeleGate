@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
@@ -47,8 +48,13 @@ public class ProjectController {
                 createProject(userId, title, description, phase), HttpStatus.OK);
     }
 
+    /*
+    * FOR TESTING:
+    * COMMENT @SessionAttribute PARAMETER, userId
+    * UNCOMMENT WHEN NOT TESTING
+    * */
     @PostMapping("/new")
-    public ResponseEntity<Project> generateProjectWithSteps(@SessionAttribute("userId") String userId, @RequestBody String prompt) throws IOException {
+    public ResponseEntity<Project> generateProjectWithSteps(@SessionAttribute("userId") String userId, @RequestBody String prompt) throws IOException, URISyntaxException, InterruptedException {
         Project project = projectService.createsProjectAndGeneratesSteps(userId, prompt);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }

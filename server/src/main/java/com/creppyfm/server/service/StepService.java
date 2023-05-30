@@ -1,4 +1,4 @@
-package com.creppyfm.server.controller;
+package com.creppyfm.server.service;
 
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.Step;
