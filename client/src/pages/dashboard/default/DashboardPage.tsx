@@ -2,12 +2,23 @@ import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { Project, ProjectCard } from "./ProjectCard";
 import { v4 as uuidv4 } from "uuid";
 import { projectList } from "../../../utils/mockProjectList";
-import { useEffect, useState } from "react";
+import { NewProjectModal } from "./NewProjectModal";
+import { useEffect, useState, useMemo } from "react";
 
 type ProjectList = Project[];
 
 export function DashboardPage() {
   const [list, setList] = useState<ProjectList>([]);
+  const [showPrompt, setShowPropmt] = useState(false);
+  const processedList = useMemo(
+    () =>
+      list.map((project, index) => {
+        return (
+          <ProjectCard key={uuidv4()} project={project} timeout={50 * index} />
+        );
+      }),
+    [list]
+  );
 
   async function getProjectList() {
     if (list.length === 0) {
@@ -37,8 +48,10 @@ export function DashboardPage() {
   }
 
   useEffect(() => {
-    setList(projectList);
-    getProjectList();
+    if (list.length === 0) {
+      setList(projectList);
+      getProjectList();
+    }
   }, []);
 
   return (
@@ -61,26 +74,18 @@ export function DashboardPage() {
         </Col>
         <Col lg={12} xl={4}>
           <h2 className="text-light text-center mt-3 mb-4">Open Projects</h2>
-          <ul className="w-100 ps-0">
-            {list.map((project, index) => {
-              return (
-                <ProjectCard
-                  key={uuidv4()}
-                  project={project}
-                  timeout={50 * index}
-                />
-              );
-            })}
-          </ul>
+          <ul className="w-100 ps-0">{processedList}</ul>
         </Col>
       </Row>
       <Button
         size="lg"
         variant="outline-success"
+        onClick={() => setShowPropmt(true)}
         className="position-absolute top-0"
       >
         <span>Start New Project</span>
       </Button>
+      <NewProjectModal show={showPrompt} onHide={() => setShowPropmt(false)} />
     </Container>
   );
 }
