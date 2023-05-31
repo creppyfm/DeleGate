@@ -1,15 +1,26 @@
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  Col,
+  Container,
+  Row,
+  ToggleButton,
+} from "react-bootstrap";
 import { Project, ProjectCard } from "./ProjectCard";
 import { v4 as uuidv4 } from "uuid";
 import { projectList } from "../../../utils/mockProjectList";
 import { NewProjectModal } from "./NewProjectModal";
 import { useEffect, useState, useMemo } from "react";
+import { OffCanvasPrompt } from "./OffCanvasPrompt";
 
 type ProjectList = Project[];
 
 export function DashboardPage() {
   const [list, setList] = useState<ProjectList>([]);
   const [showPrompt, setShowPropmt] = useState(false);
+  const [radioValue, setRadioVaule] = useState("1");
+
   const processedList = useMemo(
     () =>
       list.map((project, index) => {
@@ -85,7 +96,39 @@ export function DashboardPage() {
       >
         <span>Start New Project</span>
       </Button>
-      <NewProjectModal show={showPrompt} onHide={() => setShowPropmt(false)} />
+      {/* <NewProjectModal show={showPrompt} onHide={() => setShowPropmt(false)} /> */}
+      <OffCanvasPrompt
+        show={showPrompt}
+        handleClose={() => setShowPropmt(false)}
+      />
+      <ButtonGroup className="position-absolute top-0 end-0">
+        <ToggleButton
+          id="radio-1"
+          type="radio"
+          variant="success"
+          name="radio"
+          value={1}
+          checked={"1" === radioValue}
+          onChange={() => {
+            setRadioVaule("1");
+          }}
+        >
+          Modal
+        </ToggleButton>
+        <ToggleButton
+          id="radio-2"
+          type="radio"
+          variant="info"
+          name="radio"
+          value={2}
+          checked={"2" === radioValue}
+          onChange={() => {
+            setRadioVaule("2");
+          }}
+        >
+          Popover
+        </ToggleButton>
+      </ButtonGroup>
     </Container>
   );
 }
