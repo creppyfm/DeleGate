@@ -6,7 +6,7 @@ export function DashboardRouter() {
   return (
     <Routes>
       <Route path="/" element={<DashboardPage />} />
-      <Route path="/project" element={<ProjectPage />} />
+      <Route path="/project/:id" element={<ProjectPage />} />
     </Routes>
   );
 }
