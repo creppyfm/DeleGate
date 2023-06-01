@@ -9,7 +9,7 @@ type ProjectList = Project[];
 
 export function DashboardPage() {
   const [list, setList] = useState<ProjectList>([]);
-  const [showPrompt, setShowPropmt] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
 
   const processedList = useMemo(
     () =>
@@ -81,12 +81,12 @@ export function DashboardPage() {
       <Button
         size="lg"
         variant="outline-success"
-        onClick={() => setShowPropmt(true)}
+        onClick={() => setShowPrompt(true)}
         className="position-absolute top-0"
       >
         <span>Start New Project</span>
       </Button>
-      <NewProjectModal show={showPrompt} onHide={() => setShowPropmt(false)} />
+      <NewProjectModal showPrompt={showPrompt} setShowPrompt={setShowPrompt} />
     </Container>
   );
 }
