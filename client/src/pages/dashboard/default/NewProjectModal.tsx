@@ -3,15 +3,19 @@ import { NewProjectForm } from "./NewProjectForm";
 import { useState } from "react";
 
 type NewProjectModalProps = {
-  show: boolean;
-  onHide: () => void;
+  showPrompt: boolean;
+  setShowPrompt: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function NewProjectModal(props: NewProjectModalProps) {
+export function NewProjectModal({
+  showPrompt,
+  setShowPrompt,
+}: NewProjectModalProps) {
   const [loading, setLoading] = useState(false);
   return (
     <Modal
-      {...props}
+      onHide={() => setShowPrompt(false)}
+      show={showPrompt}
       size="lg"
       aria-labelledby="new-project-prompt-modal"
       backdrop={loading ? "static" : true}
