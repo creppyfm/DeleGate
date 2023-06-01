@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { projectList } from "../../../utils/mockProjectList";
 import { NewProjectModal } from "./NewProjectModal";
 import { useEffect, useState, useMemo } from "react";
+import styles from "./Dashboard.module.css";
 
 export type ProjectList = Project[];
 
@@ -12,12 +13,19 @@ export function DashboardPage() {
   const [showPrompt, setShowPrompt] = useState(false);
 
   const processedList = useMemo(
-    () =>
-      list.map((project, index) => {
-        return (
-          <ProjectCard key={uuidv4()} project={project} timeout={50 * index} />
-        );
-      }),
+    () => (
+      <div className={`pe-3 overflow-auto ${styles.h80}`}>
+        {list.map((project, index) => {
+          return (
+            <ProjectCard
+              key={uuidv4()}
+              project={project}
+              timeout={50 * index}
+            />
+          );
+        })}
+      </div>
+    ),
     [list]
   );
 
@@ -56,8 +64,8 @@ export function DashboardPage() {
   }, [list]);
 
   return (
-    <Container className="mt-3 rounded position-relative">
-      <Row className="g-4">
+    <Container fluid="lg" className="mt-3 rounded position-relative h-100">
+      <Row className="g-4 h-100">
         <Col lg={12} xl={7}>
           <h2 className="text-light text-center mt-3 mb-4">Quick Look</h2>
           <Card>
@@ -73,9 +81,9 @@ export function DashboardPage() {
             </Card.Body>
           </Card>
         </Col>
-        <Col lg={12} xl={5}>
-          <h2 className="text-light text-center mt-3 mb-4">Open Projects</h2>
-          <ul className="w-100 ps-0">{processedList}</ul>
+        <Col lg={12} xl={5} className="h-100">
+          <h2 className="text-light text-center my-3">Open Projects</h2>
+          {processedList}
         </Col>
       </Row>
       <Button

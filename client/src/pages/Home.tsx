@@ -7,11 +7,11 @@ export function Home() {
   useGetUserDataIfExists();
 
   return (
-    <>
+    <main className="overflow-auto">
       <Hero />
       <FeaturetteDivider />
       <Main />
       <FeaturetteDivider />
-    </>
+    </main>
   );
 }
