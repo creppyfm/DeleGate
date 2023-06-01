@@ -6,6 +6,7 @@ import {
   Badge,
   Fade,
   ListGroup,
+  Card,
 } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
@@ -46,7 +47,7 @@ export function ProjectCard({
   }, []);
   return (
     <Fade in={open} className={styles.fade}>
-      <ListGroupItem as="li" className="bg-light p-3 mb-3 rounded">
+      {/* <ListGroupItem as="li" className="bg-light p-3 mb-3 rounded">
         <LinkContainer to="/dashboard/project">
           <NavLink className="d-flex justify-content-between align-items-center">
             <ListGroup variant="flush" className="w-100">
@@ -64,7 +65,21 @@ export function ProjectCard({
             </ListGroup>
           </NavLink>
         </LinkContainer>
-      </ListGroupItem>
+      </ListGroupItem> */}
+      <LinkContainer className="my-2" to="dashboard/project">
+        <Card className="pt-3">
+          <Card.Title className="ps-3">{title}</Card.Title>
+          <Card.Footer className="d-flex justify-content-around p-0">
+            <Card.Text>
+              <span className={phaseColor}>{phase}</span>
+            </Card.Text>
+            <Card.Text>
+              {" "}
+              Updated <Badge bg="primary">{updated}</Badge>
+            </Card.Text>
+          </Card.Footer>
+        </Card>
+      </LinkContainer>
     </Fade>
   );
 }
