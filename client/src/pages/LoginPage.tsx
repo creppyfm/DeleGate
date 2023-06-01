@@ -6,7 +6,7 @@ export function LoginPage() {
   useGetUserDataIfExists();
   return (
     <Card as="main" bg="dark" className="m-auto">
-      <Card.Img variant="top" src="logo_with_brand_dark_trimmed.png" />
+      <Card.Img variant="top" src="/logo_with_brand_dark_trimmed.png" />
       <Card.Body>
         <Card.Title className="text-light text-center">
           Please Sign In
