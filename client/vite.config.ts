@@ -11,6 +11,8 @@ export default defineConfig({
       "/oauth/authorization/google": "http://localhost:8080",
       "/users/logout": "http://localhost:8080",
       "/users/user": "http://localhost:8080",
+      "/projects": "http://localhost:8080",
+      "/projects/new": "http://localhost:8080",
     },
   },
 });
