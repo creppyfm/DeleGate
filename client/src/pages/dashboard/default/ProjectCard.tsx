@@ -47,25 +47,6 @@ export function ProjectCard({
   }, []);
   return (
     <Fade in={open} className={styles.fade}>
-      {/* <ListGroupItem as="li" className="bg-light p-3 mb-3 rounded">
-        <LinkContainer to="/dashboard/project">
-          <NavLink className="d-flex justify-content-between align-items-center">
-            <ListGroup variant="flush" className="w-100">
-              <ListGroupItem>
-                <div className="fw-bold fs-4">{title}</div>
-              </ListGroupItem>
-              <ListGroupItem>
-                <div className={`${phaseColor}`}>{phase}</div>
-              </ListGroupItem>
-              <ListGroupItem>
-                <div>
-                  Updated <Badge bg="primary">{updated}</Badge>
-                </div>
-              </ListGroupItem>
-            </ListGroup>
-          </NavLink>
-        </LinkContainer>
-      </ListGroupItem> */}
       <LinkContainer className="my-2" to="dashboard/project">
         <Card className="pt-3">
           <Card.Title className="ps-3">{title}</Card.Title>
