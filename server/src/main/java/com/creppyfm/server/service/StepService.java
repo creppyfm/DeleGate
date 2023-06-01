@@ -99,6 +99,12 @@ public class StepService {
         }
     }
 
+    public boolean deleteManySteps(List<String> rejectedSteps) {
+        List<Step> stepList = stepRepository.findAllById(rejectedSteps);
+        return true; //edit here
+    }
+
+
     public void generateTasksForStep(String id) throws IOException {
         Step step = stepRepository.findStepById(id);
 
@@ -117,7 +123,7 @@ public class StepService {
                         "[\n" +
                         "[\"Task one title\", \"Task one description\"],\n" +
                         "[\"Task two title\", \"Task two description\"],\n" +
-                        "[\"Task three title\", \"Task three description\"],\n" +
+                        "[\"Task three title\", \"Task three description\"]\n" +
                         "...\n" +
                         "].\n" +
                         "NOTE: Do not include any extra words, phrases, or sentences unrelated to the tasks you are generating." +

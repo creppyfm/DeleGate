@@ -75,7 +75,18 @@ public class StepController {
         }
     }
 
-/*
+    @DeleteMapping("/delete-many")
+    public ResponseEntity<Void> deleteManySteps(@RequestBody List<String> rejectedSteps) {
+        boolean isDeleted = stepService.deleteManySteps(rejectedSteps);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    /*
     @PostMapping("/{id}/tasks/delegate")
     public ResponseEntity<Project> delegateTasksForProject(@PathVariable String id) throws IOException, InterruptedException {
         //projectService.assignTasksAutomatically(id);

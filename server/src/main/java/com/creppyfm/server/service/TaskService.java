@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,5 +92,10 @@ public class TaskService {
         } else {
             return false;
         }
+    }
+
+    public boolean deleteManyTasks(List<String> rejectedTasks) {
+        List<Task> taskList = taskRepository.findAllById(rejectedTasks);
+        return true; //edit here
     }
 }
