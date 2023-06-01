@@ -5,7 +5,7 @@ import { projectList } from "../../../utils/mockProjectList";
 import { NewProjectModal } from "./NewProjectModal";
 import { useEffect, useState, useMemo } from "react";
 
-type ProjectList = Project[];
+export type ProjectList = Project[];
 
 export function DashboardPage() {
   const [list, setList] = useState<ProjectList>([]);
@@ -53,12 +53,12 @@ export function DashboardPage() {
       setList(projectList);
       getProjectList();
     }
-  }, []);
+  }, [list]);
 
   return (
     <Container className="mt-3 rounded position-relative">
       <Row className="g-4">
-        <Col lg={12} xl={8}>
+        <Col lg={12} xl={7}>
           <h2 className="text-light text-center mt-3 mb-4">Quick Look</h2>
           <Card>
             <Card.Body>
@@ -73,7 +73,7 @@ export function DashboardPage() {
             </Card.Body>
           </Card>
         </Col>
-        <Col lg={12} xl={4}>
+        <Col lg={12} xl={5}>
           <h2 className="text-light text-center mt-3 mb-4">Open Projects</h2>
           <ul className="w-100 ps-0">{processedList}</ul>
         </Col>
@@ -86,7 +86,11 @@ export function DashboardPage() {
       >
         <span>Start New Project</span>
       </Button>
-      <NewProjectModal showPrompt={showPrompt} setShowPrompt={setShowPrompt} />
+      <NewProjectModal
+        showPrompt={showPrompt}
+        setShowPrompt={setShowPrompt}
+        setList={setList}
+      />
     </Container>
   );
 }
