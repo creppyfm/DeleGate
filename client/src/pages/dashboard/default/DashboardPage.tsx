@@ -1,64 +1,75 @@
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { Project, ProjectCard } from "./ProjectCard";
 import { v4 as uuidv4 } from "uuid";
-import { projectList } from "../../../utils/mockProjectList";
 import { NewProjectModal } from "./NewProjectModal";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
+import styles from "./Dashboard.module.css";
 
-type ProjectList = Project[];
+export type ProjectList = Project[];
 
 export function DashboardPage() {
   const [list, setList] = useState<ProjectList>([]);
-  const [showPrompt, setShowPropmt] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const fetchingStatus = useRef(false);
 
   const processedList = useMemo(
-    () =>
-      list.map((project, index) => {
-        return (
-          <ProjectCard key={uuidv4()} project={project} timeout={50 * index} />
-        );
-      }),
+    () => (
+      <div className={`pe-3 overflow-auto ${styles.h80}`}>
+        {list.map((project, index) => {
+          return (
+            <ProjectCard
+              key={uuidv4()}
+              project={project}
+              timeout={50 * index}
+            />
+          );
+        })}
+      </div>
+    ),
     [list]
   );
 
   async function getProjectList() {
-    if (list.length === 0) {
-      try {
-        const response = await fetch("/projects");
-        if (response.ok) {
-          const data: ProjectList = await response.json();
+    try {
+      const response = await fetch("/projects");
+      if (response.ok) {
+        const data: ProjectList = await response.json();
+        if (data.length > 0) {
           const fetchedList: ProjectList = [];
           data.forEach((project) => {
-            if (
-              project &&
-              project.projectId &&
-              project.title &&
-              project.phase &&
-              project.updated
-            ) {
-              fetchedList.push(project);
-            }
+            fetchedList.push(project);
           });
-          console.log(projectList);
-          // setList(projectList);
+          setList(fetchedList);
+        } else {
+          setList([
+            {
+              projectId: "None",
+              title: "No Projects Found",
+              phase: "Not Started",
+              updated: "Not Started",
+              description: "Not Started",
+            },
+          ]);
         }
-      } catch (error) {
-        console.log(error);
       }
+      fetchingStatus.current = false;
+    } catch (error) {
+      fetchingStatus.current = false;
+      console.log(error);
     }
   }
 
   useEffect(() => {
-    if (list.length === 0) {
-      setList(projectList);
+    if (list.length === 0 && !fetchingStatus.current) {
+      fetchingStatus.current = true;
       getProjectList();
     }
-  }, []);
+  }, [list]);
 
   return (
-    <Container className="mt-3 rounded position-relative">
-      <Row className="g-4">
-        <Col lg={12} xl={8}>
+    <Container fluid="lg" className="mt-3 rounded position-relative h-100">
+      <Row className="g-4 h-100">
+        <Col lg={12} xl={7}>
           <h2 className="text-light text-center mt-3 mb-4">Quick Look</h2>
           <Card>
             <Card.Body>
@@ -73,20 +84,24 @@ export function DashboardPage() {
             </Card.Body>
           </Card>
         </Col>
-        <Col lg={12} xl={4}>
-          <h2 className="text-light text-center mt-3 mb-4">Open Projects</h2>
-          <ul className="w-100 ps-0">{processedList}</ul>
+        <Col lg={12} xl={5} className="h-100">
+          <h2 className="text-light text-center my-3">Open Projects</h2>
+          {processedList}
         </Col>
       </Row>
       <Button
         size="lg"
         variant="outline-success"
-        onClick={() => setShowPropmt(true)}
+        onClick={() => setShowPrompt(true)}
         className="position-absolute top-0"
       >
         <span>Start New Project</span>
       </Button>
-      <NewProjectModal show={showPrompt} onHide={() => setShowPropmt(false)} />
+      <NewProjectModal
+        showPrompt={showPrompt}
+        setShowPrompt={setShowPrompt}
+        setList={setList}
+      />
     </Container>
   );
 }

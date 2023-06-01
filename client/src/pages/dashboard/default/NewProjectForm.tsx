@@ -1,26 +1,58 @@
 import { FormEvent, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
+import { ProjectList } from "./DashboardPage";
+
 type NewProjectFormProps = {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowPrompt: React.Dispatch<React.SetStateAction<boolean>>;
+  setList: React.Dispatch<React.SetStateAction<ProjectList>>;
 };
 
-export function NewProjectForm({ loading, setLoading }: NewProjectFormProps) {
+export function NewProjectForm({
+  loading,
+  setLoading,
+  setShowPrompt,
+  setList,
+}: NewProjectFormProps) {
   const [prompt, setPrompt] = useState("");
+  const [errorOnPost, setErrorOnPost] = useState(false);
   const examplesGiven = [
     "Build an operating system in Rust",
     "Organize a family reunion",
     "Start a food truck business",
   ];
 
+  async function createNewProject() {
+    try {
+      const postBody = JSON.stringify({ prompt });
+      console.log(postBody);
+      const response = await fetch("/projects/new", {
+        method: "POST",
+        mode: "cors",
+        body: JSON.stringify({ prompt }),
+      });
+      if (response.ok) {
+        setList([]);
+        setLoading(false);
+        setShowPrompt(false);
+      } else {
+        console.log(response);
+        setLoading(false);
+        setErrorOnPost(true);
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      setErrorOnPost(true);
+    }
+  }
+
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-    console.log(prompt);
+    createNewProject();
   }
   return (
     <Form onSubmit={handleSubmit}>
@@ -42,6 +74,9 @@ export function NewProjectForm({ loading, setLoading }: NewProjectFormProps) {
         />
       </Form.Group>
       <div className="d-flex justify-content-end mt-3">
+        {errorOnPost && (
+          <span className="text-danger me-5">Failed to create new project</span>
+        )}
         <Button type="submit" size="lg" variant="primary" disabled={loading}>
           {loading ? "Loading..." : "Submit"}
         </Button>

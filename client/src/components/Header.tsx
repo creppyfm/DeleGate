@@ -1,4 +1,4 @@
-import { Nav, Navbar, Container, Button } from "react-bootstrap";
+import { Nav, Navbar, Container, Button, Image } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import styles from "./Header.module.css";
 import { useAppContext } from "../utils/GetUserData";
@@ -17,14 +17,13 @@ export function Header() {
   }
 
   function logoutUser() {
+    fetch("/users/logout");
     setUser({
       firstName: "",
       lastName: "",
       email: "",
       loggedIn: false,
     });
-
-    fetch("/users/logout");
   }
 
   return (
@@ -32,7 +31,7 @@ export function Header() {
       <Navbar bg="dark" variant="dark">
         <Container fluid>
           <Navbar.Brand className="ms-2" href="#home">
-            DeleGate
+            <Image src="brand_dark_trans_thin.png" fluid />
           </Navbar.Brand>
           <Nav className="me-auto">
             <NavLink to={"/"} className="nav-link">

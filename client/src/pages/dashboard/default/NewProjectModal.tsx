@@ -2,16 +2,24 @@ import { Modal } from "react-bootstrap";
 import { NewProjectForm } from "./NewProjectForm";
 import { useState } from "react";
 
+import { ProjectList } from "./DashboardPage";
+
 type NewProjectModalProps = {
-  show: boolean;
-  onHide: () => void;
+  showPrompt: boolean;
+  setShowPrompt: React.Dispatch<React.SetStateAction<boolean>>;
+  setList: React.Dispatch<React.SetStateAction<ProjectList>>;
 };
 
-export function NewProjectModal(props: NewProjectModalProps) {
+export function NewProjectModal({
+  showPrompt,
+  setShowPrompt,
+  setList,
+}: NewProjectModalProps) {
   const [loading, setLoading] = useState(false);
   return (
     <Modal
-      {...props}
+      onHide={() => setShowPrompt(false)}
+      show={showPrompt}
       size="lg"
       aria-labelledby="new-project-prompt-modal"
       backdrop={loading ? "static" : true}
@@ -21,7 +29,12 @@ export function NewProjectModal(props: NewProjectModalProps) {
         <h3 className="m-0">New Project</h3>
       </Modal.Header>
       <Modal.Body>
-        <NewProjectForm loading={loading} setLoading={setLoading} />
+        <NewProjectForm
+          loading={loading}
+          setLoading={setLoading}
+          setShowPrompt={setShowPrompt}
+          setList={setList}
+        />
       </Modal.Body>
     </Modal>
   );
