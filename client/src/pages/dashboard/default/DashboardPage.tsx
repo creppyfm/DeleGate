@@ -100,7 +100,6 @@ export function DashboardPage() {
       <NewProjectModal
         showPrompt={showPrompt}
         setShowPrompt={setShowPrompt}
-        list={list}
         setList={setList}
       />
     </Container>

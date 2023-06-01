@@ -18,6 +18,7 @@ export type Project = {
   title: String;
   phase: string;
   updated: string;
+  description: string;
 };
 
 export function ProjectCard({
@@ -40,10 +41,10 @@ export function ProjectCard({
   }, []);
   return (
     <Fade in={open} className={styles.fade}>
-      <LinkContainer className="my-2" to="dashboard/project">
-        <Card className="pt-3">
+      <LinkContainer to="/dashboard/project">
+        <Card className="pt-3 my-2">
           <Card.Title className="ps-3">{title}</Card.Title>
-          <Card.Footer className="d-flex justify-content-around p-0">
+          <Card.Footer className="d-flex justify-content-around p-0 pt-2">
             <Card.Text>
               <span className={phaseColor}>{phase}</span>
             </Card.Text>
