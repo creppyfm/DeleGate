@@ -33,8 +33,8 @@ public class ProjectService {
     @Autowired
     private StepRepository stepRepository;
 
-    public List<ProjectResponse> findAllProjects() {
-        List<Project> projects = projectRepository.findAll();
+    public List<ProjectResponse> findAllProjects(String userId) {
+        List<Project> projects = projectRepository.findAllByUserId(userId);
         List<ProjectResponse> projectResponses = new ArrayList<>();
 
         for (Project project : projects) {
