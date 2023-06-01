@@ -48,23 +48,26 @@ public class ProjectController {
         String title = project.getTitle();
         String description = project.getDescription();
         String phase = project.getPhase();
-        return new ResponseEntity<Project>(projectService.
-                createProject(userId, title, description, phase), HttpStatus.OK);
+        return new ResponseEntity<Project>(projectService.createProject(userId, title, description, phase),
+                HttpStatus.OK);
     }
 
     /*
-    * FOR TESTING:
-    * COMMENT @SessionAttribute PARAMETER, userId
-    * UNCOMMENT WHEN NOT TESTING
-    * */
+     * FOR TESTING:
+     * COMMENT @SessionAttribute PARAMETER, userId
+     * UNCOMMENT WHEN NOT TESTING
+     */
     @PostMapping("/new")
-    public ResponseEntity<Project> generateProjectWithSteps(@SessionAttribute("userId") String userId, @RequestBody String prompt) throws IOException, URISyntaxException, InterruptedException {
+    public ResponseEntity<Project> generateProjectWithSteps(@SessionAttribute("userId") String userId,
+            @RequestBody String prompt) throws IOException, URISyntaxException, InterruptedException {
+        System.out.println(prompt);
         Project project = projectService.createsProjectAndGeneratesSteps(userId, prompt);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
     @PostMapping("/{id}/project-members/add")
-    public ResponseEntity<Project> addProjectMember(@PathVariable String id, @RequestBody ProjectMembers projectMember) {
+    public ResponseEntity<Project> addProjectMember(@PathVariable String id,
+            @RequestBody ProjectMembers projectMember) {
         Project updatedProject = projectService.addProjectMember(id, projectMember);
         return new ResponseEntity<>(updatedProject, HttpStatus.OK);
     }
@@ -80,7 +83,8 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}/project-members/{userId}/role")
-    public ResponseEntity<Void> updateProjectMemberRole(@PathVariable String projectId, @PathVariable String userId, String newRole) {
+    public ResponseEntity<Void> updateProjectMemberRole(@PathVariable String projectId, @PathVariable String userId,
+            String newRole) {
         boolean isUpdated = projectService.updateProjectMemberRoleByUserId(projectId, userId, newRole);
         if (isUpdated) {
             return new ResponseEntity<>(HttpStatus.OK);

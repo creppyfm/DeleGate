@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Spinner } from "react-bootstrap";
 
 import { ProjectList } from "./DashboardPage";
 
@@ -28,8 +28,9 @@ export function NewProjectForm({
     try {
       const postBody = JSON.stringify({ prompt });
       console.log(postBody);
-      const response = await fetch("/projects/new", {
+      const response = await fetch("http://localhost:8080/projects/new", {
         method: "POST",
+        credentials: "include",
         mode: "cors",
         body: JSON.stringify({ prompt }),
       });
@@ -38,7 +39,6 @@ export function NewProjectForm({
         setLoading(false);
         setShowPrompt(false);
       } else {
-        console.log(response);
         setLoading(false);
         setErrorOnPost(true);
       }
@@ -78,6 +78,15 @@ export function NewProjectForm({
           <span className="text-danger me-5">Failed to create new project</span>
         )}
         <Button type="submit" size="lg" variant="primary" disabled={loading}>
+          {loading && (
+            <Spinner
+              as="span"
+              size="sm"
+              role="status"
+              aria-hidden="true"
+              className="me-3"
+            />
+          )}
           {loading ? "Loading..." : "Submit"}
         </Button>
       </div>
