@@ -1,13 +1,6 @@
 import styles from "./ProjectCard.module.css";
 import { useEffect, useState } from "react";
-import {
-  NavLink,
-  ListGroupItem,
-  Badge,
-  Fade,
-  ListGroup,
-  Card,
-} from "react-bootstrap";
+import { Badge, Fade, Card } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
 // export type Project = {
