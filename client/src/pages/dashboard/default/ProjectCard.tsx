@@ -1,34 +1,16 @@
 import styles from "./ProjectCard.module.css";
 import { useEffect, useState } from "react";
 import { Badge, Fade, Card } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+import { Project } from "./DashboardPage";
+import { NavLink } from "react-router-dom";
 
-// export type Project = {
-//   projectId: string;
-//   title: string;
-//   subtitle: string | null | undefined;
-//   description: string;
-//   phase: string;
-//   projectMembers: string[];
-//   updated: string;
-// };
-
-export type Project = {
-  projectId: string;
-  title: String;
-  phase: string;
-  updated: string;
-  description: string;
-};
-
-export function ProjectCard({
-  project,
-  timeout,
-}: {
+type ProjectCardProps = {
   project: Project;
   timeout: number;
-}) {
-  const { title, phase, updated } = project;
+};
+
+export function ProjectCard({ project, timeout }: ProjectCardProps) {
+  const { title, phase, updated, projectId } = project;
   const [open, setOpen] = useState(false);
   let phaseColor = "";
   if (phase === "In Review") {
@@ -41,8 +23,11 @@ export function ProjectCard({
   }, []);
   return (
     <Fade in={open} className={styles.fade}>
-      <LinkContainer to="/dashboard/project">
-        <Card className="pt-3 my-2">
+      <NavLink
+        to={`/dashboard/project/${projectId}`}
+        style={{ textDecoration: "none" }}
+      >
+        <Card className="pt-3 my-2 text-decoration-none">
           <Card.Title className="ps-3">{title}</Card.Title>
           <Card.Footer className="d-flex justify-content-around p-0 pt-2">
             <Card.Text>
@@ -54,7 +39,7 @@ export function ProjectCard({
             </Card.Text>
           </Card.Footer>
         </Card>
-      </LinkContainer>
+      </NavLink>
     </Fade>
   );
 }
