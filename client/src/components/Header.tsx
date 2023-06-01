@@ -17,14 +17,13 @@ export function Header() {
   }
 
   function logoutUser() {
+    fetch("/users/logout");
     setUser({
       firstName: "",
       lastName: "",
       email: "",
       loggedIn: false,
     });
-
-    fetch("/users/logout");
   }
 
   return (
