@@ -23,14 +23,15 @@ public class OpenAIChatAPIManager {
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
     Dotenv dotenv = Dotenv.load();
 
-    public List<String> buildsTaskList(String prompt) throws IOException, InterruptedException {
-        List<String> choices = new ArrayList<>();
+
+    public List<List<String>> buildsTaskList(String prompt) throws IOException, InterruptedException {
+        List<List<String>> tasks = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
         List<ChatMessage> messages = List.of(new ChatMessage("system", "You are the world's best project manager. " +
-                        "You specialize in decomposing projects into actionable tasks. Generate a list of no more than 10 steps" +
-                        " to complete the project, presented in key:value pairs."),
+                        "You specialize in decomposing project steps into detailed, actionable tasks. Generate a list of no more than 10 tasks" +
+                        " to complete the step."),
                 new ChatMessage("user", prompt));
-        OpenAIChatRequest openAIChatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 2000, 0); // Use the gpt-3.5-turbo model
+        OpenAIChatRequest openAIChatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 3000, 0); //use the gpt-3.5-turbo model
         String input = objectMapper.writeValueAsString(openAIChatRequest);
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
@@ -46,22 +47,25 @@ public class OpenAIChatAPIManager {
         if (response.statusCode() == 200) {
             OpenAIChatResponse openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
 
-            if (openAIChatResponse.getChoices() != null && !openAIChatResponse.getChoices().isEmpty()) {
+            //TESTING
+            System.out.println(openAIChatResponse.toString());
 
+            if (openAIChatResponse.getChoices() != null && !openAIChatResponse.getChoices().isEmpty()) {
                 OpenAIChatResponse.ChatMessageWrapper choice = openAIChatResponse.getChoices().get(0);
                 String choiceString = choice.getMessage().getContent();
-                choices = Arrays.stream(choiceString.split("\n")).toList();
+
+                //parse the JSON string into a List<List<Strings>>
+                tasks = objectMapper.readValue(choiceString, new TypeReference<List<List<String>>>() {});
 
             } else {
-                choices.add("Sorry. I'm unable to think of any relevant tasks to complete your project. " +
-                        "Try adding a bit more detail to your Project Description.");
+                tasks.add(List.of("Sorry. I'm unable to think of any relevant tasks to complete your project. Try adding a bit more detail to your Project Description."));
             }
         } else {
             System.out.println("See status code below:");
             System.out.println(response.statusCode());
         }
 
-        return choices;
+        return tasks;
     }
 
     public ProjectDataTransferObject buildsProjectDataTransferObject(String prompt) throws IOException, URISyntaxException, InterruptedException {

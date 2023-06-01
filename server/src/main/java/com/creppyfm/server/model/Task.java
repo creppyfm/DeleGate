@@ -18,7 +18,6 @@ import java.util.List;
 public class Task {
     @Id
     private String id;
-    private String projectId; //to be deleted
     private String stepId;
     private String title;
     private String description;
@@ -30,8 +29,8 @@ public class Task {
     private List<User> assignedUsers = new ArrayList<>();
 
     //manual constructor for associating 'Task' with 'Project'
-    public Task(String projectId, String title, String description, int weight, String status, LocalDateTime created, LocalDateTime updated) {
-        this.projectId = projectId;
+    public Task(String stepId, String title, String description, int weight, String status, LocalDateTime created, LocalDateTime updated) {
+        this.stepId = stepId;
         this.title = title;
         this.description = description;
         this.weight = weight;
@@ -48,16 +47,16 @@ public class Task {
         return weight;
     }
 
+    public String getStepId() {
+        return stepId;
+    }
+
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
+    }
+
     public void setWeight(int weight) {
         this.weight = weight;
-    }
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
     }
 
     public String getTitle() {

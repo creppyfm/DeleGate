@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,42 +104,48 @@ public class StepService {
 
         String stepInfo = String.format("Title: %s\nDescription: %s\n\nList of tasks to complete the step:", step.getTitle(), step.getDescription());
         String prompt =
-                "Read the Step title and description included below, and generate a list " +
-                        "of no more than 10 tasks to complete the project. Each task must be " +
-                        "on its own line. Each task should be presented in the form of a key:value pair " +
-                        "containing the title of the task as the key, and a 3 to 5 sentence description " +
-                        "of the task as the value. Each task should be detailed and actionable. " +
-                        "The format of each task should match the following example:\n " +
-                        "1. Setup Java & Spring Boot: Value: Install the Java runtime environment. Download and configure " +
-                        "the Spring Boot application using the Spring Initializer, making sure to add the necessary dependencies. " +
-                        "Confirm the file structure of the Spring Boot application matches the needs of your project.\n " +
+                "Read the title and description of the Step included below, and generate a list " +
+                        "of no more than 10 tasks to complete the Step. The format of your response should be a JSON array, where each " +
+                        "element is an array containing two strings - the title of the task as the first element, and a 3 to 5 sentence description " +
+                        "of the task as the second element. Each task should be detailed and actionable. " +
+                        "The format of each task should match the following example: \n" +
+                        "[\"Database Setup\", \"Download and install MySQL database server from the official website. After installation, " +
+                        "secure the database server by running the security script that comes with the installation. Then, create a new database " +
+                        "for the application and an account that can access and modify it. Finally, test the connection to the database from your " +
+                        "application code to ensure everything is set up correctly.\"]\n" +
+                        "An example of the complete response format is: \n" +
+                        "[\n" +
+                        "[\"Task one title\", \"Task one description\"],\n" +
+                        "[\"Task two title\", \"Task two description\"],\n" +
+                        "[\"Task three title\", \"Task three description\"],\n" +
+                        "...\n" +
+                        "].\n" +
                         "NOTE: Do not include any extra words, phrases, or sentences unrelated to the tasks you are generating." +
                         "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
-                        "or ending your response. ONLY return the list of generated tasks in the format requested above.\n" +
+                        "or ending your response. Do not include numbering for the tasks. Do not include a comma after " +
+                        "the final sub array (the final task.) ONLY return the list of generated tasks " +
+                        "in the format requested above.\n" +
                         "Here is the Step information:\n"
                         + stepInfo;
 
         OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
-        List<String> tasks;
+        List<List<String>> tasks;
         try {
             tasks = openAIChatAPIManager.buildsTaskList(prompt);
         } catch (IOException | InterruptedException e) {
             throw new IOException(e);
         }
 
-        for (String response : tasks) {
-            if (response.length() > 0) {
-                System.out.println(response);
-                String[] taskAndDescription = response.split(": Value: ");
-                if (taskAndDescription.length > 1) {
-                    String taskTitle = taskAndDescription[0];
-                    String taskDescription = taskAndDescription[1];
-                    Task task = taskService.createTask(id, taskTitle, taskDescription, 0, "in-progress");
-                    step.getTaskList().add(task);
-                }
+        List<Task> taskList = new ArrayList<>();
+        for (List<String> list : tasks) {
+            if (list.size() == 2) {
+                String taskTitle = list.get(0);
+                String taskDescription = list.get(1);
+                Task task = taskService.createTask(id, taskTitle, taskDescription, 0, "in-progress");
+                taskList.add(task);
             }
         }
-
+        step.setTaskList(taskList);
         stepRepository.save(step);
     }
 
