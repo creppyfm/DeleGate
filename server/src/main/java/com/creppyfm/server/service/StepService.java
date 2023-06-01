@@ -91,8 +91,22 @@ public class StepService {
                 projectRepository.save(project);
             }
 
-            taskRepository.deleteAll(existingStep.getTaskList());
+            if (!existingStep.getTaskList().isEmpty()){
+                taskRepository.deleteAll(existingStep.getTaskList());
+            }
             stepRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean deleteManySteps(List<String> rejectedSteps) {
+        List<Step> stepList = stepRepository.findAllById(rejectedSteps);
+        if (!stepList.isEmpty()){
+            for (Step step : stepList) {
+                deleteStep(step.getId());
+            }
             return true;
         } else {
             return false;
@@ -117,7 +131,7 @@ public class StepService {
                         "[\n" +
                         "[\"Task one title\", \"Task one description\"],\n" +
                         "[\"Task two title\", \"Task two description\"],\n" +
-                        "[\"Task three title\", \"Task three description\"],\n" +
+                        "[\"Task three title\", \"Task three description\"]\n" +
                         "...\n" +
                         "].\n" +
                         "NOTE: Do not include any extra words, phrases, or sentences unrelated to the tasks you are generating." +

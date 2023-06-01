@@ -3,7 +3,9 @@ package com.creppyfm.server.controller;
 import com.creppyfm.server.data_transfer_object_model.ProjectResponse;
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.ProjectMembers;
+import com.creppyfm.server.model.User;
 import com.creppyfm.server.service.ProjectService;
+import com.creppyfm.server.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,10 +24,12 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<ProjectResponse>> getAllProjects() {
-        return new ResponseEntity<List<ProjectResponse>>(projectService.findAllProjects(), HttpStatus.OK);
+    public ResponseEntity<List<ProjectResponse>> getAllProjects(@SessionAttribute("userId") String userId) {
+        return new ResponseEntity<List<ProjectResponse>>(projectService.findAllProjects(userId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

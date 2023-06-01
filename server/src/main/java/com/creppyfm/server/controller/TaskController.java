@@ -61,4 +61,14 @@ public class TaskController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @DeleteMapping("/delete-many")
+    public ResponseEntity<Void> deleteManyTasks(@RequestBody List<String> rejectedTasks) {
+        boolean isDeleted = taskService.deleteManyTasks(rejectedTasks);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
