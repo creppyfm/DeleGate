@@ -96,6 +96,13 @@ public class TaskService {
 
     public boolean deleteManyTasks(List<String> rejectedTasks) {
         List<Task> taskList = taskRepository.findAllById(rejectedTasks);
-        return true; //edit here
+        if (!taskList.isEmpty()){
+            for (Task task : taskList) {
+                deleteTask(task.getId());
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }

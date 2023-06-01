@@ -91,7 +91,9 @@ public class StepService {
                 projectRepository.save(project);
             }
 
-            taskRepository.deleteAll(existingStep.getTaskList());
+            if (!existingStep.getTaskList().isEmpty()){
+                taskRepository.deleteAll(existingStep.getTaskList());
+            }
             stepRepository.deleteById(id);
             return true;
         } else {
@@ -101,9 +103,15 @@ public class StepService {
 
     public boolean deleteManySteps(List<String> rejectedSteps) {
         List<Step> stepList = stepRepository.findAllById(rejectedSteps);
-        return true; //edit here
+        if (!stepList.isEmpty()){
+            for (Step step : stepList) {
+                deleteStep(step.getId());
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
-
 
     public void generateTasksForStep(String id) throws IOException {
         Step step = stepRepository.findStepById(id);
