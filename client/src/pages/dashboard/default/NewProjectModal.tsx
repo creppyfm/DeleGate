@@ -1,4 +1,6 @@
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
+import { NewProjectForm } from "./NewProjectForm";
+import { useState } from "react";
 
 type NewProjectModalProps = {
   show: boolean;
@@ -6,29 +8,21 @@ type NewProjectModalProps = {
 };
 
 export function NewProjectModal(props: NewProjectModalProps) {
+  const [loading, setLoading] = useState(false);
   return (
     <Modal
       {...props}
       size="lg"
-      aria-labelledby="new-project-prompt-modal-vcenter"
+      aria-labelledby="new-project-prompt-modal"
+      backdrop={loading ? "static" : true}
       centered
     >
-      <Modal.Header closeButton>
-        <Modal.Title id="new-project-prompt-modal-vcenter">
-          Prompt Modal for New Project
-        </Modal.Title>
+      <Modal.Header closeButton={!loading}>
+        <h3 className="m-0">New Project</h3>
       </Modal.Header>
       <Modal.Body>
-        <h4>Centered Modal</h4>
-        <p>
-          Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-          dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-          consectetur ac, vestibulum at eros.
-        </p>
+        <NewProjectForm loading={loading} setLoading={setLoading} />
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
-      </Modal.Footer>
     </Modal>
   );
 }
