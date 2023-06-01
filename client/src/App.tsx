@@ -7,9 +7,9 @@ import { LoginPage } from "./pages/LoginPage";
 import { AboutUsPage } from "./pages/AboutUsPage";
 import { ProtectedRoute } from "./utils/routeProtection";
 import { useState } from "react";
-import { AppContext } from "./utils/SessionContext";
 import { DashboardRouter } from "./pages/dashboard/DashboardRouter";
 import { PageNotFound } from "./pages/PageNotFound";
+import { AppContext } from "./utils/GetUserData";
 
 export type User = {
   firstName: string;
@@ -51,7 +51,7 @@ function App() {
           path="/dashboard/*"
           element={
             <ProtectedRoute user={user}>
-              <DashboardRouter user={user} />
+              <DashboardRouter />
             </ProtectedRoute>
           }
         />

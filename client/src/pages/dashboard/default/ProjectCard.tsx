@@ -1,54 +1,70 @@
-import { Col, Card, NavLink } from "react-bootstrap";
+import styles from "./ProjectCard.module.css";
+import { useEffect, useState } from "react";
+import {
+  NavLink,
+  ListGroupItem,
+  Badge,
+  Fade,
+  ListGroup,
+} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
-type Project = {
+// export type Project = {
+//   projectId: string;
+//   title: string;
+//   subtitle: string | null | undefined;
+//   description: string;
+//   phase: string;
+//   projectMembers: string[];
+//   updated: string;
+// };
+
+export type Project = {
   projectId: string;
-  title: string;
-  subtitle: string | null | undefined;
-  description: string;
+  title: String;
   phase: string;
-  projectMembers: string[];
   updated: string;
 };
 
-export function ProjectCard({ project }: { project: Project }) {
-  const {
-    // projectId,
-    title,
-    subtitle,
-    description,
-    phase,
-    projectMembers,
-    updated,
-  } = project;
+export function ProjectCard({
+  project,
+  timeout,
+}: {
+  project: Project;
+  timeout: number;
+}) {
+  const { title, phase, updated } = project;
+  const [open, setOpen] = useState(false);
+  let phaseColor = "";
+  if (phase === "In Review") {
+    phaseColor = "text-info";
+  }
+  useEffect(() => {
+    setTimeout(() => {
+      setOpen(true);
+    }, timeout);
+  }, []);
   return (
-    <Col className="text-light">
-      <LinkContainer to="/dashboard/project">
-        <NavLink>
-          <Card
-            bg="secondary"
-            border="secondary"
-            className="h-100 mx-auto rounded-4"
-          >
-            <Card.Header as="h3">{title}</Card.Header>
-            <Card.Body className="bg-light bg-opacity-25">
-              <Card.Title className="text-info">{phase}</Card.Title>
-              {subtitle && <Card.Subtitle>{subtitle}</Card.Subtitle>}
-              <Card.Text className="fs-5">{description}</Card.Text>
-            </Card.Body>
-            <Card.Footer as="div" className="d-flex fs-5">
-              <span className="text-primary">
-                <i className="bi-clock-history" />{" "}
-                <span className="fw-bold">{updated}</span>
-              </span>
-              <span className="ms-auto fs-4">
-                <i className="bi-person text-primary"></i>{" "}
-                <span className=" text-warning">{projectMembers.length}</span>
-              </span>
-            </Card.Footer>
-          </Card>
-        </NavLink>
-      </LinkContainer>
-    </Col>
+    <Fade in={open} className={styles.fade}>
+      <ListGroupItem as="li" className="bg-light p-3 mb-3 rounded">
+        <LinkContainer to="/dashboard/project">
+          <NavLink className="d-flex justify-content-between align-items-center">
+            <ListGroup variant="flush" className="w-100">
+              <ListGroupItem>
+                <div className="fw-bold fs-4">{title}</div>
+              </ListGroupItem>
+              <ListGroupItem>
+                <div className={`${phaseColor}`}>{phase}</div>
+              </ListGroupItem>
+              <ListGroupItem>
+                <div>
+                  Updated <Badge bg="primary">{updated}</Badge>
+                </div>
+              </ListGroupItem>
+            </ListGroup>
+          </NavLink>
+        </LinkContainer>
+      </ListGroupItem>
+    </Fade>
   );
 }

@@ -1,34 +1,92 @@
-// import styles from "./Home.module.css";
-import { Container, Row } from "react-bootstrap";
-import { ProjectCard } from "./ProjectCard";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Project, ProjectCard } from "./ProjectCard";
 import { v4 as uuidv4 } from "uuid";
-import { User } from "../../../App";
+import { projectList } from "../../../utils/mockProjectList";
+import { NewProjectModal } from "./NewProjectModal";
+import { useEffect, useState, useMemo } from "react";
 
-type DashboardPageProps = {
-  user: User;
-};
+type ProjectList = Project[];
 
-export function DashboardPage({ user }: DashboardPageProps) {
-  console.log("Dashboard Page user present: ", user.loggedIn);
+export function DashboardPage() {
+  const [list, setList] = useState<ProjectList>([]);
+  const [showPrompt, setShowPropmt] = useState(false);
+
+  const processedList = useMemo(
+    () =>
+      list.map((project, index) => {
+        return (
+          <ProjectCard key={uuidv4()} project={project} timeout={50 * index} />
+        );
+      }),
+    [list]
+  );
+
+  async function getProjectList() {
+    if (list.length === 0) {
+      try {
+        const response = await fetch("/projects");
+        if (response.ok) {
+          const data: ProjectList = await response.json();
+          const fetchedList: ProjectList = [];
+          data.forEach((project) => {
+            if (
+              project &&
+              project.projectId &&
+              project.title &&
+              project.phase &&
+              project.updated
+            ) {
+              fetchedList.push(project);
+            }
+          });
+          console.log(projectList);
+          // setList(projectList);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (list.length === 0) {
+      setList(projectList);
+      getProjectList();
+    }
+  }, []);
 
   return (
-    <Container className="mt-3">
-      <Row xs={1} md={2} xl={3} className="g-4">
-        {Array.from({ length: 4 }).map((_) => {
-          const randomKey = uuidv4();
-          const project = {
-            projectId: randomKey.slice(randomKey.length / 1.5),
-            title: "Project: " + randomKey.slice(randomKey.length / 1.5),
-            subtitle: null,
-            description:
-              "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-            phase: "Not Started",
-            projectMembers: ["Bill", "Joanne"],
-            updated: "November 5, 1605",
-          };
-          return <ProjectCard key={randomKey} project={project} />;
-        })}
+    <Container className="mt-3 rounded position-relative">
+      <Row className="g-4">
+        <Col lg={12} xl={8}>
+          <h2 className="text-light text-center mt-3 mb-4">Quick Look</h2>
+          <Card>
+            <Card.Body>
+              <Card.Title as="h3" className="text-center">
+                Heads Up
+              </Card.Title>
+              <Card.Subtitle>Aggregate Data</Card.Subtitle>
+              <Card.Text className="mt-3">
+                Over time this section will expand.
+              </Card.Text>
+              <Card.Text>Charts, shorcuts, you name it.</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col lg={12} xl={4}>
+          <h2 className="text-light text-center mt-3 mb-4">Open Projects</h2>
+          <ul className="w-100 ps-0">{processedList}</ul>
+        </Col>
       </Row>
+      <Button
+        size="lg"
+        variant="outline-success"
+        onClick={() => setShowPropmt(true)}
+        className="position-absolute top-0"
+      >
+        <span>Start New Project</span>
+      </Button>
+      <NewProjectModal show={showPrompt} onHide={() => setShowPropmt(false)} />
     </Container>
   );
 }
