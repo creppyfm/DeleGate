@@ -1,4 +1,4 @@
-import { Button, Card, Image } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import styles from "./LoginPage.module.css";
 import { useGetUserDataIfExists } from "../utils/GetUserData";
 
