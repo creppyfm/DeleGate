@@ -1,12 +1,21 @@
 import { FormEvent, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
+import { ProjectList } from "./DashboardPage";
+
 type NewProjectFormProps = {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowPrompt: React.Dispatch<React.SetStateAction<boolean>>;
+  setList: React.Dispatch<React.SetStateAction<ProjectList>>;
 };
 
-export function NewProjectForm({ loading, setLoading }: NewProjectFormProps) {
+export function NewProjectForm({
+  loading,
+  setLoading,
+  setShowPrompt,
+  setList,
+}: NewProjectFormProps) {
   const [prompt, setPrompt] = useState("");
   const examplesGiven = [
     "Build an operating system in Rust",
@@ -18,7 +27,9 @@ export function NewProjectForm({ loading, setLoading }: NewProjectFormProps) {
     event.preventDefault();
     setLoading(true);
     setTimeout(() => {
+      setList([]);
       setLoading(false);
+      setShowPrompt(false);
     }, 3000);
     console.log(prompt);
   }
