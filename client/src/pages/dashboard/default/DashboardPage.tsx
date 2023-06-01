@@ -1,9 +1,8 @@
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { Project, ProjectCard } from "./ProjectCard";
 import { v4 as uuidv4 } from "uuid";
-import { projectList } from "../../../utils/mockProjectList";
 import { NewProjectModal } from "./NewProjectModal";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import styles from "./Dashboard.module.css";
 
 export type ProjectList = Project[];
@@ -11,6 +10,7 @@ export type ProjectList = Project[];
 export function DashboardPage() {
   const [list, setList] = useState<ProjectList>([]);
   const [showPrompt, setShowPrompt] = useState(false);
+  const fetchingStatus = useRef(false);
 
   const processedList = useMemo(
     () => (
@@ -30,35 +30,38 @@ export function DashboardPage() {
   );
 
   async function getProjectList() {
-    if (list.length === 0) {
-      try {
-        const response = await fetch("/projects");
-        if (response.ok) {
-          const data: ProjectList = await response.json();
+    try {
+      const response = await fetch("/projects");
+      if (response.ok) {
+        const data: ProjectList = await response.json();
+        if (data.length > 0) {
           const fetchedList: ProjectList = [];
           data.forEach((project) => {
-            if (
-              project &&
-              project.projectId &&
-              project.title &&
-              project.phase &&
-              project.updated
-            ) {
-              fetchedList.push(project);
-            }
+            fetchedList.push(project);
           });
-          console.log(projectList);
-          // setList(projectList);
+          setList(fetchedList);
+        } else {
+          setList([
+            {
+              projectId: "None",
+              title: "No Projects Found",
+              phase: "Not Started",
+              updated: "Not Started",
+              description: "Not Started",
+            },
+          ]);
         }
-      } catch (error) {
-        console.log(error);
       }
+      fetchingStatus.current = false;
+    } catch (error) {
+      fetchingStatus.current = false;
+      console.log(error);
     }
   }
 
   useEffect(() => {
-    if (list.length === 0) {
-      setList(projectList);
+    if (list.length === 0 && !fetchingStatus.current) {
+      fetchingStatus.current = true;
       getProjectList();
     }
   }, [list]);
@@ -97,6 +100,7 @@ export function DashboardPage() {
       <NewProjectModal
         showPrompt={showPrompt}
         setShowPrompt={setShowPrompt}
+        list={list}
         setList={setList}
       />
     </Container>
