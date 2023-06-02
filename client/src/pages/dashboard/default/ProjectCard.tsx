@@ -1,11 +1,11 @@
 import styles from "./ProjectCard.module.css";
 import { useEffect, useState } from "react";
 import { Badge, Fade, Card } from "react-bootstrap";
-import { Project } from "./DashboardPage";
+import { ProjectPreview } from "./DashboardPage";
 import { NavLink } from "react-router-dom";
 
 type ProjectCardProps = {
-  project: Project;
+  project: ProjectPreview;
   timeout: number;
 };
 

@@ -5,7 +5,7 @@ import { NewProjectModal } from "./NewProjectModal";
 import { useEffect, useState, useMemo, useRef } from "react";
 import styles from "./Dashboard.module.css";
 
-export type Project = {
+export type ProjectPreview = {
   projectId: string;
   title: String;
   phase: string;
@@ -13,10 +13,10 @@ export type Project = {
   description: string;
 };
 
-export type ProjectList = Project[];
+type ProjectPreviewList = ProjectPreview[];
 
 export function DashboardPage() {
-  const [list, setList] = useState<ProjectList>([]);
+  const [list, setList] = useState<ProjectPreviewList>([]);
   const [showPrompt, setShowPrompt] = useState(false);
   const [loading, setLoading] = useState(true);
   const fetchingStatus = useRef(false);
@@ -45,13 +45,13 @@ export function DashboardPage() {
     </div>
   );
 
-  async function getProjectList() {
+  async function getProjectPreviewList() {
     try {
       const response = await fetch("/projects");
       if (response.ok) {
-        const data: ProjectList = await response.json();
+        const data: ProjectPreviewList = await response.json();
         if (data.length > 0) {
-          const fetchedList: ProjectList = [];
+          const fetchedList: ProjectPreviewList = [];
           data.forEach((project) => {
             fetchedList.push(project);
           });
@@ -80,7 +80,7 @@ export function DashboardPage() {
   useEffect(() => {
     if (list.length === 0 && !fetchingStatus.current) {
       fetchingStatus.current = true;
-      getProjectList();
+      getProjectPreviewList();
     }
 
     if (list.length > 0) {
