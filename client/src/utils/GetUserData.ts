@@ -1,8 +1,28 @@
 import { useContext } from "react";
 import { createContext } from "react";
-import { AppContextProps } from "../App";
 
-export const AppContext = createContext<AppContextProps>({
+export type User = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  loggedIn: boolean;
+};
+
+export type SetUser = React.Dispatch<
+  React.SetStateAction<{
+    firstName: string;
+    lastName: string;
+    email: string;
+    loggedIn: boolean;
+  }>
+>;
+
+interface AppContext {
+  user: User;
+  setUser: (user: User) => void;
+}
+
+export const AppContext = createContext<AppContext>({
   user: {
     firstName: "",
     lastName: "",

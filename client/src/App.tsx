@@ -9,31 +9,10 @@ import { ProtectedRoute } from "./utils/routeProtection";
 import { useState } from "react";
 import { DashboardRouter } from "./pages/dashboard/DashboardRouter";
 import { PageNotFound } from "./pages/PageNotFound";
-import { AppContext } from "./utils/GetUserData";
-
-export type User = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  loggedIn: boolean;
-};
-
-export type SetUser = React.Dispatch<
-  React.SetStateAction<{
-    firstName: string;
-    lastName: string;
-    email: string;
-    loggedIn: boolean;
-  }>
->;
-
-export interface AppContextProps {
-  user: User;
-  setUser: (user: User) => void;
-}
+import { AppContext, User } from "./utils/GetUserData";
 
 function App() {
-  const [user, setUser] = useState({
+  const [user, setUser] = useState<User>({
     firstName: "",
     lastName: "",
     email: "",
