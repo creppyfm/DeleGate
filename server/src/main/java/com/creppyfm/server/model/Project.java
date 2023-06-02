@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Document(collection = "Project")
 @Data
@@ -122,7 +123,7 @@ public class Project {
     }
 
     public List<Task> getTaskList() {
-        return taskList;
+        return Objects.requireNonNullElseGet(taskList, ArrayList::new);
     }
 
     public void addTask(Task task) {

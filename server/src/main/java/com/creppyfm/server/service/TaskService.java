@@ -44,9 +44,10 @@ public class TaskService {
         return task;
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
-    } //Modify to return only an authenticated User's tasks
+    public List<Task> getAllTasks(String projectId) {
+        Project project = projectRepository.findProjectById(projectId);
+        return project.getTaskList();
+    }
 
     public Task getTaskById(String id) {
         Task task = taskRepository.findTaskById(id);
@@ -67,7 +68,7 @@ public class TaskService {
             existingTask.setUpdated(LocalDateTime.now());
 
             // Update task in the step's taskList
-            Step step = stepRepository.findByTaskListContaining(existingTask);
+            Step step = stepRepository.findByTaskListContaining(existingTask.getId());
             Project project = projectRepository.findByStepListContaining(step);
             if (step != null) {
                 int stepTaskIndex = step.getTaskList()
@@ -96,7 +97,7 @@ public class TaskService {
             Task existingTask = optionalTask.get();
 
             // Remove task from the step's taskList
-            Step step = stepRepository.findByTaskListContaining(existingTask);
+            Step step = stepRepository.findByTaskListContaining(existingTask.getId());
             Project project = projectRepository.findByStepListContaining(step);
             if (step != null) {
                 step.getTaskList().remove(existingTask.getId());
