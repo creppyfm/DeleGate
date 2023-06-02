@@ -1,9 +1,9 @@
 package com.creppyfm.server.controller;
 
 import com.creppyfm.server.data_transfer_object_model.ProjectResponse;
+import com.creppyfm.server.enumerated.Phase;
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.ProjectMembers;
-import com.creppyfm.server.model.User;
 import com.creppyfm.server.service.ProjectService;
 import com.creppyfm.server.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,7 +47,7 @@ public class ProjectController {
         String userId = project.getUserId();
         String title = project.getTitle();
         String description = project.getDescription();
-        String phase = project.getPhase();
+        Phase phase = project.getPhase();
         return new ResponseEntity<Project>(projectService.createProject(userId, title, description, phase),
                 HttpStatus.OK);
     }
@@ -82,10 +82,10 @@ public class ProjectController {
         }
     }
 
-    @PutMapping("/{projectId}/project-members/{userId}/role")
-    public ResponseEntity<Void> updateProjectMemberRole(@PathVariable String projectId, @PathVariable String userId,
-            String newRole) {
-        boolean isUpdated = projectService.updateProjectMemberRoleByUserId(projectId, userId, newRole);
+    @PutMapping("/{id}/project-members/{userId}/role")
+    public ResponseEntity<Void> updateProjectMemberRole(@PathVariable String id, @PathVariable String userId,
+                                                        String newRole) {
+        boolean isUpdated = projectService.updateProjectMemberRoleByUserId(id, userId, newRole);
         if (isUpdated) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
@@ -93,9 +93,9 @@ public class ProjectController {
         }
     }
 
-    @DeleteMapping("/{projectId}/project-members/{userId}")
-    public ResponseEntity<Void> removeProjectMember(@PathVariable String projectId, @PathVariable String userId) {
-        boolean isRemoved = projectService.removeProjectMemberByUserId(projectId, userId);
+    @DeleteMapping("/{id}/project-members/{userId}")
+    public ResponseEntity<Void> removeProjectMember(@PathVariable String id, @PathVariable String userId) {
+        boolean isRemoved = projectService.removeProjectMemberByUserId(id, userId);
         if (isRemoved) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {

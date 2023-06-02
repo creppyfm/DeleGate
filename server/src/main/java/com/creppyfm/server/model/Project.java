@@ -1,5 +1,6 @@
 package com.creppyfm.server.model;
 
+import com.creppyfm.server.enumerated.Phase;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ public class Project {
     private String userId;
     private String title;
     private String description;
-    private String phase; //Not Started, In Progress, In Review, Completed
+    private Phase phase; //Not Started, In Progress, In Review, Completed
     private LocalDateTime created;
     private LocalDateTime updated;
     private List<ProjectMembers> projectMembers = new ArrayList<>();
@@ -31,7 +32,7 @@ public class Project {
     private List<Step> stepList;
 
     //manual constructor for associating 'Project' with 'User'
-    public Project(String userId, String title, String description, String phase, LocalDateTime created, LocalDateTime updated) {
+    public Project(String userId, String title, String description, Phase phase, LocalDateTime created, LocalDateTime updated) {
         this.userId = userId;
         this.title = title;
         this.description = description;
@@ -68,11 +69,11 @@ public class Project {
         this.description = description;
     }
 
-    public String getPhase() {
+    public Phase getPhase() {
         return phase;
     }
 
-    public void setPhase(String phase) {
+    public void setPhase(Phase phase) {
         this.phase = phase;
     }
 
