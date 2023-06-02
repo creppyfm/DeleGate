@@ -31,7 +31,7 @@ export function Header() {
       <Navbar bg="dark" variant="dark">
         <Container fluid>
           <Navbar.Brand className="ms-2" href="#home">
-            <Image src="brand_dark_trans_thin.png" fluid />
+            <Image src="/brand_dark_trans_thin.png" fluid />
           </Navbar.Brand>
           <Nav className="me-auto">
             <NavLink to={"/"} className="nav-link">
