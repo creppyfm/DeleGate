@@ -3,6 +3,7 @@ package com.creppyfm.server.service;
 import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
 import com.creppyfm.server.data_transfer_object_model.ProjectResponse;
 import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
+import com.creppyfm.server.enumerated.Phase;
 import com.creppyfm.server.model.*;
 import com.creppyfm.server.openai_chat_handlers.OpenAIChatAPIManager;
 import com.creppyfm.server.repository.ProjectRepository;
@@ -59,8 +60,8 @@ public class ProjectService {
         return project.getProjectMembers();
     }
 
-    public Project createProject(String userId, String title, String description, String status) {
-        Project project = projectRepository.insert(new Project(userId, title, description, status, LocalDateTime.now(), LocalDateTime.now()));
+    public Project createProject(String userId, String title, String description, Phase phase) {
+        Project project = projectRepository.insert(new Project(userId, title, description, phase, LocalDateTime.now(), LocalDateTime.now()));
         mongoTemplate.update(User.class)
                 .matching(Criteria.where("id").is(userId))
                 .apply(new Update().push("projectIds").value(project.getId()))
@@ -84,7 +85,7 @@ public class ProjectService {
         String description = projectDTO.getDescription();
         List<StepDataTransferObject> stepDTOList = projectDTO.getSteps();
 
-        Project project = createProject(userId, title, description, "in-progress");
+        Project project = createProject(userId, title, description, Phase.NOT_STARTED);
 
         List<Step> stepList = new ArrayList<>();
         for (StepDataTransferObject stepDTO : stepDTOList) {
