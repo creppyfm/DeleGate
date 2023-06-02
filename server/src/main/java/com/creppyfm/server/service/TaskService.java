@@ -4,6 +4,7 @@ import com.creppyfm.server.enumerated.Phase;
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.Step;
 import com.creppyfm.server.model.Task;
+import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.StepRepository;
 import com.creppyfm.server.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,18 @@ public class TaskService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private StepRepository stepRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     public Task createTask(String stepId, String title, String description, int weight, Phase phase) {
         Task task = taskRepository.insert(new Task(stepId, title, description, weight, phase, LocalDateTime.now(), LocalDateTime.now())); //insert into 'Task' collection
-        mongoTemplate.update(Project.class) //insert into 'Step->taskList' array
+        Project project = projectRepository.findByStepListContaining(stepRepository.findStepById(stepId));
+        mongoTemplate.update(Step.class) //insert into 'Step->taskList' array
                 .matching(Criteria.where("id").is(stepId))
+                .apply(new Update().push("taskList").value(task.getId()))
+                .first();
+        mongoTemplate.update(Project.class) //insert into 'Step->taskList' array
+                .matching(Criteria.where("id").is(project.getId()))
                 .apply(new Update().push("taskList").value(task))
                 .first();
 
@@ -38,7 +46,7 @@ public class TaskService {
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
-    }
+    } //Modify to return only an authenticated User's tasks
 
     public Task getTaskById(String id) {
         Task task = taskRepository.findTaskById(id);
@@ -60,12 +68,19 @@ public class TaskService {
 
             // Update task in the step's taskList
             Step step = stepRepository.findByTaskListContaining(existingTask);
+            Project project = projectRepository.findByStepListContaining(step);
             if (step != null) {
-                int taskIndex = step.getTaskList()
+                int stepTaskIndex = step.getTaskList()
                         .indexOf(existingTask.getId());
-                if (taskIndex >= 0) { // Check if the index is within bounds
-                    step.getTaskList().set(taskIndex, existingTask.getId());
+                int projectTaskIndex = project.getTaskList()
+                        .indexOf(existingTask);
+                if (stepTaskIndex >= 0) { // Check if the index is within bounds
+                    step.getTaskList().set(stepTaskIndex, existingTask.getId());
                     stepRepository.save(step);
+                }
+                if (projectTaskIndex >= 0) {
+                    project.getTaskList().set(projectTaskIndex, existingTask);
+                    projectRepository.save(project);
                 }
             }
 
@@ -82,9 +97,12 @@ public class TaskService {
 
             // Remove task from the step's taskList
             Step step = stepRepository.findByTaskListContaining(existingTask);
+            Project project = projectRepository.findByStepListContaining(step);
             if (step != null) {
-                step.getTaskList().remove(existingTask);
+                step.getTaskList().remove(existingTask.getId());
+                project.getTaskList().remove(existingTask);
                 stepRepository.save(step);
+                projectRepository.save(project);
             }
 
             taskRepository.deleteById(id);
