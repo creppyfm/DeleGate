@@ -1,9 +1,9 @@
 package com.creppyfm.server.service;
 
+import com.creppyfm.server.enumerated.Phase;
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.Step;
 import com.creppyfm.server.model.Task;
-import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.StepRepository;
 import com.creppyfm.server.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +26,8 @@ public class TaskService {
     @Autowired
     private StepRepository stepRepository;
 
-    public Task createTask(String stepId, String title, String description, int weight, String status) {
-        Task task = taskRepository.insert(new Task(stepId, title, description, weight, status, LocalDateTime.now(), LocalDateTime.now())); //insert into 'Task' collection
+    public Task createTask(String stepId, String title, String description, int weight, Phase phase) {
+        Task task = taskRepository.insert(new Task(stepId, title, description, weight, phase, LocalDateTime.now(), LocalDateTime.now())); //insert into 'Task' collection
         mongoTemplate.update(Project.class) //insert into 'Step->taskList' array
                 .matching(Criteria.where("id").is(stepId))
                 .apply(new Update().push("taskList").value(task))
@@ -56,15 +55,16 @@ public class TaskService {
             Task existingTask = optionalTask.get();
             existingTask.setTitle(updatedTask.getTitle());
             existingTask.setDescription(updatedTask.getDescription());
-            existingTask.setStatus(updatedTask.getStatus());
+            existingTask.setPhase(updatedTask.getPhase());
             existingTask.setUpdated(LocalDateTime.now());
 
             // Update task in the step's taskList
             Step step = stepRepository.findByTaskListContaining(existingTask);
             if (step != null) {
-                int taskIndex = step.getTaskList().indexOf(existingTask);
+                int taskIndex = step.getTaskList()
+                        .indexOf(existingTask.getId());
                 if (taskIndex >= 0) { // Check if the index is within bounds
-                    step.getTaskList().set(taskIndex, existingTask);
+                    step.getTaskList().set(taskIndex, existingTask.getId());
                     stepRepository.save(step);
                 }
             }

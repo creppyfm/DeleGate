@@ -30,7 +30,7 @@ public class UserService {
         return userRepository.findUserById(id);
     }
 
-    public List<Task> findCurrentTasksById(String id) {
+    public List<String> findCurrentTasksById(String id) {
         User user = userRepository.findUserById(id);
         return user.getCurrentTasks();
     }
@@ -49,7 +49,6 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
             existingUser.setToken(updatedUser.getToken());
-            existingUser.setOpenAIKey(updatedUser.getOpenAIKey());
             existingUser.setFirstName(updatedUser.getFirstName());
             existingUser.setLastName(updatedUser.getLastName());
             existingUser.setEmail(updatedUser.getEmail());

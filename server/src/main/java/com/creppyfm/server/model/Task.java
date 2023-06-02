@@ -1,6 +1,6 @@
 package com.creppyfm.server.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.creppyfm.server.enumerated.Phase;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,19 +22,19 @@ public class Task {
     private String title;
     private String description;
     private int weight;
-    private String status;
+    private Phase phase;
     private LocalDateTime created;
     private LocalDateTime updated;
-    @JsonManagedReference
-    private List<User> assignedUsers = new ArrayList<>();
+    private List<String> assignedUsers = new ArrayList<>();
+
 
     //manual constructor for associating 'Task' with 'Project'
-    public Task(String stepId, String title, String description, int weight, String status, LocalDateTime created, LocalDateTime updated) {
+    public Task(String stepId, String title, String description, int weight, Phase phase, LocalDateTime created, LocalDateTime updated) {
         this.stepId = stepId;
         this.title = title;
         this.description = description;
         this.weight = weight;
-        this.status = status;
+        this.phase = phase;
         this.created = created;
         this.updated = updated;
     }
@@ -75,12 +75,12 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
-        return status;
+    public Phase getPhase() {
+        return phase;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPhase(Phase phase) {
+        this.phase = phase;
     }
 
     public LocalDateTime getCreated() {
@@ -99,11 +99,12 @@ public class Task {
         this.updated = updated;
     }
 
-    public List<User> getAssignedUsers() {
+    public List<String> getAssignedUsers() {
         return assignedUsers;
     }
 
-    public void setAssignedUsers(List<User> assignedUsers) {
+    public void setAssignedUsers(List<String> assignedUsers) {
         this.assignedUsers = assignedUsers;
     }
+
 }

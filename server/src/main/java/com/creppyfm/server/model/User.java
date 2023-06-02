@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
@@ -19,16 +18,14 @@ import java.util.List;
 public class User {
     private String id;
     private String token;
-    private String openAIKey;
     private String firstName;
     private String lastName;
     private String email;
     private Provider provider;
     private List<String> projectIds;
     private List<String> strengths;
-    @DocumentReference(collection = "Task")
     @JsonBackReference
-    private List<Task> currentTasks = new ArrayList<>();
+    private List<String> currentTasks = new ArrayList<>();
 
     public String getToken() {
         return token;
@@ -36,14 +33,6 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getOpenAIKey() {
-        return openAIKey;
-    }
-
-    public void setOpenAIKey(String openAIKey) {
-        this.openAIKey = openAIKey;
     }
 
     public Provider getProvider() {
@@ -102,15 +91,11 @@ public class User {
         this.email = email;
     }
 
-    public int getWorkload(List<String> projectIDList) {
-        return projectIDList.size();
-    }
-
-    public List<Task> getCurrentTasks() {
+    public List<String> getCurrentTasks() {
         return currentTasks;
     }
 
-    public void setCurrentTasks(List<Task> currentTasks) {
+    public void setCurrentTasks(List<String> currentTasks) {
         this.currentTasks = currentTasks;
     }
 

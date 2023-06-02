@@ -1,8 +1,7 @@
 package com.creppyfm.server.controller;
 
+import com.creppyfm.server.enumerated.Phase;
 import com.creppyfm.server.model.Task;
-import com.creppyfm.server.repository.ProjectRepository;
-import com.creppyfm.server.repository.TaskRepository;
 import com.creppyfm.server.service.TaskService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,10 @@ public class TaskController {
         String title = task.getTitle();
         String description = task.getDescription();
         int weight = task.getWeight();
-        String status = task.getStatus();
+        Phase phase = task.getPhase();
 
         return new ResponseEntity<Task>(taskService.
-                createTask(stepId, title, description, weight, status), HttpStatus.OK);
+                createTask(stepId, title, description, weight, phase), HttpStatus.OK);
     }
 
     @GetMapping

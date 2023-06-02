@@ -21,12 +21,12 @@ public class Project {
     private String userId;
     private String title;
     private String description;
-    private String phase; //ex: yet to begin, working on it, finished
+    private String phase; //Not Started, In Progress, In Review, Completed
     private LocalDateTime created;
     private LocalDateTime updated;
     private List<ProjectMembers> projectMembers = new ArrayList<>();
     @DocumentReference
-    private List<Task> taskList; //to be deleted
+    private List<Task> taskList;
     @DocumentReference
     private List<Step> stepList;
 
@@ -106,13 +106,13 @@ public class Project {
 
     public boolean removeProjectMemberByUserId(String userId) {
         return projectMembers.removeIf(projectMember ->
-            projectMember.getUserId().equals(userId)
+            projectMember.getId().equals(userId)
         );
     }
 
     public boolean updateProjectMemberRoleByUserId(String userId, String newRole) {
         for (ProjectMembers projectMember : projectMembers) {
-            if (projectMember.getUserId().equals(userId)) {
+            if (projectMember.getId().equals(userId)) {
                 projectMember.setRole(newRole);
                 return true;
             }
