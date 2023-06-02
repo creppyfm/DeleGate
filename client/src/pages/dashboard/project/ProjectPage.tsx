@@ -1,77 +1,23 @@
 import { useState, useEffect } from "react";
 import { Card, Col, Container, ListGroup, Row, Spinner } from "react-bootstrap";
 import { NavLink, useParams } from "react-router-dom";
-
-type ProjectData = {
-  id: string;
-  userId: string;
-  title: string;
-  description: string;
-  phase: string;
-  created: string;
-  updated: string;
-  projectMembers: ProjectMemberList;
-  taskList: TaskList;
-  stepList: StepList;
-};
-
-type ProjectMember = {
-  userID: string;
-  role: string;
-  currentTasks: string[];
-  firstName: string;
-  lastName: string;
-};
-
-type ProjectMemberList = ProjectMember[];
-
-export type Task = {
-  taskId: string;
-  stepId: string;
-  title: string;
-  description: string;
-  weight: number;
-  status: string;
-  created: string;
-  updated: string;
-  assignedUsers: AssignedUserList;
-};
-
-type TaskList = Task[];
-
-type AssignedUserList = string[];
-
-export type Step = {
-  id: string;
-  projectId: string;
-  title: string;
-  description: string;
-  taskList: string[];
-};
-
-type StepList = Step[];
+import {
+  Project,
+  Step,
+  useProjectContext,
+} from "../../../utils/GetProjectData";
 
 export function ProjectPage() {
   const [loading, setLoading] = useState(true);
-  const [steps, setSteps] = useState<StepList>([]);
-  const [projectName, setProjectName] = useState("Loading Project...");
-  const [description, setDescription] = useState("Loading Project...");
-  const [phase, setPhase] = useState("Not Started");
-  const [updated, setUpdated] = useState("Unknown");
   const { id } = useParams();
+  const { project, setProject } = useProjectContext();
 
   async function fetchProject() {
     try {
       const response = await fetch(`/projects/${id}`);
       if (response.ok) {
-        const data: ProjectData = await response.json();
-        const { title, description, phase, updated, stepList } = data;
-        setProjectName(title);
-        setSteps(stepList);
-        setDescription(description);
-        setPhase(phase);
-        setUpdated(updated);
-
+        const data: Project = await response.json();
+        setProject(data);
         setLoading(false);
       }
     } catch (error) {
@@ -80,37 +26,45 @@ export function ProjectPage() {
   }
 
   useEffect(() => {
-    fetchProject();
-  }, []);
+    if ((!project && id) || (project && project.id !== id)) {
+      fetchProject();
+    } else {
+      setLoading(false);
+    }
+  }, [project]);
 
   return (
     <Container className="pt-5">
-      <h1 className="text-center text-light mb-5">{projectName}</h1>
+      <h1 className="text-center text-light mb-5">
+        {project && !loading ? project.title : "Loading Project..."}
+      </h1>
       <Row style={{ height: "60%" }}>
         <Col lg={12} xl={6}>
           <Card bg="light" className="rounded-4 mb-3">
             <Card.Header as="h3">Summary</Card.Header>
             <Card.Body>
               <Card.Title></Card.Title>
-              <Card.Text>{description}</Card.Text>
+              <Card.Text>
+                {project && !loading
+                  ? project.description
+                  : "Loading Project..."}
+              </Card.Text>
             </Card.Body>
             <Card.Footer>
               <div className="d-flex justify-content-between">
-                <span>Phase: {phase}</span>
-                <span>Updated: {updated}</span>
+                <span>Phase: {project && !loading && project.phase}</span>
+                <span>
+                  Updated:{" "}
+                  {project &&
+                    !loading &&
+                    new Date(project.updated).toISOString()}
+                </span>
               </div>
             </Card.Footer>
           </Card>
           <ListGroup className="rounded-4">
-            {loading ? (
-              <ListGroup.Item>
-                <div className="d-flex text-warning">
-                  <Spinner animation="border" role="status" className="me-3" />
-                  <h3>Loading... </h3>
-                </div>
-              </ListGroup.Item>
-            ) : (
-              steps.map((step) => {
+            {project && !loading ? (
+              project.stepList.map((step) => {
                 const { id, title }: Step = step;
                 return (
                   <ListGroup.Item key={id}>
@@ -118,6 +72,13 @@ export function ProjectPage() {
                   </ListGroup.Item>
                 );
               })
+            ) : (
+              <ListGroup.Item>
+                <div className="d-flex text-warning">
+                  <Spinner animation="border" role="status" className="me-3" />
+                  <h3>Loading... </h3>
+                </div>
+              </ListGroup.Item>
             )}
           </ListGroup>
         </Col>
