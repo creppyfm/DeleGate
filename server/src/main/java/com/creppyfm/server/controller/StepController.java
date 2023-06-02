@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/step")
+@RequestMapping("/steps")
 @CrossOrigin
 @Tag(name = "Step Controller")
 public class StepController {
@@ -93,8 +93,8 @@ public class StepController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 */
-    @PostMapping("/{id}/tasks/generate")
-    public ResponseEntity<Step> generateTasksForProject(@PathVariable String id) throws IOException {
+    @PostMapping("/tasks/generate")
+    public ResponseEntity<Step> generateTasksForProject(@RequestBody String id) throws IOException {
         stepService.generateTasksForStep(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

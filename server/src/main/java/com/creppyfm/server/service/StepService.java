@@ -1,5 +1,6 @@
 package com.creppyfm.server.service;
 
+import com.creppyfm.server.enumerated.Phase;
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.Step;
 import com.creppyfm.server.model.Task;
@@ -92,7 +93,9 @@ public class StepService {
             }
 
             if (!existingStep.getTaskList().isEmpty()){
-                taskRepository.deleteAll(existingStep.getTaskList());
+                for (String taskId : existingStep.getTaskList()) {
+                    taskRepository.deleteById(taskId);
+                }
             }
             stepRepository.deleteById(id);
             return true;
@@ -150,16 +153,30 @@ public class StepService {
             throw new IOException(e);
         }
 
+        Project project = projectRepository.findByStepListContaining(step);
         List<Task> taskList = new ArrayList<>();
+        List<String> taskIds = new ArrayList<>();
         for (List<String> list : tasks) {
             if (list.size() == 2) {
                 String taskTitle = list.get(0);
                 String taskDescription = list.get(1);
-                Task task = taskService.createTask(id, taskTitle, taskDescription, 0, "in-progress");
+                Task task = taskService.createTask(id, taskTitle, taskDescription, 0, Phase.NOT_STARTED);
                 taskList.add(task);
+                taskIds.add(task.getId());
             }
         }
-        step.setTaskList(taskList);
+        //add tasks to project's taskList
+        if (project.getTaskList() != null) {
+            project.getTaskList().addAll(taskList);
+        } else {
+            project.setTaskList(taskList);
+        }
+
+        if (step.getTaskList() != null) {
+            step.getTaskList().addAll(taskIds);
+        } else {
+            step.setTaskList(taskIds);
+        }
         stepRepository.save(step);
     }
 

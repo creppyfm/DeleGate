@@ -95,8 +95,8 @@ public class UserController {
             )}
     )
     @GetMapping("/{userId}/current-tasks")
-    public ResponseEntity<List<Task>> getAllCurrentTasks(@PathVariable String userId) {
-        return new ResponseEntity<List<Task>>(userService.findCurrentTasksById(userId), HttpStatus.OK);
+    public ResponseEntity<List<String>> getAllCurrentTasks(@PathVariable String userId) {
+        return new ResponseEntity<List<String>>(userService.findCurrentTasksById(userId), HttpStatus.OK);
     }
 
     @Operation(
