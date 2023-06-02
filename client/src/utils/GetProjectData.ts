@@ -1,5 +1,6 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { createContext } from "react";
+import { redirect } from "react-router-dom";
 
 export type Project = {
   id: string;
@@ -44,7 +45,7 @@ export type Step = {
 
 interface ProjectContext {
   project: Project | null;
-  setProject: (project: Project) => void;
+  setProject: (project: Project | null) => void;
 }
 
 export const ProjectContext = createContext<ProjectContext>({
@@ -54,4 +55,27 @@ export const ProjectContext = createContext<ProjectContext>({
 
 export function useProjectContext() {
   return useContext(ProjectContext);
+}
+
+export async function useUpdateProjectData() {
+  const { project, setProject } = useContext(ProjectContext);
+  if (project) {
+    try {
+      const response = await fetch(`/projects/${project.id}`);
+      if (response.ok) {
+        const data: Project = await response.json();
+        setProject(data);
+      } else {
+        setProject(null);
+        redirect("/dashboard");
+      }
+    } catch (error) {
+      setProject(null);
+      redirect("/dashboard");
+      console.log(error);
+    }
+  } else {
+    setProject(null);
+    redirect("/dashboard");
+  }
 }
