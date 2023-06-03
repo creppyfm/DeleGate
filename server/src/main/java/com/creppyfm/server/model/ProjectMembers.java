@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -15,4 +17,9 @@ public class ProjectMembers {
     private String firstName;
     private String lastName;
     private List<String> currentTasks;
+
+    public List<String> getCurrentTasks() {
+        return Objects.requireNonNullElseGet(currentTasks, ArrayList::new);
+    }
+
 }
