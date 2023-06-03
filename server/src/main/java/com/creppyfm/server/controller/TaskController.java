@@ -3,6 +3,9 @@ package com.creppyfm.server.controller;
 import com.creppyfm.server.enumerated.Phase;
 import com.creppyfm.server.model.Task;
 import com.creppyfm.server.service.TaskService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,8 +35,10 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks(@RequestBody String projectId) {
-        return taskService.getAllTasks(projectId);
+    public List<Task> getAllTasks(@RequestBody String projectId) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(projectId);
+        return taskService.getAllTasks(jsonNode.get("projectId").asText());
     }
 
     @GetMapping("/{id}")
@@ -62,7 +67,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/delete-many")
-    public ResponseEntity<Void> deleteManyTasks(@RequestBody List<String> rejectedTasks) {
+    public ResponseEntity<Void> deleteManyTasks(@RequestBody List<String> rejectedTasks) throws JsonProcessingException {
         boolean isDeleted = taskService.deleteManyTasks(rejectedTasks);
         if (isDeleted) {
             return new ResponseEntity<>(HttpStatus.OK);

@@ -9,6 +9,9 @@ import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.StepRepository;
 import com.creppyfm.server.repository.TaskRepository;
 import com.creppyfm.server.service.TaskService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -111,8 +114,15 @@ public class StepService {
         }
     }
 
-    public boolean deleteManySteps(List<String> rejectedSteps) {
-        List<Step> stepList = stepRepository.findAllById(rejectedSteps);
+    public boolean deleteManySteps(List<String> rejectedSteps) throws JsonProcessingException {
+        List<String> rejectedStepIds = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (String jsonString : rejectedSteps) {
+            JsonNode jsonNode = objectMapper.readTree(jsonString);
+            rejectedStepIds.add(jsonNode.get("id").asText());
+        }
+
+        List<Step> stepList = stepRepository.findAllById(rejectedStepIds);
         if (!stepList.isEmpty()) {
             for (Step step : stepList) {
                 deleteStep(step.getId());

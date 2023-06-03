@@ -6,6 +6,9 @@ import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.ProjectMembers;
 import com.creppyfm.server.service.ProjectService;
 import com.creppyfm.server.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,16 +55,12 @@ public class ProjectController {
                 HttpStatus.OK);
     }
 
-    /*
-     * FOR TESTING:
-     * COMMENT @SessionAttribute PARAMETER, userId
-     * UNCOMMENT WHEN NOT TESTING
-     */
     @PostMapping("/new")
     public ResponseEntity<Project> generateProjectWithSteps(@SessionAttribute("userId") String userId,
             @RequestBody String prompt) throws IOException, URISyntaxException, InterruptedException {
-        System.out.println(prompt);
-        Project project = projectService.createsProjectAndGeneratesSteps(userId, prompt);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(prompt);
+        Project project = projectService.createsProjectAndGeneratesSteps(userId, jsonNode.get("prompt").asText());
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
@@ -83,9 +82,10 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}/project-members/{userId}/role")
-    public ResponseEntity<Void> updateProjectMemberRole(@PathVariable String id, @PathVariable String userId,
-                                                        String newRole) {
-        boolean isUpdated = projectService.updateProjectMemberRoleByUserId(id, userId, newRole);
+    public ResponseEntity<Void> updateProjectMemberRole(@PathVariable String id, @PathVariable String userId, @RequestBody String newRole) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(newRole);
+        boolean isUpdated = projectService.updateProjectMemberRoleByUserId(id, userId, jsonNode.get("role").asText());
         if (isUpdated) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
