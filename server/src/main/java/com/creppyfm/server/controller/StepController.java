@@ -3,6 +3,8 @@ import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.Step;
 import com.creppyfm.server.service.ProjectService;
 import com.creppyfm.server.service.StepService;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -99,8 +101,9 @@ public class StepController {
     }
 */
     @PostMapping("/tasks/generate")
-    public ResponseEntity<Step> generateTasksForProject(@RequestBody String id) throws IOException {
-        stepService.generateTasksForStep(id);
+    public ResponseEntity<Step> generateTasksForProject(@RequestBody JsonProperty id) throws IOException {
+        String stepId = id.value();
+        stepService.generateTasksForStep(stepId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
