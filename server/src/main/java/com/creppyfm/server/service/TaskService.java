@@ -7,6 +7,9 @@ import com.creppyfm.server.model.Task;
 import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.StepRepository;
 import com.creppyfm.server.repository.TaskRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -14,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,8 +117,15 @@ public class TaskService {
         }
     }
 
-    public boolean deleteManyTasks(List<String> rejectedTasks) {
-        List<Task> taskList = taskRepository.findAllById(rejectedTasks);
+    public boolean deleteManyTasks(List<String> rejectedTasks) throws JsonProcessingException {
+        List<String> rejectedTaskIds = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (String jsonString : rejectedTasks) {
+            JsonNode jsonNode = objectMapper.readTree(jsonString);
+            rejectedTaskIds.add(jsonNode.get("id").asText());
+        }
+
+        List<Task> taskList = taskRepository.findAllById(rejectedTaskIds);
         if (!taskList.isEmpty()){
             for (Task task : taskList) {
                 deleteTask(task.getId());

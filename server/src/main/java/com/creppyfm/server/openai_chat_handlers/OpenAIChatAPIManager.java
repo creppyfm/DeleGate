@@ -3,7 +3,7 @@ package com.creppyfm.server.openai_chat_handlers;
 import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
 import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
 import com.creppyfm.server.model.Task;
-//import com.fasterxml.jackson.datatype.jsr310.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +17,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class OpenAIChatAPIManager {
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
@@ -42,29 +41,43 @@ public class OpenAIChatAPIManager {
                 .build();
 
         HttpClient client = HttpClient.newHttpClient();
-        var response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() == 200) {
-            OpenAIChatResponse openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
+        int maxTries = 3;
+        int currTries = 0;
+        boolean successfulResponse = false;
 
-            //TESTING
-            System.out.println(openAIChatResponse.toString());
+        while (!successfulResponse && currTries < maxTries){
+            try {
+                var response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-            if (openAIChatResponse.getChoices() != null && !openAIChatResponse.getChoices().isEmpty()) {
-                OpenAIChatResponse.ChatMessageWrapper choice = openAIChatResponse.getChoices().get(0);
-                String choiceString = choice.getMessage().getContent();
+                if (response.statusCode() == 200) {
+                    OpenAIChatResponse openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
 
-                //parse the JSON string into a List<List<Strings>>
-                tasks = objectMapper.readValue(choiceString, new TypeReference<List<List<String>>>() {});
+                    //TESTING
+                    System.out.println(openAIChatResponse.toString());
 
-            } else {
-                tasks.add(List.of("Sorry. I'm unable to think of any relevant tasks to complete your project. Try adding a bit more detail to your Project Description."));
+                    if (openAIChatResponse.getChoices() != null && !openAIChatResponse.getChoices().isEmpty()) {
+                        OpenAIChatResponse.ChatMessageWrapper choice = openAIChatResponse.getChoices().get(0);
+                        String choiceString = choice.getMessage().getContent();
+
+                        //parse the JSON string into a List<List<Strings>>
+                        tasks = objectMapper.readValue(choiceString, new TypeReference<List<List<String>>>() {});
+                        successfulResponse = true;
+
+                    } else {
+                        tasks.add(List.of("Sorry. I'm unable to think of any relevant tasks to complete your project. Try adding a bit more detail to your Project Description."));
+                    }
+                } else {
+                    System.out.println("See status code below:");
+                    System.out.println(response.statusCode());
+                }
+            } catch (JsonProcessingException e) {
+                currTries++;
+                if (currTries == maxTries) {
+                    System.out.println("Unable to parse response JSON: " + e.getMessage());
+                }
             }
-        } else {
-            System.out.println("See status code below:");
-            System.out.println(response.statusCode());
         }
-
         return tasks;
     }
 
@@ -128,8 +141,11 @@ public class OpenAIChatAPIManager {
                 "ONLY return the project title, description, and steps in the required format. " +
                 "Here is your prompt:\n" + prompt;
 
-        //TESTING
-        System.out.println(promptToSend);
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpRequest request;
+        HttpResponse<String> response;
+        OpenAIChatResponse openAIChatResponse = new OpenAIChatResponse();
+
 
         ChatMessage chatMessage = new ChatMessage();
         List<ChatMessage> messages = new ArrayList<>();
@@ -138,19 +154,38 @@ public class OpenAIChatAPIManager {
         messages.add(chatMessage);
         OpenAIChatRequest chatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 3000, 0);
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(chatRequest);
 
-        HttpRequest request = HttpRequest.newBuilder()
+        request = HttpRequest.newBuilder()
                 .uri(new URI(OPENAI_URL))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        int maxTries = 3;
+        int currTries = 0;
+        boolean successfulResponse = false;
 
-        return objectMapper.readValue(response.body(), OpenAIChatResponse.class);
+        while (!successfulResponse && currTries < maxTries) {
+            try {
+                response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
+                successfulResponse = true;
+
+            } catch (JsonProcessingException e) {
+                currTries++;
+                if (currTries == maxTries) {
+                    System.out.println("Unable to parse response JSON: " + e.getMessage());
+                }
+            }
+        }
+
+        if(openAIChatResponse == null) {
+            throw new IOException("Unable to parse OpenAI response after multiple attempts.");
+        }
+
+        return openAIChatResponse;
     }
 
     public Map<String, String> delegateTasks(Map<String, List<String>> memberStrengths, List<Task> tasks) throws IOException, InterruptedException {

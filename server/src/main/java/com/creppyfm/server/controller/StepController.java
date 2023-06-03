@@ -6,6 +6,7 @@ import com.creppyfm.server.service.ProjectService;
 import com.creppyfm.server.service.StepService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,8 +32,10 @@ public class StepController {
     private ProjectService projectService;
 
     @GetMapping
-    public ResponseEntity<List<Step>> getAllSteps(@RequestBody String projectId) {
-        return new ResponseEntity<List<Step>>(stepService.getAllSteps(projectId), HttpStatus.OK);
+    public ResponseEntity<List<Step>> getAllSteps(@RequestBody String projectId) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(projectId);
+        return new ResponseEntity<List<Step>>(stepService.getAllSteps(jsonNode.get("projectId").asText()), HttpStatus.OK);
     }
 
     @GetMapping("/{projectId}/{id}")
@@ -89,7 +92,7 @@ public class StepController {
     }
 
     @DeleteMapping("/delete-many")
-    public ResponseEntity<Void> deleteManySteps(@RequestBody List<String> rejectedSteps) {
+    public ResponseEntity<Void> deleteManySteps(@RequestBody List<String> rejectedSteps) throws JsonProcessingException {
         boolean isDeleted = stepService.deleteManySteps(rejectedSteps);
         if (isDeleted) {
             return new ResponseEntity<>(HttpStatus.OK);
