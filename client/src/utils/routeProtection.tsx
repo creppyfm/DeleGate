@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { User } from "../App";
+import { User } from "./GetUserData";
 
 type ProtectedRouteProps = {
   user: User;
