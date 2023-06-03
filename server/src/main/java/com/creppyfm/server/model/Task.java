@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Document(collection = "Task")
 @Data
@@ -109,7 +110,7 @@ public class Task {
     }
 
     public List<String> getAssignedUsers() {
-        return assignedUsers;
+        return Objects.requireNonNullElseGet(assignedUsers, ArrayList::new);
     }
 
     public void setAssignedUsers(List<String> assignedUsers) {

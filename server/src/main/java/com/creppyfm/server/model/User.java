@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Document(collection = "User")
 @Data
@@ -92,9 +93,8 @@ public class User {
     }
 
     public List<String> getCurrentTasks() {
-        return currentTasks;
+        return Objects.requireNonNullElseGet(currentTasks, ArrayList::new);
     }
-
     public void setCurrentTasks(List<String> currentTasks) {
         this.currentTasks = currentTasks;
     }
