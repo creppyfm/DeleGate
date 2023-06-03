@@ -1,4 +1,4 @@
-import { Card, Col, Container, ListGroup } from "react-bootstrap";
+import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { Step, Task, useProjectContext } from "../../utils/GetProjectData";
 
@@ -25,25 +25,29 @@ export function StepPage() {
 
   return (
     <Container>
-      <Col lg={12} xl={6}>
-        <Card>
-          <Card.Title>{title}</Card.Title>
-          <Card.Body>
-            <Card.Text>{description}</Card.Text>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col lg={12} xl={6}>
-        <ListGroup>
-          {taskList.length > 0 ? (
-            taskListWithData.map((task: Task) => {
-              return <ListGroup.Item>{task.title}</ListGroup.Item>;
-            })
-          ) : (
-            <ListGroup.Item>No Tasks Generated</ListGroup.Item>
-          )}
-        </ListGroup>
-      </Col>
+      <Row>
+        <Col lg={12} xl={6}>
+          <Card>
+            <Card.Title>{title}</Card.Title>
+            <Card.Body>
+              <Card.Text>{description}</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col lg={12} xl={6}>
+          <ListGroup>
+            {taskList.length > 0 ? (
+              taskListWithData.map((task: Task) => {
+                return <ListGroup.Item>{task.title}</ListGroup.Item>;
+              })
+            ) : (
+              <ListGroup.Item>
+                <Button className="align-self-end">Generate Tasks</Button>
+              </ListGroup.Item>
+            )}
+          </ListGroup>
+        </Col>
+      </Row>
     </Container>
   );
 }
