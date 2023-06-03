@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface StepRepository extends MongoRepository<Step, String> {
     Step findStepById(String id);
 
-    Step findByTaskListContaining(Task existingTask);
+    Step findByTaskListContaining(String taskId);
 
 }

@@ -51,8 +51,9 @@ public class StepService {
         return step;
     }
 
-    public List<Step> getAllSteps() {
-        return stepRepository.findAll();
+    public List<Step> getAllSteps(String projectId) {
+        Project project = projectRepository.findProjectById(projectId);
+        return project.getStepList();
     }
 
     public Step getStepById(String id) {
@@ -94,7 +95,13 @@ public class StepService {
 
             if (!existingStep.getTaskList().isEmpty()){
                 for (String taskId : existingStep.getTaskList()) {
-                    taskRepository.deleteById(taskId);
+                    Task task = taskRepository.findTaskById(taskId);
+                    //remove task from project.taskList
+                    if (project != null) {
+                        project.getTaskList().remove(task);
+                    }
+                    //remove task from taskRepository
+                    taskRepository.delete(task);
                 }
             }
             stepRepository.deleteById(id);

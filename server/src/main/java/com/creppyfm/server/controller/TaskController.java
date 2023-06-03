@@ -32,8 +32,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public List<Task> getAllTasks(@RequestBody String projectId) {
+        return taskService.getAllTasks(projectId);
     }
 
     @GetMapping("/{id}")

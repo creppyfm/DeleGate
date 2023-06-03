@@ -23,6 +23,11 @@ public class StepController {
     @Autowired
     private ProjectService projectService;
 
+    @GetMapping
+    public ResponseEntity<List<Step>> getAllSteps(@RequestBody String projectId) {
+        return new ResponseEntity<List<Step>>(stepService.getAllSteps(projectId), HttpStatus.OK);
+    }
+
     @GetMapping("/{projectId}/{id}")
     public ResponseEntity<Step> getStepById(@PathVariable String id) {
         Step step = stepService.getStepById(id);
