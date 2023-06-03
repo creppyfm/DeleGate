@@ -1,13 +1,13 @@
 import { FormEvent, useState } from "react";
 import { Button, Form, Spinner } from "react-bootstrap";
 
-import { ProjectList } from "./DashboardPage";
+import { Project } from "../../../utils/GetProjectData";
 
 type NewProjectFormProps = {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setShowPrompt: React.Dispatch<React.SetStateAction<boolean>>;
-  setList: React.Dispatch<React.SetStateAction<ProjectList>>;
+  setList: React.Dispatch<React.SetStateAction<Project[]>>;
 };
 
 export function NewProjectForm({
