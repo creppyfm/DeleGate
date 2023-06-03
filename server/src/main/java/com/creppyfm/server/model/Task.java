@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Document(collection = "Task")
 @Data
@@ -19,6 +20,7 @@ public class Task {
     @Id
     private String id;
     private String stepId;
+    private String projectId;
     private String title;
     private String description;
     private int weight;
@@ -53,6 +55,14 @@ public class Task {
 
     public void setStepId(String stepId) {
         this.stepId = stepId;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
     public void setWeight(int weight) {
@@ -100,7 +110,7 @@ public class Task {
     }
 
     public List<String> getAssignedUsers() {
-        return assignedUsers;
+        return Objects.requireNonNullElseGet(assignedUsers, ArrayList::new);
     }
 
     public void setAssignedUsers(List<String> assignedUsers) {

@@ -1,8 +1,14 @@
 package com.creppyfm.server.controller;
+
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.Step;
 import com.creppyfm.server.service.ProjectService;
 import com.creppyfm.server.service.StepService;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/steps")
@@ -37,6 +44,7 @@ public class StepController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @GetMapping("/{projectId}")
     public ResponseEntity<List<Step>> getStepsByProjectId(@PathVariable String projectId) {
         Project project = projectService.findProjectById(projectId);
@@ -90,19 +98,21 @@ public class StepController {
         }
     }
 
-
     /*
-    @PostMapping("/{id}/tasks/delegate")
-    public ResponseEntity<Project> delegateTasksForProject(@PathVariable String id) throws IOException, InterruptedException {
-        //projectService.assignTasksAutomatically(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-*/
+     * @PostMapping("/{id}/tasks/delegate")
+     * public ResponseEntity<Project> delegateTasksForProject(@PathVariable String
+     * id) throws IOException, InterruptedException {
+     * //projectService.assignTasksAutomatically(id);
+     * return new ResponseEntity<>(HttpStatus.OK);
+     * }
+     */
     @PostMapping("/tasks/generate")
     public ResponseEntity<Step> generateTasksForProject(@RequestBody String id) throws IOException {
-        stepService.generateTasksForStep(id);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode parsed = objectMapper.readTree(id);
+
+        stepService.generateTasksForStep(parsed.get("id").asText());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 }

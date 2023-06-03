@@ -26,7 +26,7 @@ public class Project {
     private Phase phase; //Not Started, In Progress, In Review, Completed
     private LocalDateTime created;
     private LocalDateTime updated;
-    private List<ProjectMembers> projectMembers = new ArrayList<>();
+    private List<ProjectMembers> projectMembers;
     @DocumentReference
     private List<Task> taskList;
     @DocumentReference
@@ -95,8 +95,9 @@ public class Project {
     }
 
     public List<ProjectMembers> getProjectMembers() {
-        return projectMembers;
+        return Objects.requireNonNullElseGet(projectMembers, ArrayList::new);
     }
+
 
     public void addProjectMember (ProjectMembers projectMember) {
         projectMembers.add(projectMember);
@@ -135,7 +136,7 @@ public class Project {
     }
 
     public List<Step> getStepList() {
-        return stepList;
+        return Objects.requireNonNullElseGet(stepList, ArrayList::new);
     }
 
     public void setStepList(List<Step> stepList) {
