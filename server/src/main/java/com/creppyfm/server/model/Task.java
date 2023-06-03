@@ -19,6 +19,7 @@ public class Task {
     @Id
     private String id;
     private String stepId;
+    private String projectId;
     private String title;
     private String description;
     private int weight;
@@ -53,6 +54,14 @@ public class Task {
 
     public void setStepId(String stepId) {
         this.stepId = stepId;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
     public void setWeight(int weight) {
