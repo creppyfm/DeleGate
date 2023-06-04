@@ -80,10 +80,6 @@ public class OpenAIChatAPIManager {
         return tasks;
     }
 
-    public List<List<String>> decomposesTask(String prompt) throws IOException, InterruptedException {
-        return new ArrayList<>();
-    }
-
     public ProjectDataTransferObject buildsProjectDataTransferObject(String prompt) throws IOException, URISyntaxException, InterruptedException {
         OpenAIChatResponse openAIChatResponse = sendChatMessageToOpenAI(prompt);
 
