@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { DashboardPage } from "./default/DashboardPage";
 import { ProjectPage } from "./project/ProjectPage";
-import { TaskPage } from "./task/TaskPage";
-import { StepPage } from "../step/StepPage";
+import { TaskPage } from "./project/step/task/TaskPage";
+import { StepPage } from "./project/step/StepPage";
 import { Project, ProjectContext } from "../../utils/GetProjectData";
 import { useState } from "react";
 
