@@ -187,7 +187,7 @@ public class StepService {
                 if (list.size() == 2) {
                     String taskTitle = list.get(0);
                     String taskDescription = list.get(1);
-                    Task task = taskService.createTask(id, taskTitle, taskDescription, 0, Phase.NOT_STARTED);
+                    Task task = taskService.createTask(id, taskTitle, taskDescription, 0, 0, Phase.NOT_STARTED);
                     taskList.add(task);
                     taskIds.add(task.getId());
                 }

@@ -32,11 +32,11 @@ public class Task {
 
 
     //manual constructor for associating 'Task' with 'Project'
-    public Task(String stepId, String title, String description, int weight, Phase phase, LocalDateTime created, LocalDateTime updated) {
+    public Task(String stepId, String title, String description, int generation, int weight, Phase phase, LocalDateTime created, LocalDateTime updated) {
         this.stepId = stepId;
         this.title = title;
         this.description = description;
-        this.generation = 0;
+        this.generation = generation;
         this.weight = weight;
         this.phase = phase;
         this.created = created;
