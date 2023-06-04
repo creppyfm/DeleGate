@@ -27,8 +27,7 @@ public class OpenAIChatAPIManager {
         List<List<String>> tasks = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
         List<ChatMessage> messages = List.of(new ChatMessage("system", "You are the world's best project manager. " +
-                        "You specialize in decomposing project steps into detailed, actionable tasks. Generate a list of no more than 10 tasks" +
-                        " to complete the step."),
+                        "You specialize in decomposing project steps or tasks into detailed, actionable tasks or subtasks. "), //removed: "Generate a list of no more than 10 tasks to complete the step."
                 new ChatMessage("user", prompt));
         OpenAIChatRequest openAIChatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 3000, 0); //use the gpt-3.5-turbo model
         String input = objectMapper.writeValueAsString(openAIChatRequest);
