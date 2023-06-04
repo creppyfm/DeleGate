@@ -1,8 +1,11 @@
 import { Nav } from "react-bootstrap";
+import styles from "./Footer.module.css";
 
 export function Footer() {
   return (
-    <footer className="d-flex justify-content-start align-items-center pb-3 mb-4 w-100">
+    <footer
+      className={`d-flex justify-content-start align-items-center pb-3 w-100 ${styles.footer}`}
+    >
       <div className="ms-5">
         <a
           href="#"
