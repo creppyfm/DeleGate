@@ -4,6 +4,7 @@ import com.creppyfm.server.enumerated.Phase;
 import com.creppyfm.server.model.Project;
 import com.creppyfm.server.model.Step;
 import com.creppyfm.server.model.Task;
+import com.creppyfm.server.openai_chat_handlers.OpenAIChatAPIManager;
 import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.StepRepository;
 import com.creppyfm.server.repository.TaskRepository;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,68 @@ public class TaskService {
                 .first();
 
         return task;
+    }
+
+    public void decomposesTask(String id) throws IOException {
+        Task task = taskRepository.findTaskById(id);
+
+        if (task.getGeneration() < 1) {
+            String taskInfo = String.format("Title: %s\nDescription: %s\n\nList of Subtasks:",
+                    task.getTitle(), task.getDescription());
+            String prompt = "Read the title and description of the Task included below, and generate a list " +
+                    "of no more than 5 subtasks to complete the Task. Each subtask should be granular, descriptive, and actionable. " +
+                    "The format of your response should be a JSON array, where each element is an array containing two " +
+                    "string - the title of the subtask as the first element, and a 3 to 5 sentence description of the " +
+                    "subtask as the second element. The format of each subtask should match the following: \n" +
+                    "[\"Subtask title\", \"Subtask description.\"]\n" +
+                    "An example of the complete response format is:\n" +
+                    "[\n" +
+                    "[\"Subtask one title\", \"Subtask one description\"],\n" +
+                    "[\"Subtask two title\", \"Subtask two description\"],\n" +
+                    "[\"Subtask three title\", \"Subtask three description\"]\n" +
+                    "...\n" +
+                    "]\n" +
+                    "NOTE: Do not include any extra words, phrases, or sentences unrelated to the subtasks you are generating. " +
+                    "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
+                    "or ending your response. Do not include numbering for the subtasks. Do not include a comma after " +
+                    "the final sub array (the final subtask.) ONLY return the list of generated subtasks " +
+                    "in the format requested above.\n" +
+                    "Here is the Task information:\n" +
+                    taskInfo;
+
+            OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
+            List<List<String>> subtasks;
+            try {
+                subtasks = openAIChatAPIManager.buildsTaskList(prompt);
+            } catch (IOException | InterruptedException e) {
+                throw new IOException(e);
+            }
+
+            Step step = stepRepository.findByTaskListContaining(id);
+            Project project = projectRepository.findByStepListContaining(step);
+            List<Task> subtaskList = new ArrayList<>();
+            List<String> subtaskIds = new ArrayList<>();
+            for (List<String> subList : subtasks) {
+                if (subList.size() == 2) {
+                    String subtaskTitle = subList.get(0);
+                    String subtaskDescription = subList.get(1);
+                    Task subtask = createTask(step.getId(), subtaskTitle, subtaskDescription, 0, Phase.NOT_STARTED);
+                    subtask.setProjectId(project.getId());
+                    subtask.setGeneration(1);
+                    subtaskList.add(subtask);
+                    subtaskIds.add(subtask.getId());
+                }
+            }
+
+            int projectTaskIndex = project.getTaskList().indexOf(task);
+            project.getTaskList().remove(task);
+            project.getTaskList().addAll(projectTaskIndex, subtaskList);
+            int stepTaskIdIndex = step.getTaskList().indexOf(task.getId());
+            step.getTaskList().remove(task.getId());
+            step.getTaskList().addAll(stepTaskIdIndex, subtaskIds);
+            taskRepository.delete(task);
+
+        }
     }
 
     public List<Task> getAllTasks(String projectId) {

@@ -23,6 +23,7 @@ public class Task {
     private String projectId;
     private String title;
     private String description;
+    private int generation;
     private int weight;
     private Phase phase;
     private LocalDateTime created;
@@ -35,6 +36,7 @@ public class Task {
         this.stepId = stepId;
         this.title = title;
         this.description = description;
+        this.generation = 0;
         this.weight = weight;
         this.phase = phase;
         this.created = created;
@@ -63,6 +65,14 @@ public class Task {
 
     public void setProjectId(String projectId) {
         this.projectId = projectId;
+    }
+
+    public int getGeneration() {
+        return generation;
+    }
+
+    public void setGeneration(int generation) {
+        this.generation = generation;
     }
 
     public void setWeight(int weight) {

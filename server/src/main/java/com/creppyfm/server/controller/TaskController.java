@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -32,6 +33,12 @@ public class TaskController {
 
         return new ResponseEntity<Task>(taskService.
                 createTask(stepId, title, description, weight, phase), HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Task> decomposeTask(@PathVariable("id") String id) throws IOException {
+        taskService.decomposesTask(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping
