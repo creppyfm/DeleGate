@@ -27,7 +27,7 @@ export function ProjectCard({ project, timeout }: ProjectCardProps) {
         to={`/dashboard/project/${projectId}`}
         style={{ textDecoration: "none" }}
       >
-        <Card className="pt-3 my-2 text-decoration-none">
+        <Card className="pt-3 my-2 pe-0 text-decoration-none">
           <Card.Title className="ps-3">{title}</Card.Title>
           <Card.Footer className="d-flex justify-content-around p-0 pt-2">
             <Card.Text>
