@@ -23,7 +23,7 @@ export function DashboardPage() {
 
   const processedList = useMemo(
     () => (
-      <div className={`pe-3 overflow-auto ${styles.h80}`}>
+      <div className="overflow-auto">
         {list.map((project, index) => {
           return (
             <ProjectCard
@@ -89,7 +89,10 @@ export function DashboardPage() {
   }, [list]);
 
   return (
-    <Container fluid="lg" className="mt-3 rounded position-relative h-100">
+    <Container
+      fluid="lg"
+      className={`mt-3 rounded position-relative ${styles["dynamic-height"]}`}
+    >
       <Row className="g-4 h-100">
         <Col lg={12} xl={7}>
           <h2 className="text-light text-center mt-3 mb-4">Quick Look</h2>
