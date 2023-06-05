@@ -28,11 +28,12 @@ public class TaskController {
         String stepId = task.getStepId();
         String title = task.getTitle();
         String description = task.getDescription();
+        int generation = task.getGeneration();
         int weight = task.getWeight();
         Phase phase = task.getPhase();
 
         return new ResponseEntity<Task>(taskService.
-                createTask(stepId, title, description, weight, phase), HttpStatus.OK);
+                createTask(stepId, title, description, generation, weight, phase), HttpStatus.OK);
     }
 
     @PostMapping("/{id}")

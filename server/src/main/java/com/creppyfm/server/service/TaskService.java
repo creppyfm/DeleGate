@@ -35,8 +35,8 @@ public class TaskService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public Task createTask(String stepId, String title, String description, int weight, Phase phase) {
-        Task task = taskRepository.insert(new Task(stepId, title, description, weight, phase, LocalDateTime.now(), LocalDateTime.now())); //insert into 'Task' collection
+    public Task createTask(String stepId, String title, String description, int generation, int weight, Phase phase) {
+        Task task = taskRepository.insert(new Task(stepId, title, description, generation, weight, phase, LocalDateTime.now(), LocalDateTime.now())); //insert into 'Task' collection
         Project project = projectRepository.findByStepListContaining(stepRepository.findStepById(stepId));
         mongoTemplate.update(Step.class) //insert into 'Step->taskList' array
                 .matching(Criteria.where("id").is(stepId))
@@ -66,8 +66,14 @@ public class TaskService {
                     "[\n" +
                     "[\"Subtask one title\", \"Subtask one description\"],\n" +
                     "[\"Subtask two title\", \"Subtask two description\"],\n" +
-                    "[\"Subtask three title\", \"Subtask three description\"]\n" +
-                    "...\n" +
+                    "[\"Subtask three title\", \"Subtask three description\"],\n" +
+                    "[\"Subtask four title\", \"Subtask four description\"],\n" +
+                    "[\"Subtask five title\", \"Subtask five description\"],\n" +
+                    "[\"Subtask six title\", \"Subtask six description\"],\n" +
+                    "[\"Subtask seven title\", \"Subtask seven description\"],\n" +
+                    "[\"Subtask eight title\", \"Subtask eight description\"],\n" +
+                    "[\"Subtask nine title\", \"Subtask nine description\"],\n" +
+                    "[\"Subtask ten title\", \"Subtask ten description\"]\n" +
                     "]\n" +
                     "NOTE: Do not include any extra words, phrases, or sentences unrelated to the subtasks you are generating. " +
                     "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
@@ -93,21 +99,18 @@ public class TaskService {
                 if (subList.size() == 2) {
                     String subtaskTitle = subList.get(0);
                     String subtaskDescription = subList.get(1);
-                    Task subtask = createTask(step.getId(), subtaskTitle, subtaskDescription, 0, Phase.NOT_STARTED);
+                    Task subtask = createTask(step.getId(), subtaskTitle, subtaskDescription, 1, 0, Phase.NOT_STARTED);
                     subtask.setProjectId(project.getId());
-                    subtask.setGeneration(1);
                     subtaskList.add(subtask);
                     subtaskIds.add(subtask.getId());
                 }
             }
 
             int projectTaskIndex = project.getTaskList().indexOf(task);
-            project.getTaskList().remove(task);
             project.getTaskList().addAll(projectTaskIndex, subtaskList);
             int stepTaskIdIndex = step.getTaskList().indexOf(task.getId());
-            step.getTaskList().remove(task.getId());
             step.getTaskList().addAll(stepTaskIdIndex, subtaskIds);
-            taskRepository.delete(task);
+            deleteTask(task.getId());
 
         }
     }
