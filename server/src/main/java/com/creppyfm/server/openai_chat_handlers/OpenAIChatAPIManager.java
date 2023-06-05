@@ -29,7 +29,7 @@ public class OpenAIChatAPIManager {
         List<ChatMessage> messages = List.of(new ChatMessage("system", "You are the world's best project manager. " +
                         "You specialize in decomposing project steps or tasks into detailed, actionable tasks or subtasks. "), //removed: "Generate a list of no more than 10 tasks to complete the step."
                 new ChatMessage("user", prompt));
-        OpenAIChatRequest openAIChatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 3000, 0); //use the gpt-3.5-turbo model
+        OpenAIChatRequest openAIChatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 4000, 0); //use the gpt-3.5-turbo model
         String input = objectMapper.writeValueAsString(openAIChatRequest);
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
@@ -62,6 +62,10 @@ public class OpenAIChatAPIManager {
                         //parse the JSON string into a List<List<Strings>>
                         tasks = objectMapper.readValue(choiceString, new TypeReference<List<List<String>>>() {});
                         successfulResponse = true;
+
+                        //counting failed attempts
+                        System.out.println("\n\n\nNumber of tries: " + currTries + "\n\n\n");
+
 
                     } else {
                         tasks.add(List.of("Sorry. I'm unable to think of any relevant tasks to complete your project. Try adding a bit more detail to your Project Description."));
@@ -111,10 +115,7 @@ public class OpenAIChatAPIManager {
     }
 
     private OpenAIChatResponse sendChatMessageToOpenAI(String prompt) throws IOException, InterruptedException, URISyntaxException {
-        String promptToSend = "You are the world's best project manager AI. You specialize in " +
-                "analyzing brief prompts containing needs and requirements, and producing project titles, " +
-                "project descriptions, and high-level steps necessary to complete the project. " +
-                "Your task is to analyze the prompt provided below, create a project title, create a project description, " +
+        String promptToSend = "Your task is to analyze the prompt provided below, create a project title, create a project description, " +
                 "and create a list of no more than 10 high-level steps to complete the project. " +
                 "The format by which you return your response must match the following JSON structure:\n " +
                 "{\"title\": \"Your project title\",\n" +
@@ -122,7 +123,7 @@ public class OpenAIChatAPIManager {
                 "\"steps\": [\n" +
                 "[\"Step one title\", \"Step one description\"],\n" +
                 "[\"Step two title\", \"Step two description\"],\n" +
-                "...]}.\n" +
+                "...]}\n" +
                 "In the steps array, each subarray should contain two elements. The first element of the subarray should be the step's title, " +
                 "and the second should be the step's description. " +
                 "Below is an example of the required format for your response: \n" +
@@ -133,7 +134,7 @@ public class OpenAIChatAPIManager {
                 "[\"Step two title\", \"Step two description\"],\n" +
                 "[\"Step three title\", \"Step three description\"]\n" +
                 "...]\n" +
-                "}." +
+                "}" +
                 "\"NOTE: Do not include any conversational phrases or sentences in your response. " +
                 "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
                 "or ending your response. Do not include numbering for the steps. " +
@@ -145,12 +146,12 @@ public class OpenAIChatAPIManager {
         HttpResponse<String> response;
         OpenAIChatResponse openAIChatResponse = new OpenAIChatResponse();
 
+        List<ChatMessage> messages = List.of(
+                new ChatMessage("system", "You are the world's best project manager AI. You specialize in " +
+                    "analyzing brief prompts containing needs and requirements, and producing project titles, " +
+                    "project descriptions, and high-level steps necessary to complete the project. "),
+                new ChatMessage("user", promptToSend));
 
-        ChatMessage chatMessage = new ChatMessage();
-        List<ChatMessage> messages = new ArrayList<>();
-        chatMessage.setRole("user");
-        chatMessage.setContent(promptToSend);
-        messages.add(chatMessage);
         OpenAIChatRequest chatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 3000, 0);
 
         String requestBody = objectMapper.writeValueAsString(chatRequest);
@@ -171,6 +172,9 @@ public class OpenAIChatAPIManager {
                 response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
                 successfulResponse = true;
+
+                //counting failed attempts
+                System.out.println("\n\n\nNumber of tries: " + currTries + "\n\n\n");
 
             } catch (JsonProcessingException e) {
                 currTries++;

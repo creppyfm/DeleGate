@@ -160,14 +160,20 @@ public class StepService {
                     "[\n" +
                     "[\"Task one title\", \"Task one description\"],\n" +
                     "[\"Task two title\", \"Task two description\"],\n" +
-                    "[\"Task three title\", \"Task three description\"]\n" +
-                    "...\n" +
-                    "].\n" +
+                    "[\"Task three title\", \"Task three description\"],\n" +
+                    "[\"Task four title\", \"Task four description\"],\n" +
+                    "[\"Task five title\", \"Task five description\"],\n" +
+                    "[\"Task six title\", \"Task six description\"],\n" +
+                    "[\"Task seven title\", \"Task seven description\"],\n" +
+                    "[\"Task eight title\", \"Task eight description\"],\n" +
+                    "[\"Task nine title\", \"Task nine description\"],\n" +
+                    "[\"Task ten title\", \"Task ten description\"]\n" +
+                    "]\n" +
                     "NOTE: Do not include any extra words, phrases, or sentences unrelated to the tasks you are generating."
                     +
                     "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
                     "or ending your response. Do not include numbering for the tasks. Do not include a comma after " +
-                    "the final sub array (the final task.) ONLY return the list of generated tasks " +
+                    "the final array (the final task.) ONLY return the list of generated tasks " +
                     "in the format requested above.\n" +
                     "Here is the Step information:\n"
                     + stepInfo;

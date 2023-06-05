@@ -66,8 +66,14 @@ public class TaskService {
                     "[\n" +
                     "[\"Subtask one title\", \"Subtask one description\"],\n" +
                     "[\"Subtask two title\", \"Subtask two description\"],\n" +
-                    "[\"Subtask three title\", \"Subtask three description\"]\n" +
-                    "...\n" +
+                    "[\"Subtask three title\", \"Subtask three description\"],\n" +
+                    "[\"Subtask four title\", \"Subtask four description\"],\n" +
+                    "[\"Subtask five title\", \"Subtask five description\"],\n" +
+                    "[\"Subtask six title\", \"Subtask six description\"],\n" +
+                    "[\"Subtask seven title\", \"Subtask seven description\"],\n" +
+                    "[\"Subtask eight title\", \"Subtask eight description\"],\n" +
+                    "[\"Subtask nine title\", \"Subtask nine description\"],\n" +
+                    "[\"Subtask ten title\", \"Subtask ten description\"]\n" +
                     "]\n" +
                     "NOTE: Do not include any extra words, phrases, or sentences unrelated to the subtasks you are generating. " +
                     "Do not include phrases such as \"Sure, I can do that,\" or any phrases throughout " +
