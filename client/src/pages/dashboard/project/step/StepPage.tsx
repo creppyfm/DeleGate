@@ -6,7 +6,6 @@ import {
   ListGroup,
   Row,
   Spinner,
-  Stack,
 } from "react-bootstrap";
 import { NavLink, useParams } from "react-router-dom";
 import {
@@ -71,15 +70,17 @@ export function StepPage() {
 
   return (
     <Container
-      className={`text-center d-flex flex-column my-3 position-relative  ${styles["dynamic-height"]}`}
+      className={`d-flex flex-column my-3 ${styles["dynamic-height"]}`}
     >
-      <NavLink
-        to={`/dashboard/project/${step.projectId}`}
-        className="position-absolute top-0 start-0 text-success text-decoration-none fs-3"
-      >
-        <i className="bi bi-chevron-left" /> Project
-      </NavLink>
-      <h1 className="text-light mb-4">{step.title}</h1>
+      <Row className="text-start">
+        <NavLink
+          to={`/dashboard/project/${step.projectId}`}
+          className="text-success text-decoration-none fs-3"
+        >
+          <i className="bi bi-chevron-left" /> Project
+        </NavLink>
+      </Row>
+      <h1 className="text-light text-center mb-4">{step.title}</h1>
       <Card className="overflow-auto">
         <Card.Header as="h3">{step.description}</Card.Header>
         <ListGroup>
@@ -103,17 +104,24 @@ export function StepPage() {
                 <ListGroup.Item action key={task.id}>
                   <Container className="p-0 m-0">
                     <Row className="mb-4">
-                      <Col lg={12} xl={4}>
-                        <div className="fw-bold">
-                          {task.title}
-                          <div className={phaseColor}>{task.phase}</div>
-                        </div>
-                        <Button variant="success" className="text-light w-100">
-                          Start Task
-                        </Button>
+                      <Col md={12} lg={3}>
+                        <Row md={2} lg={1}>
+                          <Col className="fw-bold">
+                            {task.title}
+                            <div className={phaseColor}>{task.phase}</div>
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="success"
+                              className="text-light w-100"
+                            >
+                              Start Task
+                            </Button>
+                          </Col>
+                        </Row>
                       </Col>
-                      <Col lg={12} xl={8}>
-                        <div className="">{task.description}</div>
+                      <Col md={12} lg={9} className="d-flex align-items-center">
+                        <div>{task.description}</div>
                       </Col>
                     </Row>
                   </Container>

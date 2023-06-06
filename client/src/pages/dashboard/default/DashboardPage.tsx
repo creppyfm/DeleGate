@@ -13,10 +13,8 @@ export type ProjectPreview = {
   description: string;
 };
 
-type ProjectPreviewList = ProjectPreview[];
-
 export function DashboardPage() {
-  const [list, setList] = useState<ProjectPreviewList>([]);
+  const [list, setList] = useState<ProjectPreview[]>([]);
   const [showPrompt, setShowPrompt] = useState(false);
   const [loading, setLoading] = useState(true);
   const fetchingStatus = useRef(false);
@@ -49,9 +47,9 @@ export function DashboardPage() {
     try {
       const response = await fetch("/projects");
       if (response.ok) {
-        const data: ProjectPreviewList = await response.json();
+        const data: ProjectPreview[] = await response.json();
         if (data.length > 0) {
-          const fetchedList: ProjectPreviewList = [];
+          const fetchedList: ProjectPreview[] = [];
           data.forEach((project) => {
             fetchedList.push(project);
           });
@@ -89,44 +87,47 @@ export function DashboardPage() {
   }, [list]);
 
   return (
-    <Container
-      fluid="lg"
-      className={`mt-3 rounded position-relative ${styles["dynamic-height"]}`}
-    >
-      <Row className="g-4 h-100">
-        <Col lg={12} xl={7}>
-          <h2 className="text-light text-center mt-3 mb-4">Quick Look</h2>
-          <Card>
-            <Card.Body>
-              <Card.Title as="h3" className="text-center">
-                Heads Up
-              </Card.Title>
-              <Card.Subtitle>Aggregate Data</Card.Subtitle>
-              <Card.Text className="mt-3">
-                Over time this section will expand.
-              </Card.Text>
-              <Card.Text>Charts, shorcuts, you name it.</Card.Text>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={12} xl={5} className="h-100">
-          <h2 className="text-light text-center my-3">Open Projects</h2>
-          {loading ? loadingElement : processedList}
-        </Col>
-      </Row>
-      <Button
-        size="lg"
-        variant="outline-success"
-        onClick={() => setShowPrompt(true)}
-        className="position-absolute top-0"
-      >
-        <span>Start New Project</span>
-      </Button>
-      <NewProjectModal
-        showPrompt={showPrompt}
-        setShowPrompt={setShowPrompt}
-        setList={setList}
-      />
-    </Container>
+    <>
+      <Container className={`mt-3 rounded position-relative h-100`}>
+        <Row>
+          <Col>
+            <Button
+              size="lg"
+              variant="outline-success"
+              onClick={() => setShowPrompt(true)}
+              className=""
+            >
+              <span>Start New Project</span>
+            </Button>
+          </Col>
+        </Row>
+        <Row className="g-4">
+          <Col lg={12} xl={7} xxl={6}>
+            <h2 className="text-light text-center mt-3 mb-4">Quick Look</h2>
+            <Card>
+              <Card.Body>
+                <Card.Title as="h3" className="text-center">
+                  Heads Up
+                </Card.Title>
+                <Card.Subtitle>Aggregate Data</Card.Subtitle>
+                <Card.Text className="mt-3">
+                  Over time this section will expand.
+                </Card.Text>
+                <Card.Text>Charts, shorcuts, you name it.</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={12} xl={5} xxl={6} className="h-100">
+            <h2 className="text-light text-center my-3">Open Projects</h2>
+            {loading ? loadingElement : processedList}
+          </Col>
+        </Row>
+        <NewProjectModal
+          showPrompt={showPrompt}
+          setShowPrompt={setShowPrompt}
+          setList={setList}
+        />
+      </Container>
+    </>
   );
 }

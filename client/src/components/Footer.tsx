@@ -4,7 +4,7 @@ import styles from "./Footer.module.css";
 export function Footer() {
   return (
     <footer
-      className={`d-flex justify-content-start align-items-center pb-3 w-100 ${styles.footer}`}
+      className={`d-flex justify-content-start align-items-center mt-auto pb-3 w-100 ${styles.footer}`}
     >
       <div className="ms-5">
         <a

@@ -2,12 +2,12 @@ import { Modal } from "react-bootstrap";
 import { NewProjectForm } from "./NewProjectForm";
 import { useState } from "react";
 
-import { ProjectList } from "./DashboardPage";
+import { ProjectPreview } from "./DashboardPage";
 
 type NewProjectModalProps = {
   showPrompt: boolean;
   setShowPrompt: React.Dispatch<React.SetStateAction<boolean>>;
-  setList: React.Dispatch<React.SetStateAction<ProjectList>>;
+  setList: React.Dispatch<React.SetStateAction<ProjectPreview[]>>;
 };
 
 export function NewProjectModal({

@@ -10,13 +10,15 @@ export function DashboardRouter() {
   const [project, setProject] = useState<Project | null>(null);
 
   return (
-    <ProjectContext.Provider value={{ project, setProject }}>
-      <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/project/:id" element={<ProjectPage />} />
-        <Route path="/step/:id" element={<StepPage />} />
-        <Route path="/task/:id" element={<TaskPage />} />
-      </Routes>
-    </ProjectContext.Provider>
+    <main className="">
+      <ProjectContext.Provider value={{ project, setProject }}>
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/project/:id" element={<ProjectPage />} />
+          <Route path="/step/:id" element={<StepPage />} />
+          <Route path="/task/:id" element={<TaskPage />} />
+        </Routes>
+      </ProjectContext.Provider>
+    </main>
   );
 }

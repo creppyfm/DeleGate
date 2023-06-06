@@ -43,17 +43,17 @@ export function ProjectPage() {
   }, [project]);
 
   return (
-    <Container
-      className={`p-0 overflow-hidden my-0 ${styles["dynamic-height"]}`}
-    >
-      <h1 className="text-center text-light mb-5">
-        {project && !loading ? project.title : "Loading Project..."}
-      </h1>
+    <Container className={`d-flex flex-column ${styles["dynamic-height"]}`}>
+      <Row>
+        <h1 className="text-center text-light mb-5">
+          {project && !loading ? project.title : "Loading Project..."}
+        </h1>
+      </Row>
 
-      <Row lg={1} xl={2} style={{ height: "inherit" }}>
-        <Col className={`overflow-auto ${styles["card-height"]}`}>
-          <Stack direction="vertical" className="pb-5" gap={3}>
-            <Card bg="light" className="rounded-4">
+      <Row className="mb-1 d-flex overflow-auto h-100">
+        <Col lg={12} xl={6}>
+          <Stack direction="vertical" className="mb-4" gap={4}>
+            <Card className="rounded-4">
               <Card.Header as="h3">Summary</Card.Header>
               <Card.Body>
                 <Card.Title></Card.Title>
@@ -70,7 +70,7 @@ export function ProjectPage() {
                     Updated:{" "}
                     {project &&
                       !loading &&
-                      new Date(project.updated).toISOString()}
+                      new Date(project.updated).toLocaleString()}
                   </span>
                 </div>
               </Card.Footer>
@@ -101,15 +101,15 @@ export function ProjectPage() {
             </ListGroup>
           </Stack>
         </Col>
-        <Col className={styles["card-height"]}>
-          <Card style={{ height: "inherit" }}>
-            <Card.Header as="h3">Tasks</Card.Header>
-            <ListGroup variant="flush" className="overflow-auto">
-              {project?.taskList.map((task) => {
-                return <ListGroup.Item action>{task.title}</ListGroup.Item>;
-              })}
-            </ListGroup>
-          </Card>
+        <Col className="d-flex flex-column" lg={12} xl={6}>
+          <ListGroup variant="flush" className="rounded-4 overflow-auto">
+            <ListGroup.Item>
+              <h3>Tasks</h3>
+            </ListGroup.Item>
+            {project?.taskList.map((task) => {
+              return <ListGroup.Item action>{task.title}</ListGroup.Item>;
+            })}
+          </ListGroup>
         </Col>
       </Row>
     </Container>
