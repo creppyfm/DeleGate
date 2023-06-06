@@ -114,7 +114,7 @@ public class OpenAIChatAPIManager {
         return projectDTO;
     }
 
-    private OpenAIChatResponse sendChatMessageToOpenAI(String prompt) throws IOException, InterruptedException, URISyntaxException {
+    public OpenAIChatResponse sendChatMessageToOpenAI(String prompt) throws IOException, InterruptedException, URISyntaxException {
         String promptToSend = "Your task is to analyze the prompt provided below, create a project title, create a project description, " +
                 "and create a list of no more than 10 high-level steps to complete the project. " +
                 "The format by which you return your response must match the following JSON structure:\n " +
@@ -189,6 +189,39 @@ public class OpenAIChatAPIManager {
         }
 
         return openAIChatResponse;
+    }
+
+    public ChatMessage callOpenAIChat(Conversation conversation) throws IOException, InterruptedException {
+        List<ChatMessage> messages = conversation.getMessages();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        OpenAIChatRequest openAIChatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 4000, 0);
+        String input = objectMapper.writeValueAsString(openAIChatRequest);
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(OPENAI_URL))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
+                .POST(HttpRequest.BodyPublishers.ofString(input))
+                .build();
+
+        HttpClient client = HttpClient.newHttpClient();
+        var response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+        // Parse response
+        if (response.statusCode() == 200) {
+            OpenAIChatResponse openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
+            // Get the chat message from the assistant
+            if (!openAIChatResponse.getChoices().isEmpty()) {
+                String assistantContent = openAIChatResponse.getChoices().get(0).getMessage().getContent();
+                // Create and return a ChatMessage object with the assistant's response
+                return new ChatMessage("assistant", assistantContent);
+            } else {
+                throw new IOException("Assistant didn't provide a response");
+            }
+        } else {
+            throw new IOException("Response from OpenAI was not successful: " + response.statusCode());
+        }
     }
 
     public Map<String, String> delegateTasks(Map<String, List<String>> memberStrengths, List<Task> tasks) throws IOException, InterruptedException {
