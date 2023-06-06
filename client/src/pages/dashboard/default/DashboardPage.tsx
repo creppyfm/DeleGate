@@ -3,7 +3,6 @@ import { ProjectCard } from "./ProjectCard";
 import { v4 as uuidv4 } from "uuid";
 import { NewProjectModal } from "./NewProjectModal";
 import { useEffect, useState, useMemo, useRef } from "react";
-import styles from "./Dashboard.module.css";
 
 export type ProjectPreview = {
   projectId: string;
@@ -88,7 +87,7 @@ export function DashboardPage() {
 
   return (
     <>
-      <Container className={`mt-3 rounded position-relative h-100`}>
+      <Container className={`mt-3 rounded h-100`}>
         <Row>
           <Col>
             <Button
