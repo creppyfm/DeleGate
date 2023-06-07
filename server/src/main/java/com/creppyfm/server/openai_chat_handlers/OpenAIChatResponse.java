@@ -24,6 +24,8 @@ public class OpenAIChatResponse {
     private Usage usage;
     @JsonProperty("choices")
     private List<ChatMessageWrapper> choices;
+    @JsonProperty("choices")
+    private List<ChatWrapper> chatChoices;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ChatMessageWrapper {
@@ -38,6 +40,20 @@ public class OpenAIChatResponse {
             this.message = message;
         }
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ChatWrapper {
+        @JsonProperty("delta")
+        private ChatMessage delta;
+
+        public ChatMessage getDelta() {
+            return delta;
+        }
+        public void setDelta(ChatMessage message) {
+            this.delta = message;
+        }
+    }
+
 
     /*
     * To see raw output for testing purposes.

@@ -78,7 +78,7 @@ public class ProjectService {
     * */
     public Project createsProjectAndGeneratesSteps(String userId, String prompt) throws IOException, URISyntaxException, InterruptedException {
         OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
-        ProjectDataTransferObject projectDTO = new ProjectDataTransferObject();
+        ProjectDataTransferObject projectDTO;
         projectDTO = openAIChatAPIManager.buildsProjectDataTransferObject(prompt);
 
         String title = projectDTO.getTitle();

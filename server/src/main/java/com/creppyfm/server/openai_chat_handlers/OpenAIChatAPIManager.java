@@ -3,12 +3,19 @@ package com.creppyfm.server.openai_chat_handlers;
 import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
 import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
 import com.creppyfm.server.model.Task;
+import com.creppyfm.server.repository.ConversationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.net.URI;
@@ -17,6 +24,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
+import java.util.concurrent.Executors;
 
 public class OpenAIChatAPIManager {
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
@@ -191,38 +199,49 @@ public class OpenAIChatAPIManager {
         return openAIChatResponse;
     }
 
-    public ChatMessage callOpenAIChat(Conversation conversation) throws IOException, InterruptedException {
+    public void callOpenAIChat(Conversation conversation, SseEmitter emitter, ConversationRepository conversationRepository) throws IOException, InterruptedException {
         List<ChatMessage> messages = conversation.getMessages();
         ObjectMapper objectMapper = new ObjectMapper();
 
         OpenAIChatRequest openAIChatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 4000, 0);
+        openAIChatRequest.setStream(true);
         String input = objectMapper.writeValueAsString(openAIChatRequest);
 
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(OPENAI_URL))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
-                .POST(HttpRequest.BodyPublishers.ofString(input))
+        WebClient webClient = WebClient.builder()
+                .baseUrl(OPENAI_URL)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + dotenv.get("OPENAI_API_KEY"))
                 .build();
 
-        HttpClient client = HttpClient.newHttpClient();
-        var response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        StringBuilder contentBuilder = new StringBuilder();
 
-        // Parse response
-        if (response.statusCode() == 200) {
-            OpenAIChatResponse openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
-            // Get the chat message from the assistant
-            if (!openAIChatResponse.getChoices().isEmpty()) {
-                String assistantContent = openAIChatResponse.getChoices().get(0).getMessage().getContent();
-                // Create and return a ChatMessage object with the assistant's response
-                return new ChatMessage("assistant", assistantContent);
-            } else {
-                throw new IOException("Assistant didn't provide a response");
-            }
-        } else {
-            throw new IOException("Response from OpenAI was not successful: " + response.statusCode());
-        }
+        webClient.post()
+                .uri(OPENAI_URL)
+                .body(Mono.just(input), String.class)
+                .retrieve()
+                .bodyToFlux(OpenAIChatResponse.class)
+                .publishOn(Schedulers.boundedElastic())
+                .doOnNext(response -> {
+                    if (!"[DONE]".equals(response.getId())) {
+                        for (OpenAIChatResponse.ChatWrapper chatWrapper : response.getChatChoices()) {
+                            ChatMessage newMessage = new ChatMessage("assistant", chatWrapper.getDelta().getContent());
+                            contentBuilder.append(newMessage.getContent());
+                            try {
+                                emitter.send(newMessage);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        conversation.getMessages().add(new ChatMessage("assistant", contentBuilder.toString()));
+                        conversationRepository.save(conversation);
+                        emitter.complete();
+                    }
+                })
+                .doOnError(emitter::completeWithError)
+                .subscribe();
     }
+
 
     public Map<String, String> delegateTasks(Map<String, List<String>> memberStrengths, List<Task> tasks) throws IOException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper()

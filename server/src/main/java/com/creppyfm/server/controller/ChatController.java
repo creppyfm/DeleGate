@@ -1,18 +1,18 @@
 package com.creppyfm.server.controller;
 
-import com.creppyfm.server.openai_chat_handlers.ChatMessage;
+import com.creppyfm.server.data_transfer_object_model.IncomingChatDataTransferObject;
 import com.creppyfm.server.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
-@Controller
+@RestController
 @CrossOrigin
 public class ChatController {
     private final ChatService chatService;
@@ -22,9 +22,10 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    @MessageMapping("/chat/{userId}")
-    @SendTo("/topic/messages/{userId}")
-    public ChatMessage send(@DestinationVariable String userId, ChatMessage message) throws IOException, URISyntaxException, InterruptedException {
-        return chatService.processMessage(userId, message);
+    @PostMapping("/chat/")
+    public SseEmitter send(@RequestBody IncomingChatDataTransferObject incoming) throws IOException, InterruptedException {
+        SseEmitter sseEmitter = new SseEmitter();
+        sseEmitter = chatService.processMessage(incoming, sseEmitter);
+        return sseEmitter;
     }
 }
