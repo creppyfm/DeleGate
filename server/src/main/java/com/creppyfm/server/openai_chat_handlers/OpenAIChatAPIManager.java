@@ -10,8 +10,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Mono;
@@ -26,10 +29,13 @@ import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.concurrent.Executors;
 
+@Service
 public class OpenAIChatAPIManager {
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
     Dotenv dotenv = Dotenv.load();
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public List<List<String>> buildsTaskList(String prompt) throws IOException, InterruptedException {
         List<List<String>> tasks = new ArrayList<>();
@@ -199,13 +205,18 @@ public class OpenAIChatAPIManager {
         return openAIChatResponse;
     }
 
-    public void callOpenAIChat(Conversation conversation, SseEmitter emitter, ConversationRepository conversationRepository) throws IOException, InterruptedException {
+    public void callOpenAIChat(Conversation conversation, String userId, ConversationRepository conversationRepository) {
         List<ChatMessage> messages = conversation.getMessages();
         ObjectMapper objectMapper = new ObjectMapper();
 
         OpenAIChatRequest openAIChatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 4000, 0);
         openAIChatRequest.setStream(true);
-        String input = objectMapper.writeValueAsString(openAIChatRequest);
+        String input;
+        try {
+            input = objectMapper.writeValueAsString(openAIChatRequest);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error preparing OpenAI request", e);
+        }
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(OPENAI_URL)
@@ -226,22 +237,18 @@ public class OpenAIChatAPIManager {
                         for (OpenAIChatResponse.ChatWrapper chatWrapper : response.getChatChoices()) {
                             ChatMessage newMessage = new ChatMessage("assistant", chatWrapper.getDelta().getContent());
                             contentBuilder.append(newMessage.getContent());
-                            try {
-                                emitter.send(newMessage);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            messagingTemplate.convertAndSendToUser(userId, "/queue/reply", newMessage);
                         }
                     } else {
                         conversation.getMessages().add(new ChatMessage("assistant", contentBuilder.toString()));
                         conversationRepository.save(conversation);
-                        emitter.complete();
                     }
                 })
-                .doOnError(emitter::completeWithError)
+                .doOnError(error -> {
+                    //handle error??
+                })
                 .subscribe();
     }
-
 
     public Map<String, String> delegateTasks(Map<String, List<String>> memberStrengths, List<Task> tasks) throws IOException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper()

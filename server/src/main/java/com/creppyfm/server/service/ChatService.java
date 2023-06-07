@@ -26,7 +26,7 @@ public class ChatService {
         this.taskRepository = taskRepository;
     }
 
-    public SseEmitter processMessage(IncomingChatDataTransferObject incoming, SseEmitter emitter) throws InterruptedException, IOException {
+    public void processMessage(IncomingChatDataTransferObject incoming) throws IOException, InterruptedException {
         String userId = incoming.getUserId();
         Task task = taskRepository.findTaskById(incoming.getTaskId());
         String prompt = "Read the following prompt, as well as the task description below, and respond accordingly. Here is the prompt: " +
@@ -46,13 +46,13 @@ public class ChatService {
             conversationRepository.insert(new Conversation(userId, newMessageList));
             conversation = conversationRepository.findByUserId(userId);
         }
-        callOpenAIChat(conversation, emitter);
-        return emitter;
+        callOpenAIChat(conversation, userId, conversationRepository);
     }
 
-    public void callOpenAIChat(Conversation conversation, SseEmitter emitter) throws IOException, InterruptedException {
+
+    public void callOpenAIChat(Conversation conversation, String userId, ConversationRepository conversationRepository) throws IOException, InterruptedException {
         OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
-        openAIChatAPIManager.callOpenAIChat(conversation, emitter, conversationRepository);
+        openAIChatAPIManager.callOpenAIChat(conversation, userId, conversationRepository);
     }
 
 }
