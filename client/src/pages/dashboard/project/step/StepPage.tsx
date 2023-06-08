@@ -83,60 +83,70 @@ export function StepPage() {
       <h1 className="text-light text-center mb-4">{step.title}</h1>
       <Card className="overflow-auto">
         <Card.Header as="h3">{step.description}</Card.Header>
-        <ListGroup>
-          {step.taskList.length > 0 ? (
-            taskListWithData.map((task: Task) => {
-              let phaseColor = "";
-              switch (task.phase) {
-                case "Not Started":
-                  phaseColor = "text-info";
-                  break;
-                case "In Progress":
-                  phaseColor = "text-success";
-                  break;
-                case "In Review":
-                  phaseColor = "text-warning";
-                  break;
-                default:
-                  phaseColor = "text-primary";
-              }
-              return (
-                <ListGroup.Item action key={task.id}>
-                  <Container className="p-0 m-0">
-                    <Row className="mb-4">
-                      <Col md={12} lg={3}>
-                        <Row md={2} lg={1}>
-                          <Col className="fw-bold">
-                            {task.title}
-                            <div className={phaseColor}>{task.phase}</div>
-                          </Col>
-                          <Col>
-                            <Button
-                              variant="success"
-                              className="text-light w-100"
-                            >
-                              Start Task
-                            </Button>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Col md={12} lg={9} className="d-flex align-items-center">
-                        <div>{task.description}</div>
-                      </Col>
-                    </Row>
-                  </Container>
-                </ListGroup.Item>
-              );
-            })
-          ) : (
-            <ListGroup.Item className="d-flex justify-content-center">
-              <Button className="w-100" onClick={generateTasks}>
-                {loading && <Spinner className="me-3"></Spinner>}
-                {loading ? "Loading..." : "Generate Tasks"}
-              </Button>
-            </ListGroup.Item>
-          )}
-        </ListGroup>
+        <Card.Body>
+          <ListGroup variant="flush" className="gap-3">
+            {step.taskList.length > 0 ? (
+              taskListWithData.map((task: Task) => {
+                let phaseColor = "";
+                switch (task.phase) {
+                  case "Not Started":
+                    phaseColor = "text-info";
+                    break;
+                  case "In Progress":
+                    phaseColor = "text-success";
+                    break;
+                  case "In Review":
+                    phaseColor = "text-warning";
+                    break;
+                  default:
+                    phaseColor = "text-primary";
+                }
+                return (
+                  <ListGroup.Item action key={task.id}>
+                    <Container className="p-0 m-0">
+                      <Row>
+                        <Col>
+                          <Row>
+                            <Col className="fw-bold">
+                              <Row>
+                                <Col md={12} lg={9}>
+                                  {task.title}
+                                </Col>
+                                <Col className={phaseColor}>{task.phase}</Col>
+                              </Row>
+                            </Col>
+                            <Col xs={3}>
+                              <NavLink to={`/dashboard/task/${task.id}`}>
+                                <Button
+                                  variant="success"
+                                  className="text-light w-100"
+                                >
+                                  Start Task
+                                </Button>
+                              </NavLink>
+                            </Col>
+                          </Row>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="d-flex align-items-center">
+                          <div>{task.description}</div>
+                        </Col>
+                      </Row>
+                    </Container>
+                  </ListGroup.Item>
+                );
+              })
+            ) : (
+              <ListGroup.Item className="d-flex justify-content-center">
+                <Button className="w-100" onClick={generateTasks}>
+                  {loading && <Spinner className="me-3"></Spinner>}
+                  {loading ? "Loading..." : "Generate Tasks"}
+                </Button>
+              </ListGroup.Item>
+            )}
+          </ListGroup>
+        </Card.Body>
       </Card>
     </Container>
   );
