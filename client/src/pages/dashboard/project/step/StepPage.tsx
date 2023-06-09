@@ -102,7 +102,7 @@ export function StepPage() {
                     phaseColor = "text-primary";
                 }
                 return (
-                  <ListGroup.Item action key={task.id}>
+                  <ListGroup.Item key={task.id}>
                     <Container className="p-0 m-0">
                       <Row>
                         <Col>
