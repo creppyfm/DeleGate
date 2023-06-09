@@ -81,8 +81,13 @@ export function ProjectPage() {
                 project.stepList.map((step) => {
                   const { id, title }: Step = step;
                   return (
-                    <ListGroup.Item key={id}>
-                      <NavLink to={`/dashboard/step/${id}`}>{title}</NavLink>
+                    <ListGroup.Item className="p-0" key={id}>
+                      <NavLink
+                        to={`/dashboard/step/${id}`}
+                        className="text-decoration-none"
+                      >
+                        <div className="w-100 h-100 p-2 ps-3">{title}</div>
+                      </NavLink>
                     </ListGroup.Item>
                   );
                 })
@@ -107,7 +112,16 @@ export function ProjectPage() {
               <h3>Tasks</h3>
             </ListGroup.Item>
             {project?.taskList.map((task) => {
-              return <ListGroup.Item action>{task.title}</ListGroup.Item>;
+              return (
+                <ListGroup.Item className="p-0" action>
+                  <NavLink
+                    to={`/dashboard/task/${task.id}`}
+                    className="text-decoration-none"
+                  >
+                    <div className="w-100 h-100 p-2 ps-3">{task.title}</div>
+                  </NavLink>
+                </ListGroup.Item>
+              );
             })}
           </ListGroup>
         </Col>
