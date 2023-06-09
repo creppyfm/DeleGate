@@ -34,6 +34,8 @@ public class TaskService {
     private StepRepository stepRepository;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private OpenAIChatAPIManager openAIChatAPIManager;
 
     public Task createTask(String stepId, String title, String description, int generation, int weight, Phase phase) {
         Task task = taskRepository.insert(new Task(stepId, title, description, generation, weight, phase, LocalDateTime.now(), LocalDateTime.now())); //insert into 'Task' collection
@@ -83,7 +85,6 @@ public class TaskService {
                     "Here is the Task information:\n" +
                     taskInfo;
 
-            OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
             List<List<String>> subtasks;
             try {
                 subtasks = openAIChatAPIManager.buildsTaskList(prompt);

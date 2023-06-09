@@ -2,6 +2,7 @@ package com.creppyfm.server.openai_chat_handlers;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @Data
 @AllArgsConstructor
+@Document(collection = "Conversation")
 public class Conversation {
     private String userId;
     private List<ChatMessage> messages;

@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OpenAIChatResponse {
+public class OpenAIHttpResponse {
     @JsonProperty("id")
     private String id;
     @JsonProperty("object")
@@ -24,34 +24,12 @@ public class OpenAIChatResponse {
     private Usage usage;
     @JsonProperty("choices")
     private List<ChatMessageWrapper> choices;
-    @JsonProperty("choices")
-    private List<ChatWrapper> chatChoices;
 
+    @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ChatMessageWrapper {
         @JsonProperty("message")
         private ChatMessage message;
-
-        public ChatMessage getMessage() {
-            return message;
-        }
-
-        public void setMessage(ChatMessage message) {
-            this.message = message;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ChatWrapper {
-        @JsonProperty("delta")
-        private ChatMessage delta;
-
-        public ChatMessage getDelta() {
-            return delta;
-        }
-        public void setDelta(ChatMessage message) {
-            this.delta = message;
-        }
     }
 
 

@@ -8,7 +8,6 @@ import com.creppyfm.server.openai_chat_handlers.OpenAIChatAPIManager;
 import com.creppyfm.server.repository.ProjectRepository;
 import com.creppyfm.server.repository.StepRepository;
 import com.creppyfm.server.repository.TaskRepository;
-import com.creppyfm.server.service.TaskService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +37,8 @@ public class StepService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    OpenAIChatAPIManager openAIChatAPIManager;
 
     public Step createStep(String projectId, String title, String description) {
         Step step = new Step();
@@ -178,7 +179,6 @@ public class StepService {
                     "Here is the Step information:\n"
                     + stepInfo;
 
-            OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
             List<List<String>> tasks;
             try {
                 tasks = openAIChatAPIManager.buildsTaskList(prompt);

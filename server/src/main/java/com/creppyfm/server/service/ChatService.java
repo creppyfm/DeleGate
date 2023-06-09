@@ -8,8 +8,8 @@ import com.creppyfm.server.openai_chat_handlers.OpenAIChatAPIManager;
 import com.creppyfm.server.repository.ConversationRepository;
 import com.creppyfm.server.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +19,9 @@ import java.util.List;
 public class ChatService {
     private final ConversationRepository conversationRepository;
     private final TaskRepository taskRepository;
+
+    @Autowired
+    OpenAIChatAPIManager openAIChatAPIManager;
 
     @Autowired
     public ChatService(ConversationRepository conversationRepository, TaskRepository taskRepository) {
@@ -51,7 +54,6 @@ public class ChatService {
 
 
     public void callOpenAIChat(Conversation conversation, String userId, ConversationRepository conversationRepository) throws IOException, InterruptedException {
-        OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
         openAIChatAPIManager.callOpenAIChat(conversation, userId, conversationRepository);
     }
 

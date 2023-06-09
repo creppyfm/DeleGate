@@ -33,6 +33,8 @@ public class ProjectService {
     private StepService stepService;
     @Autowired
     private StepRepository stepRepository;
+    @Autowired
+    OpenAIChatAPIManager openAIChatAPIManager;
 
     public List<ProjectResponse> findAllProjects(String userId) {
         List<Project> projects = projectRepository.findAllByUserId(userId);
@@ -77,7 +79,6 @@ public class ProjectService {
     * UNCOMMENT, REMOVE HARD-CODED ID WHEN NOT TESTING
     * */
     public Project createsProjectAndGeneratesSteps(String userId, String prompt) throws IOException, URISyntaxException, InterruptedException {
-        OpenAIChatAPIManager openAIChatAPIManager = new OpenAIChatAPIManager();
         ProjectDataTransferObject projectDTO;
         projectDTO = openAIChatAPIManager.buildsProjectDataTransferObject(prompt);
 
