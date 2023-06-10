@@ -9,8 +9,10 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
+    "postinstall": "npm run build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "serve": "vite --host 0.0.0.0 --port $PORT preview"
   },
   "dependencies": {
     "bootstrap": "^5.2.3",

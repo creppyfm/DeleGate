@@ -1,3 +1,7 @@
-.h80 {
-  height: 75vh;
+.dynamic-height {
+  height: calc(100vh - 12rem);
+}
+
+.card-height {
+  height: calc(100% - 4rem);
 }

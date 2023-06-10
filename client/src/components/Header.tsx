@@ -7,15 +7,6 @@ import { LinkContainer } from "react-router-bootstrap";
 export function Header() {
   const { user, setUser } = useAppContext();
 
-  function fakeLogin() {
-    setUser({
-      firstName: "Kenson",
-      lastName: "Johnson",
-      email: "kenson.johnson@outlook.com",
-      loggedIn: true,
-    });
-  }
-
   function logoutUser() {
     fetch("/users/logout");
     setUser({
@@ -44,24 +35,16 @@ export function Header() {
           {user.loggedIn && (
             <NavLink
               target="_blank"
-              to="http://localhost:8080/swagger-ui/index.html#/"
+              to="/swagger-ui/index.html"
               className="btn btn-outline-info me-3"
             >
               Docs
             </NavLink>
           )}
-          {user.loggedIn ? (
+          {user.loggedIn && (
             <NavLink to="/dashboard" className="btn btn-outline-success me-3">
               Dashboard
             </NavLink>
-          ) : (
-            <Button
-              variant="outline-success"
-              className="me-3"
-              onClick={fakeLogin}
-            >
-              Fake Login
-            </Button>
           )}
 
           {user.loggedIn ? (

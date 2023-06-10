@@ -1,13 +1,12 @@
 import { FormEvent, useState } from "react";
 import { Button, Form, Spinner } from "react-bootstrap";
 
-import { Project } from "../../../utils/GetProjectData";
-
+import { ProjectPreview } from "./DashboardPage";
 type NewProjectFormProps = {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setShowPrompt: React.Dispatch<React.SetStateAction<boolean>>;
-  setList: React.Dispatch<React.SetStateAction<Project[]>>;
+  setList: React.Dispatch<React.SetStateAction<ProjectPreview[]>>;
 };
 
 export function NewProjectForm({
@@ -28,7 +27,7 @@ export function NewProjectForm({
     try {
       const postBody = JSON.stringify({ prompt });
       console.log(postBody);
-      const response = await fetch("http://localhost:8080/projects/new", {
+      const response = await fetch("/projects/new", {
         method: "POST",
         credentials: "include",
         mode: "cors",
