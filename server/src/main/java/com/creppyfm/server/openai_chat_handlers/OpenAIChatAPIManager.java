@@ -1,14 +1,26 @@
 package com.creppyfm.server.openai_chat_handlers;
 
+import com.creppyfm.server.data_transfer_object_model.ChatResponseMessage;
 import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
 import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
 import com.creppyfm.server.model.Task;
+import com.creppyfm.server.repository.ConversationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,10 +30,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
 
+@Service
 public class OpenAIChatAPIManager {
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
     Dotenv dotenv = Dotenv.load();
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public List<List<String>> buildsTaskList(String prompt) throws IOException, InterruptedException {
         List<List<String>> tasks = new ArrayList<>();
@@ -50,13 +65,13 @@ public class OpenAIChatAPIManager {
                 var response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
                 if (response.statusCode() == 200) {
-                    OpenAIChatResponse openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
+                    OpenAIHttpResponse openAIHttpResponse = objectMapper.readValue(response.body(), OpenAIHttpResponse.class);
 
                     //TESTING
-                    System.out.println(openAIChatResponse.toString());
+                    System.out.println(openAIHttpResponse.toString());
 
-                    if (openAIChatResponse.getChoices() != null && !openAIChatResponse.getChoices().isEmpty()) {
-                        OpenAIChatResponse.ChatMessageWrapper choice = openAIChatResponse.getChoices().get(0);
+                    if (openAIHttpResponse.getChoices() != null && !openAIHttpResponse.getChoices().isEmpty()) {
+                        OpenAIHttpResponse.ChatMessageWrapper choice = openAIHttpResponse.getChoices().get(0);
                         String choiceString = choice.getMessage().getContent();
 
                         //parse the JSON string into a List<List<Strings>>
@@ -85,13 +100,13 @@ public class OpenAIChatAPIManager {
     }
 
     public ProjectDataTransferObject buildsProjectDataTransferObject(String prompt) throws IOException, URISyntaxException, InterruptedException {
-        OpenAIChatResponse openAIChatResponse = sendChatMessageToOpenAI(prompt);
+        OpenAIHttpResponse openAIHttpResponse = sendChatMessageToOpenAI(prompt);
 
         //TESTING
-        System.out.println(openAIChatResponse.toString());
+        System.out.println(openAIHttpResponse.toString());
 
         //get the responseMessage as a JSON string
-        String responseMessage = openAIChatResponse.getChoices().get(0).getMessage().getContent();
+        String responseMessage = openAIHttpResponse.getChoices().get(0).getMessage().getContent();
 
         //parse the JSON string into a JSON object
         ObjectMapper objectMapper = new ObjectMapper();
@@ -114,7 +129,7 @@ public class OpenAIChatAPIManager {
         return projectDTO;
     }
 
-    private OpenAIChatResponse sendChatMessageToOpenAI(String prompt) throws IOException, InterruptedException, URISyntaxException {
+    public OpenAIHttpResponse sendChatMessageToOpenAI(String prompt) throws IOException, InterruptedException, URISyntaxException {
         String promptToSend = "Your task is to analyze the prompt provided below, create a project title, create a project description, " +
                 "and create a list of no more than 10 high-level steps to complete the project. " +
                 "The format by which you return your response must match the following JSON structure:\n " +
@@ -144,7 +159,7 @@ public class OpenAIChatAPIManager {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpRequest request;
         HttpResponse<String> response;
-        OpenAIChatResponse openAIChatResponse = new OpenAIChatResponse();
+        OpenAIHttpResponse openAIHttpResponse = new OpenAIHttpResponse();
 
         List<ChatMessage> messages = List.of(
                 new ChatMessage("system", "You are the world's best project manager AI. You specialize in " +
@@ -170,7 +185,7 @@ public class OpenAIChatAPIManager {
         while (!successfulResponse && currTries < maxTries) {
             try {
                 response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-                openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
+                openAIHttpResponse = objectMapper.readValue(response.body(), OpenAIHttpResponse.class);
                 successfulResponse = true;
 
                 //counting failed attempts
@@ -184,11 +199,92 @@ public class OpenAIChatAPIManager {
             }
         }
 
-        if(openAIChatResponse == null) {
+        if(openAIHttpResponse == null) {
             throw new IOException("Unable to parse OpenAI response after multiple attempts.");
         }
 
-        return openAIChatResponse;
+        return openAIHttpResponse;
+    }
+
+    public void callOpenAIChat(Conversation conversation, List<SseEmitter> emitters, ConversationRepository conversationRepository) throws IOException, InterruptedException {
+        System.out.println("Conversation: " + conversation.getId());
+        List<ChatMessage> messages = conversation.getMessages();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        OpenAIChatRequest openAIChatRequest = new OpenAIChatRequest("gpt-3.5-turbo", messages, 4000, 0);
+        openAIChatRequest.setStream(true);
+        String input;
+        try {
+            input = objectMapper.writeValueAsString(openAIChatRequest);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error preparing OpenAI request", e);
+        }
+        WebClient webClient = WebClient.builder()
+                .baseUrl(OPENAI_URL)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + dotenv.get("OPENAI_API_KEY"))
+                .build();
+
+        StringBuilder contentBuilder = new StringBuilder();
+
+        webClient.post()
+                .uri(OPENAI_URL)
+                .body(Mono.just(input), String.class)
+                .retrieve()
+                .bodyToFlux(new ParameterizedTypeReference<String>() {})
+                .switchIfEmpty(Mono.just("DONE"))
+                .flatMap(rawJson -> {
+                    rawJson = rawJson.trim();
+                    try {
+                        if ("DONE".equals(rawJson) || "[DONE]".equals(rawJson)) {
+                            //System.out.println("Received DONE"); //logging
+                            return Mono.empty();
+                        } else {
+                            //System.out.println("Received: " + rawJson); //logging
+                            return Mono.just(objectMapper.readValue(rawJson, OpenAIStreamResponse.class));
+                        }
+                    } catch (JsonProcessingException e) {
+                        return Mono.error(e);
+                    }
+                })
+                .publishOn(Schedulers.boundedElastic())
+                .doOnNext(response -> {
+                    for (OpenAIStreamResponse.ChatWrapper chatWrapper : response.getChatChoices()) {
+                        if (chatWrapper.getDelta().getContent() != null) {
+                            //ChatMessage newMessage = new ChatMessage("assistant", chatWrapper.getDelta().getContent());
+                            ChatResponseMessage responseMessage = new ChatResponseMessage("assistant", chatWrapper.getDelta().getContent(), chatWrapper.getFinishReason());
+                            contentBuilder.append(responseMessage.getContent());
+                            for (SseEmitter emitter : emitters) {
+                                try {
+                                    emitter.send(responseMessage);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                })
+                .doOnError(t -> {
+                    for (SseEmitter emitter : emitters) {
+                        emitter.completeWithError(t);
+                    }
+                })
+                .doOnComplete(() -> {
+                    conversation.getMessages().add(new ChatMessage("assistant", contentBuilder.toString()));
+                    conversationRepository.save(conversation);
+
+                    System.out.println(conversation.getId());
+
+                    for (SseEmitter emitter : emitters) {
+                        try {
+                            emitter.send(new ChatResponseMessage("assistant", "", "stop"));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        emitter.complete();
+                    }
+                })
+                .subscribe();
     }
 
     public Map<String, String> delegateTasks(Map<String, List<String>> memberStrengths, List<Task> tasks) throws IOException, InterruptedException {
@@ -230,10 +326,10 @@ public class OpenAIChatAPIManager {
         var response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
-            OpenAIChatResponse openAIChatResponse = objectMapper.readValue(response.body(), OpenAIChatResponse.class);
+            OpenAIHttpResponse openAIHttpResponse = objectMapper.readValue(response.body(), OpenAIHttpResponse.class);
 
-            if (openAIChatResponse.getChoices() != null && !openAIChatResponse.getChoices().isEmpty()) {
-                OpenAIChatResponse.ChatMessageWrapper choice = openAIChatResponse.getChoices().get(0);
+            if (openAIHttpResponse.getChoices() != null && !openAIHttpResponse.getChoices().isEmpty()) {
+                OpenAIHttpResponse.ChatMessageWrapper choice = openAIHttpResponse.getChoices().get(0);
                 String choiceString = choice.getMessage().getContent();
                 System.out.println(choiceString);
                 return objectMapper.readValue(choiceString, new TypeReference<Map<String, String>>() {});

@@ -20,6 +20,9 @@ import jdk.jfr.Description;
         servers = {
                 @Server(
                         description = "Local Development Environment",
+                        /*
+                        * Modify to deployed server url
+                        * */
                         url = "http://localhost:8080"
                 )
         }

@@ -28,6 +28,9 @@ public class OAuth2Controller {
     private ClientRegistrationRepository clientRegistrationRepository;
     private CsrfTokenRepository csrfTokenRepository;
 
+    /*
+    * Modify to point to deployed server url
+    * */
     private final static String authorizationRequestBaseUri = "http://localhost:8080/auth/";
 
     private ClientRegistration getRegistration(String provider) {

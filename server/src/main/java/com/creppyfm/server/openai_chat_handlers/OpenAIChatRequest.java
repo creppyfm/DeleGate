@@ -10,6 +10,7 @@ import java.util.List;
 public class OpenAIChatRequest {
     private String model;
     private List<ChatMessage> messages;
+    private boolean stream;
 
     public OpenAIChatRequest(String model, List<ChatMessage> messages, int max_tokens, int temperature) {
         this.model = model;
