@@ -80,12 +80,14 @@
             <artifactId>spring-boot-autoconfigure</artifactId>
             <version>3.0.4</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.github.cdimascio/dotenv-java -->
+<!--
+        &lt;!&ndash; https://mvnrepository.com/artifact/io.github.cdimascio/dotenv-java &ndash;&gt;
         <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>
             <version>3.0.0</version>
         </dependency>
+-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>

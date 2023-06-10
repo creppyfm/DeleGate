@@ -16,7 +16,7 @@ import java.time.Duration;
 @EnableMongoHttpSession(maxInactiveIntervalInSeconds = 2592000) //30 days converted to seconds
 public class HttpSessionConfig {
 
-    Dotenv dotenv = Dotenv.load();
+    //Dotenv dotenv = Dotenv.load();
 
     @Autowired
     private MongoClient mongoClient;

@@ -33,7 +33,7 @@ import java.util.*;
 @Service
 public class OpenAIChatAPIManager {
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-    Dotenv dotenv = Dotenv.load();
+    //Dotenv dotenv = Dotenv.load();
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
