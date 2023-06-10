@@ -35,7 +35,7 @@ export function Header() {
           {user.loggedIn && (
             <NavLink
               target="_blank"
-              to="http://localhost:8080/swagger-ui/index.html#/"
+              to="/swagger-ui/index.html"
               className="btn btn-outline-info me-3"
             >
               Docs
