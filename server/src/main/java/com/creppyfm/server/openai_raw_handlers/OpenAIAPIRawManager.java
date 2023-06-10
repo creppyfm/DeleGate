@@ -14,7 +14,7 @@ import java.util.List;
 
 public class OpenAIAPIRawManager {
 
-    Dotenv dotenv = Dotenv.load();
+    //Dotenv dotenv = Dotenv.load();
 
     public List<String> buildsTaskList(String prompt) throws IOException, InterruptedException {
         List<String> choices = new ArrayList<>();

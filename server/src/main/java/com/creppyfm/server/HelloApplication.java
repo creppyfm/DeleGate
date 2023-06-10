@@ -17,7 +17,7 @@ public class HelloApplication {
     public static void main(String[] args)
 
     {
-        Dotenv dotenv = Dotenv.load();
+        //Dotenv dotenv = Dotenv.load();
         // MongoDB Credentials
         System.setProperty("MONGO_DATABASE", System.getenv("MONGO_DATABASE"));
         System.setProperty("MONGO_URI", System.getenv("MONGO_URI"));
