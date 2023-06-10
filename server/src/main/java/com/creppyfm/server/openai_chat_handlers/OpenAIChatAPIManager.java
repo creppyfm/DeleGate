@@ -50,7 +50,7 @@ public class OpenAIChatAPIManager {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(OPENAI_URL)) // Use the /chat/completions endpoint
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
+                .header("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY"))
                 .POST(HttpRequest.BodyPublishers.ofString(input))
                 .build();
 
@@ -174,7 +174,7 @@ public class OpenAIChatAPIManager {
         request = HttpRequest.newBuilder()
                 .uri(new URI(OPENAI_URL))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
+                .header("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
@@ -222,7 +222,7 @@ public class OpenAIChatAPIManager {
         WebClient webClient = WebClient.builder()
                 .baseUrl(OPENAI_URL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + dotenv.get("OPENAI_API_KEY"))
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + System.getenv("OPENAI_API_KEY"))
                 .build();
 
         StringBuilder contentBuilder = new StringBuilder();
@@ -318,7 +318,7 @@ public class OpenAIChatAPIManager {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(OPENAI_URL))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
+                .header("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY"))
                 .POST(HttpRequest.BodyPublishers.ofString(input))
                 .build();
 

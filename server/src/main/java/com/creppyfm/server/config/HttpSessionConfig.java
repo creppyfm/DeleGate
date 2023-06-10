@@ -27,7 +27,7 @@ public class HttpSessionConfig {
 
     @Bean
     public MongoOperations mongoTemplate() {
-        return new MongoTemplate(mongoClient, dotenv.get("MONGO_DATABASE"));
+        return new MongoTemplate(mongoClient, System.getenv("MONGO_DATABASE"));
     }
 
 }

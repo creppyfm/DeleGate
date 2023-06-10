@@ -19,16 +19,16 @@ public class HelloApplication {
     {
         Dotenv dotenv = Dotenv.load();
         // MongoDB Credentials
-        System.setProperty("MONGO_DATABASE", dotenv.get("MONGO_DATABASE"));
-        System.setProperty("MONGO_URI", dotenv.get("MONGO_URI"));
+        System.setProperty("MONGO_DATABASE", System.getenv("MONGO_DATABASE"));
+        System.setProperty("MONGO_URI", System.getenv("MONGO_URI"));
         // OpenAI Credentials
-        System.setProperty("OPENAI_API_KEY", dotenv.get("OPENAI_API_KEY"));
+        System.setProperty("OPENAI_API_KEY", System.getenv("OPENAI_API_KEY"));
         // Google OAuth2 Credentials
-        System.setProperty("GOOGLE_CLIENT_ID", dotenv.get("GOOGLE_CLIENT_ID"));
-        System.setProperty("GOOGLE_CLIENT_SECRET", dotenv.get("GOOGLE_CLIENT_SECRET"));
+        System.setProperty("GOOGLE_CLIENT_ID", System.getenv("GOOGLE_CLIENT_ID"));
+        System.setProperty("GOOGLE_CLIENT_SECRET", System.getenv("GOOGLE_CLIENT_SECRET"));
         // GitHub OAuth2 Credentials
-        System.setProperty("GITHUB_CLIENT_ID", dotenv.get("GITHUB_CLIENT_ID"));
-        System.setProperty("GITHUB_CLIENT_SECRET", dotenv.get("GITHUB_CLIENT_SECRET"));
+        System.setProperty("GITHUB_CLIENT_ID", System.getenv("GITHUB_CLIENT_ID"));
+        System.setProperty("GITHUB_CLIENT_SECRET", System.getenv("GITHUB_CLIENT_SECRET"));
 
         SpringApplication.run(HelloApplication.class, args);
     }

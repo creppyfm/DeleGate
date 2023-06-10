@@ -25,7 +25,7 @@ public class OpenAIAPIRawManager {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.openai.com/v1/completions"))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + dotenv.get("OPENAI_API_KEY"))
+                .header("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY"))
                 .POST(HttpRequest.BodyPublishers.ofString(input))
                 .build();
 
