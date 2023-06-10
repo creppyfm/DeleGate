@@ -1,7 +1,6 @@
 package com.creppyfm.server.config;
 
 import com.mongodb.client.MongoClient;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,6 @@
 package com.creppyfm.server.openai_raw_handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
 import java.net.URI;
