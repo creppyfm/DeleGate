@@ -48,7 +48,7 @@ public class HelloApplication {
                         /*
                         * Modify to include deployed client and server urls
                         * */
-                        .allowedOrigins("http://localhost:5173", "http://localhost:8080")
+                        .allowedOrigins("http://localhost:5173", "http://localhost:8080", "https://creppyfm.github.io/DeleGate/", "https://delegate.herokuapp.com/")
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true).maxAge(3600);

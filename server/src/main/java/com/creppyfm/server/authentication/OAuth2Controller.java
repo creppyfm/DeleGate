@@ -31,7 +31,7 @@ public class OAuth2Controller {
     /*
     * Modify to point to deployed server url
     * */
-    private final static String authorizationRequestBaseUri = "http://localhost:8080/auth/";
+    private final static String authorizationRequestBaseUri = "https://delegate.herokuapp.com/auth/";
 
     private ClientRegistration getRegistration(String provider) {
         return this.clientRegistrationRepository.findByRegistrationId(provider);

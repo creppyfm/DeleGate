@@ -23,7 +23,7 @@ import jdk.jfr.Description;
                         /*
                         * Modify to deployed server url
                         * */
-                        url = "http://localhost:8080"
+                        url = "https://delegate.herokuapp.com/"
                 )
         }
 )
