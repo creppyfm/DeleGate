@@ -1,5 +1,6 @@
 package com.creppyfm.server.openai_chat_handlers;
 
+import com.creppyfm.server.data_transfer_object_model.ChatResponseMessage;
 import com.creppyfm.server.data_transfer_object_model.ProjectDataTransferObject;
 import com.creppyfm.server.data_transfer_object_model.StepDataTransferObject;
 import com.creppyfm.server.model.Task;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -204,7 +206,8 @@ public class OpenAIChatAPIManager {
         return openAIHttpResponse;
     }
 
-    public void callOpenAIChat(Conversation conversation, String userId, ConversationRepository conversationRepository) {
+    public void callOpenAIChat(Conversation conversation, List<SseEmitter> emitters, ConversationRepository conversationRepository) throws IOException, InterruptedException {
+        System.out.println("Conversation: " + conversation.getId());
         List<ChatMessage> messages = conversation.getMessages();
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -216,7 +219,6 @@ public class OpenAIChatAPIManager {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error preparing OpenAI request", e);
         }
-
         WebClient webClient = WebClient.builder()
                 .baseUrl(OPENAI_URL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -232,13 +234,13 @@ public class OpenAIChatAPIManager {
                 .bodyToFlux(new ParameterizedTypeReference<String>() {})
                 .switchIfEmpty(Mono.just("DONE"))
                 .flatMap(rawJson -> {
-                    rawJson = rawJson.trim(); // Add this line
+                    rawJson = rawJson.trim();
                     try {
                         if ("DONE".equals(rawJson) || "[DONE]".equals(rawJson)) {
-                            System.out.println("Received DONE"); //logging
+                            //System.out.println("Received DONE"); //logging
                             return Mono.empty();
                         } else {
-                            System.out.println("Received: " + rawJson); //logging
+                            //System.out.println("Received: " + rawJson); //logging
                             return Mono.just(objectMapper.readValue(rawJson, OpenAIStreamResponse.class));
                         }
                     } catch (JsonProcessingException e) {
@@ -247,24 +249,40 @@ public class OpenAIChatAPIManager {
                 })
                 .publishOn(Schedulers.boundedElastic())
                 .doOnNext(response -> {
-                    System.out.println("Processing: " + response); //logging
                     for (OpenAIStreamResponse.ChatWrapper chatWrapper : response.getChatChoices()) {
                         if (chatWrapper.getDelta().getContent() != null) {
-                            ChatMessage newMessage = new ChatMessage("assistant", chatWrapper.getDelta().getContent());
-                            contentBuilder.append(newMessage.getContent());
-                            messagingTemplate.convertAndSendToUser(userId, "/queue/reply", newMessage);
+                            //ChatMessage newMessage = new ChatMessage("assistant", chatWrapper.getDelta().getContent());
+                            ChatResponseMessage responseMessage = new ChatResponseMessage("assistant", chatWrapper.getDelta().getContent(), chatWrapper.getFinishReason());
+                            contentBuilder.append(responseMessage.getContent());
+                            for (SseEmitter emitter : emitters) {
+                                try {
+                                    emitter.send(responseMessage);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
                 })
-                .doOnError(error -> {
-                    System.err.println("Error in OpenAI chat: " + error.getMessage());
-
+                .doOnError(t -> {
+                    for (SseEmitter emitter : emitters) {
+                        emitter.completeWithError(t);
+                    }
                 })
-                .doOnComplete(() -> {//logging
-                    System.out.println("Stream completed");
+                .doOnComplete(() -> {
                     conversation.getMessages().add(new ChatMessage("assistant", contentBuilder.toString()));
-                    System.out.println("\n" + contentBuilder + "\n");
                     conversationRepository.save(conversation);
+
+                    System.out.println(conversation.getId());
+
+                    for (SseEmitter emitter : emitters) {
+                        try {
+                            emitter.send(new ChatResponseMessage("assistant", "", "stop"));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        emitter.complete();
+                    }
                 })
                 .subscribe();
     }
