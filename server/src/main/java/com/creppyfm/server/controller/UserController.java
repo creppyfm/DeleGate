@@ -2,7 +2,6 @@ package com.creppyfm.server.controller;
 
 import com.creppyfm.server.authentication.SessionService;
 import com.creppyfm.server.data_transfer_object_model.UserDataTransferObject;
-import com.creppyfm.server.model.Task;
 import com.creppyfm.server.model.User;
 import com.creppyfm.server.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;

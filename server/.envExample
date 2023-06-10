@@ -1,0 +1,7 @@
+MONGO_DATABASE=mongodb-database
+MONGO_URI=mongodb+srv://mongodb-username:mongodb-password@mongodb-host:mongodb-port/mongodb-database
+OPENAI_API_KEY=your-openai-api-key
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
