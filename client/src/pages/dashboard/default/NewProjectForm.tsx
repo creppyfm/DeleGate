@@ -27,7 +27,7 @@ export function NewProjectForm({
     try {
       const postBody = JSON.stringify({ prompt });
       console.log(postBody);
-      const response = await fetch("http://localhost:8080/projects/new", {
+      const response = await fetch("/projects/new", {
         method: "POST",
         credentials: "include",
         mode: "cors",
