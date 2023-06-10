@@ -43,7 +43,17 @@ export function ProjectPage() {
   }, [project]);
 
   return (
-    <Container className={`d-flex flex-column ${styles["dynamic-height"]}`}>
+    <Container
+      className={`d-flex flex-column my-3 ${styles["dynamic-height"]}`}
+    >
+      <Row className="text-start">
+        <NavLink
+          to={"/dashboard"}
+          className="text-success text-decoration-none fs-3"
+        >
+          <i className="bi bi-chevron-left" /> Dashboard
+        </NavLink>
+      </Row>
       <Row>
         <h1 className="text-center text-light mb-5">
           {project && !loading ? project.title : "Loading Project..."}
