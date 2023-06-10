@@ -147,6 +147,12 @@
             <artifactId>javax-websocket-server-impl</artifactId>
             <version>9.4.51.v20230217</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.6.0</version>
+        </dependency>
 
 
     </dependencies>
@@ -165,6 +171,7 @@
                     </excludes>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>
