@@ -45,7 +45,10 @@ public class HelloApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173", "http://localhost:8080", "ws/", "http://localhost:8081")
+                        /*
+                        * Modify to include deployed client and server urls
+                        * */
+                        .allowedOrigins("http://localhost:5173", "http://localhost:8080")
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true).maxAge(3600);
