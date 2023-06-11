@@ -40,6 +40,7 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
+    @CrossOrigin(origins = "http:localhost:5173")
     @GetMapping("/stream")
     public SseEmitter stream() {
         return chatService.attachEmitter();
