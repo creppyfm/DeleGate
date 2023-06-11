@@ -53,7 +53,9 @@ export function Featurette({
         </h2>
       )}
       {subHeading && (
-        <h2 className={`${styles["featurette-heading"]} ps-3 text-secondary`}>
+        <h2
+          className={`${styles["featurette-heading"]} ps-3 fs-2 text-secondary`}
+        >
           {subHeading}
         </h2>
       )}
