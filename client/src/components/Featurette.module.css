@@ -5,7 +5,7 @@
 }
 
 @media (min-width: 62em) {
-  .featurette-heading {
+  .featurette-heading-dynamic {
     margin-top: 7rem;
   }
 }
