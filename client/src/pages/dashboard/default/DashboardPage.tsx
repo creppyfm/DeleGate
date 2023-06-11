@@ -44,7 +44,6 @@ export function DashboardPage() {
 
   async function getProjectPreviewList() {
     try {
-      console.log(import.meta.env.VITE_BACKEND_SERVER_URI);
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_SERVER_URI}/projects`,
         { credentials: "include", mode: "cors" }
