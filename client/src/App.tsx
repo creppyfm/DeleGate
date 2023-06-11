@@ -25,19 +25,31 @@ function App() {
       <Container fluid="xl" className="p-0 m-auto d-flex flex-column vh-100">
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/about-us" element={<AboutUsPage />} />
+          <Route path={import.meta.env.BASE_URL + "/"} element={<Home />} />
           <Route
-            path="/dashboard/*"
+            path={import.meta.env.BASE_URL + "/login"}
+            element={<LoginPage />}
+          />
+          <Route
+            path={import.meta.env.BASE_URL + "/about-us"}
+            element={<AboutUsPage />}
+          />
+          <Route
+            path={import.meta.env.BASE_URL + "/dashboard/*"}
             element={
               <ProtectedRoute user={user}>
                 <DashboardRouter />
               </ProtectedRoute>
             }
           />
-          <Route path="/404" element={<PageNotFound />} />
-          <Route path="*" element={<Navigate to="/404" />} />
+          <Route
+            path={import.meta.env.BASE_URL + "/404"}
+            element={<PageNotFound />}
+          />
+          <Route
+            path="*"
+            element={<Navigate to={import.meta.env.BASE_URL + "/404"} />}
+          />
         </Routes>
         <Footer />
       </Container>

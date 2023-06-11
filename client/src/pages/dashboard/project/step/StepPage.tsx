@@ -17,14 +17,6 @@ import {
 import { useState } from "react";
 import styles from "../../default/Dashboard.module.css";
 
-// type Step = {
-//   id: string;
-//   projectId: string;
-//   title: string;
-//   description: string;
-//   taskList: string[];
-// };
-
 export function StepPage() {
   const { id } = useParams();
   const { project, setProject } = useProjectContext();
@@ -42,16 +34,24 @@ export function StepPage() {
   async function generateTasks() {
     setLoading(true);
     try {
-      const response = await fetch("/steps/tasks/generate", {
-        method: "POST",
-        credentials: "include",
-        mode: "cors",
-        body: JSON.stringify({ id }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_SERVER_URI}/steps/tasks/generate`,
+        {
+          method: "POST",
+          credentials: "include",
+          mode: "cors",
+          body: JSON.stringify({ id }),
+        }
+      );
       console.log("Step Response is: ", response);
 
       if (response.ok) {
-        const projectResponse = await fetch(`/projects/${step.projectId}`);
+        const projectResponse = await fetch(
+          `${import.meta.env.VITE_BACKEND_SERVER_URI}/projects/${
+            step.projectId
+          }`,
+          { credentials: "include", mode: "cors" }
+        );
         if (projectResponse.ok) {
           const data: Project = await projectResponse.json();
           setProject(data);
@@ -64,7 +64,9 @@ export function StepPage() {
         setLoading(false);
       }
     } catch (error) {
-      console.log(error);
+      if (import.meta.env.DEV) {
+        console.log("\x1b[93mDev console: \x1b[0m", error);
+      }
     }
   }
 
@@ -74,7 +76,7 @@ export function StepPage() {
     >
       <Row className="text-start">
         <NavLink
-          to={`/dashboard/project/${step.projectId}`}
+          to={`${import.meta.env.BASE_URL}/dashboard/project/${step.projectId}`}
           className="text-success text-decoration-none fs-3"
         >
           <i className="bi bi-chevron-left" /> Project
@@ -116,7 +118,11 @@ export function StepPage() {
                               </Row>
                             </Col>
                             <Col xs={3}>
-                              <NavLink to={`/dashboard/task/${task.id}`}>
+                              <NavLink
+                                to={`${
+                                  import.meta.env.BASE_URL
+                                }/dashboard/task/${task.id}`}
+                              >
                                 <Button
                                   variant="success"
                                   className="text-light w-100"

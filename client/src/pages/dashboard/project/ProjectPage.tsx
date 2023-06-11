@@ -23,14 +23,19 @@ export function ProjectPage() {
 
   async function fetchProject() {
     try {
-      const response = await fetch(`/projects/${id}`);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_SERVER_URI}/projects/${id}`,
+        { credentials: "include", mode: "cors" }
+      );
       if (response.ok) {
         const data: Project = await response.json();
         setProject(data);
         setLoading(false);
       }
     } catch (error) {
-      console.log(error);
+      if (import.meta.env.DEV) {
+        console.log("\x1b[93mDev console: \x1b[0m", error);
+      }
     }
   }
 
@@ -48,7 +53,7 @@ export function ProjectPage() {
     >
       <Row className="text-start">
         <NavLink
-          to={"/dashboard"}
+          to={import.meta.env.BASE_URL + "/dashboard"}
           className="text-success text-decoration-none fs-3"
         >
           <i className="bi bi-chevron-left" /> Dashboard
@@ -93,7 +98,7 @@ export function ProjectPage() {
                   return (
                     <ListGroup.Item className="p-0" key={id}>
                       <NavLink
-                        to={`/dashboard/step/${id}`}
+                        to={`${import.meta.env.BASE_URL}/dashboard/step/${id}`}
                         className="text-decoration-none"
                       >
                         <div className="w-100 h-100 p-2 ps-3">{title}</div>
@@ -123,9 +128,9 @@ export function ProjectPage() {
             </ListGroup.Item>
             {project?.taskList.map((task) => {
               return (
-                <ListGroup.Item className="p-0" action>
+                <ListGroup.Item key={task.id} className="p-0" action>
                   <NavLink
-                    to={`/dashboard/task/${task.id}`}
+                    to={`${import.meta.env.BASE_URL}/dashboard/task/${task.id}`}
                     className="text-decoration-none"
                   >
                     <div className="w-100 h-100 p-2 ps-3">{task.title}</div>

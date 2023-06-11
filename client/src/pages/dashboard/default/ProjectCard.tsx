@@ -24,7 +24,7 @@ export function ProjectCard({ project, timeout }: ProjectCardProps) {
   return (
     <Fade in={open} className={styles.fade}>
       <NavLink
-        to={`/dashboard/project/${projectId}`}
+        to={`${import.meta.env.BASE_URL}/dashboard/project/${projectId}`}
         style={{ textDecoration: "none" }}
       >
         <Card className="pt-3 my-2 pe-0 text-decoration-none">

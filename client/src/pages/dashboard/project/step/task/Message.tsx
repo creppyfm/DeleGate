@@ -1,18 +1,15 @@
 import { Card } from "react-bootstrap";
 import { ChatMessage } from "./TaskPage";
 
-type MessageProps = {
-  role: string;
-  setConversation: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
-};
-
-export default function Message({ role, setConversation }: MessageProps) {
+export default function Message({ role, content }: ChatMessage) {
   return (
     <Card
       border={role === "user" ? "success" : "primary"}
-      className={`w-75 ${role === "user" ? "align-self-end me-3" : ""} `}
+      className={`w-50 shadow bg- bg-opacity-10 ${
+        role === "user" ? "align-self-end me-3" : ""
+      } `}
     >
-      <Card.Body>Message</Card.Body>
+      <Card.Body>{content}</Card.Body>
     </Card>
   );
 }

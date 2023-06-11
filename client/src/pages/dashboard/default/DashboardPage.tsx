@@ -44,7 +44,10 @@ export function DashboardPage() {
 
   async function getProjectPreviewList() {
     try {
-      const response = await fetch("/projects");
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_SERVER_URI}/projects`,
+        { credentials: "include", mode: "cors" }
+      );
       if (response.ok) {
         const data: ProjectPreview[] = await response.json();
         if (data.length > 0) {
@@ -70,7 +73,9 @@ export function DashboardPage() {
       fetchingStatus.current = false;
     } catch (error) {
       fetchingStatus.current = false;
-      console.log(error);
+      if (import.meta.env.DEV) {
+        console.log("\x1b[93mDev console: \x1b[0m", error);
+      }
     }
   }
 

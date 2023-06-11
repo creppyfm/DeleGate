@@ -40,14 +40,19 @@ export async function useGetUserDataIfExists() {
   const { user, setUser } = useContext(AppContext);
   if (!user.loggedIn) {
     try {
-      const response = await fetch("/users/user"); // attempt to find user data
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_SERVER_URI}/users/user`,
+        { credentials: "include", mode: "cors" }
+      ); // attempt to find user data
       if (response.ok) {
         // if user found (becuase session in httpOnly cookie) then process JSON
         const data = await response.json();
         setUser({ ...data, loggedIn: true }); // finally, log in user
       }
     } catch (error) {
-      console.log(error);
+      if (import.meta.env.DEV) {
+        console.log("\x1b[93mDev console: \x1b[0m", error);
+      }
     }
   }
 }
