@@ -30,12 +30,18 @@ export function Footer() {
       <Nav as="ul">
         <Nav.Item as="li">
           <Nav.Link href="https://github.com/creppyfm">
-            <img src="/GitHub.svg" alt="GitHub Badge" />
+            <img
+              src={`${import.meta.env.BASE_URL}/GitHub.svg`}
+              alt="GitHub Badge"
+            />
           </Nav.Link>
         </Nav.Item>
         <Nav.Item as="li">
           <Nav.Link href="https://www.linkedin.com/in/creppyfm/">
-            <img src="/LinkedIn.svg" alt="LinkedIn Badge" />
+            <img
+              src={`${import.meta.env.BASE_URL}/LinkedIn.svg`}
+              alt="LinkedIn Badge"
+            />
           </Nav.Link>
         </Nav.Item>
       </Nav>
