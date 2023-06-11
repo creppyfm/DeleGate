@@ -44,7 +44,11 @@ export function DashboardPage() {
 
   async function getProjectPreviewList() {
     try {
-      const response = await fetch("/projects");
+      console.log(import.meta.env.VITE_BACKEND_SERVER_URI);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_SERVER_URI}/projects`,
+        { credentials: "include", mode: "cors" }
+      );
       if (response.ok) {
         const data: ProjectPreview[] = await response.json();
         if (data.length > 0) {

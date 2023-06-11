@@ -6,7 +6,10 @@ export function LoginPage() {
   useGetUserDataIfExists();
   return (
     <Card as="main" bg="dark" className="m-auto">
-      <Card.Img variant="top" src="/logo_with_brand_dark_trimmed.png" />
+      <Card.Img
+        variant="top"
+        src="/DeleGate/logo_with_brand_dark_trimmed.png"
+      />
       <Card.Body>
         <Card.Title className="text-light text-center">
           Please Sign In
@@ -15,14 +18,18 @@ export function LoginPage() {
           <Button
             className={`fs-4 ${styles["sso-button"]}`}
             as="a"
-            href="/oauth2/authorization/github"
+            href={`${
+              import.meta.env.VITE_BACKEND_SERVER_URI
+            }/oauth2/authorization/github`}
           >
             <i className="bi bi-github" style={{ color: "#181717" }}></i> Github
           </Button>
           <Button
             className={`fs-4 ${styles["sso-button"]}`}
             as="a"
-            href="/oauth2/authorization/google"
+            href={`${
+              import.meta.env.VITE_BACKEND_SERVER_URI
+            }/oauth2/authorization/google`}
           >
             <i className="bi bi-google" style={{ color: "#4285F4" }}></i> Google
           </Button>

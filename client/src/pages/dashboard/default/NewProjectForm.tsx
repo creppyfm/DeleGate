@@ -25,14 +25,15 @@ export function NewProjectForm({
 
   async function createNewProject() {
     try {
-      const postBody = JSON.stringify({ prompt });
-      console.log(postBody);
-      const response = await fetch("/projects/new", {
-        method: "POST",
-        credentials: "include",
-        mode: "cors",
-        body: JSON.stringify({ prompt }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_SERVER_URI}/projects/new`,
+        {
+          method: "POST",
+          credentials: "include",
+          mode: "cors",
+          body: JSON.stringify({ prompt }),
+        }
+      );
       if (response.ok) {
         setList([]);
         setLoading(false);

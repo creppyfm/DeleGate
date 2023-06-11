@@ -61,21 +61,24 @@ export async function useUpdateProjectData() {
   const { project, setProject } = useContext(ProjectContext);
   if (project) {
     try {
-      const response = await fetch(`/projects/${project.id}`);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_SERVER_URI}/projects/${project.id}`,
+        { credentials: "include", mode: "cors" }
+      );
       if (response.ok) {
         const data: Project = await response.json();
         setProject(data);
       } else {
         setProject(null);
-        redirect("/dashboard");
+        redirect(`${import.meta.env.BASE_URL}/dashboard`);
       }
     } catch (error) {
       setProject(null);
-      redirect("/dashboard");
+      redirect(`${import.meta.env.BASE_URL}/dashboard`);
       console.log(error);
     }
   } else {
     setProject(null);
-    redirect("/dashboard");
+    redirect(`${import.meta.env.BASE_URL}/dashboard`);
   }
 }
