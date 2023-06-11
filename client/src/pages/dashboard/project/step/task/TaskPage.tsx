@@ -3,7 +3,7 @@ import { Task, useProjectContext } from "../../../../../utils/GetProjectData";
 import { Button, Container, Form } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import styles from "./TaskPage.module.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import { v4 as uuidv4 } from "uuid";
 
@@ -27,6 +27,7 @@ export function TaskPage() {
   const [prompt, setPrompt] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [streamBucket, setStreamBucket] = useState("");
+  const tempMessage = useRef("");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPrompt(e.target.value);
@@ -34,29 +35,20 @@ export function TaskPage() {
 
   async function handleSubmit() {
     if (prompt.length === 0) return;
-    const promptSubmission = {
-      taskId: id,
-      chatMessage: {
-        role: "user",
-        content: prompt,
-      },
-    };
-    const body = JSON.stringify(promptSubmission);
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_SERVER_URI}/chat`,
+        `${import.meta.env.VITE_BACKEND_SERVER_URI}/chat/${id}`,
         {
           method: "POST",
-          body: body,
-          mode: "cors",
           credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          redirect: "manual",
+          mode: "cors",
+          body: JSON.stringify({ prompt }),
         }
       );
       console.log("Response is: ", response);
       if (response.ok) {
+        setConversation([...conversation, { role: "user", content: prompt }]);
         handleStream();
       }
     } catch (error) {
@@ -64,10 +56,12 @@ export function TaskPage() {
     }
   }
 
-  async function handleStream() {
+  function handleStream() {
     setStreaming(true);
+    setPrompt("");
     const stream = new EventSource(
-      `${import.meta.env.VITE_BACKEND_SERVER_URI}/stream`
+      `${import.meta.env.VITE_BACKEND_SERVER_URI}/stream`,
+      { withCredentials: true }
     );
     stream.onmessage = async (event) => {
       const data = await JSON.parse(event.data);
@@ -75,14 +69,18 @@ export function TaskPage() {
         setStreaming(false);
         setConversation([
           ...conversation,
-          { role: "assistant", content: streamBucket },
+          { role: "assistant", content: tempMessage.current },
         ]);
+        tempMessage.current = "";
         return stream.close();
       }
-      setStreamBucket(streamBucket + data.content);
+      tempMessage.current = tempMessage.current + data.content;
+      setStreamBucket(tempMessage.current);
     };
   }
 
+  useEffect(() => {}, []);
+  // What are good requirements to look at?
   // create function to scroll
 
   const fetchedTask = project?.taskList.find((task) => task.id === id) as Task;
@@ -114,10 +112,12 @@ export function TaskPage() {
             as={"textarea"}
             rows={5}
             onChange={handleChange}
+            value={prompt}
           />
           <Button
             onClick={handleSubmit}
             variant="primary"
+            disabled={streaming}
             className={`align-self-end mt-2 ${styles.send}`}
           >
             <span className="fs-3 text-light">Send</span>{" "}
