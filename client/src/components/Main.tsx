@@ -4,11 +4,26 @@ import { FeaturetteDivider } from "./FeaturetteDivider";
 export function Main() {
   return (
     <>
-      <Featurette reversed={false} />
+      <Featurette
+        heading="Some Content"
+        subHeading="Some more content."
+        content="Imagine some incredible prose here."
+        reversed={false}
+      />
       <FeaturetteDivider />
-      <Featurette reversed={true} />
+      <Featurette
+        heading="Some Content"
+        subHeading="Some more content."
+        content="Imagine some incredible prose here."
+        reversed={true}
+      />
       <FeaturetteDivider />
-      <Featurette reversed={false} />
+      <Featurette
+        heading="Some Content"
+        subHeading="Some more content."
+        content="Imagine some incredible prose here."
+        reversed={false}
+      />
     </>
   );
 }

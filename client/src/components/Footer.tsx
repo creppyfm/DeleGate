@@ -1,41 +1,60 @@
-import { Nav } from "react-bootstrap";
-import styles from "./Footer.module.css";
+import { Nav, NavLink } from "react-bootstrap";
 
 export function Footer() {
   return (
     <footer
-      className={`d-flex justify-content-start align-items-center mt-auto pb-3 w-100 ${styles.footer}`}
+      className={
+        "d-flex justify-content-center align-items-center mt-auto py-4 w-100"
+      }
     >
-      <div className="ms-5">
-        <a
-          href="#"
-          className="mb-3 mb-md-0 text-body-secondary text-decoration-none lh-1"
-        >
-          <svg
-            className="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto"
-            width="25"
-            height="25"
-            xmlns="http://www.w3.org/2000/svg"
-            role="img"
-            aria-label="Placeholder: 25x25"
-            preserveAspectRatio="xMidYMid slice"
-            focusable="false"
-          >
-            <title>Placeholder</title>
-            <rect width="100%" height="100%" fill="#eee" />
-          </svg>
-        </a>
-        <span className="ms-2 mb-3 mb-md-0 text-light">© 2023 Foli Creppy</span>
-      </div>
-      <Nav as="ul">
+      <Nav as="ul" className="fs-5">
         <Nav.Item as="li">
-          <Nav.Link href="https://github.com/creppyfm">
-            <img src="/GitHub.svg" alt="GitHub Badge" />
+          <Nav.Link href="https://github.com/creppyfm" target="_blank">
+            <i className="bi bi-github text-light" />
           </Nav.Link>
         </Nav.Item>
         <Nav.Item as="li">
-          <Nav.Link href="https://www.linkedin.com/in/creppyfm/">
-            <img src="/LinkedIn.svg" alt="LinkedIn Badge" />
+          <NavLink
+            href="https://tinyurl.com/foliresume"
+            target="_blank"
+            className="text-info ps-0"
+          >
+            Foli Creppy
+          </NavLink>
+        </Nav.Item>
+        <Nav.Item as="li">
+          <Nav.Link
+            className="ps-0"
+            target="_blank"
+            href="https://www.linkedin.com/in/creppyfm/"
+          >
+            <i className="bi bi-linkedin text-light" />
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+      <i className="bi bi-arrow-left-right text-light mx-3" />
+      <Nav as="ul" className="fs-5">
+        <Nav.Item as="li">
+          <Nav.Link href="https://github.com/kensonjohnson" target="_blank">
+            <i className="bi bi-github text-light" />
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item as="li">
+          <NavLink
+            href="https://kensonjohnson.com"
+            target="_blank"
+            className="text-info ps-0"
+          >
+            Kenson Johnson
+          </NavLink>
+        </Nav.Item>
+        <Nav.Item as="li">
+          <Nav.Link
+            className="ps-0"
+            target="_blank"
+            href="https://www.linkedin.com/in/kensonjohnson/"
+          >
+            <i className="bi bi-linkedin text-light" />
           </Nav.Link>
         </Nav.Item>
       </Nav>
