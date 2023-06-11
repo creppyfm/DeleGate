@@ -6,10 +6,7 @@ export function LoginPage() {
   useGetUserDataIfExists();
   return (
     <Card as="main" bg="dark" className="m-auto">
-      <Card.Img
-        variant="top"
-        src="/DeleGate/logo_with_brand_dark_trimmed.png"
-      />
+      <Card.Img variant="top" src="/DeleGate/logo_with_brand_dark_thin.png" />
       <Card.Body>
         <Card.Title className="text-light text-center">
           Please Sign In
@@ -35,7 +32,7 @@ export function LoginPage() {
           </Button>
         </div>
         <div className="d-flex justify-content-around">
-          <Button className="fs-4 my-4" style={{ width: "20rem" }} disabled>
+          <Button className="fs-4 my-4" style={{ width: "27rem" }} disabled>
             <i className="bi bi-envelope"></i> Log In With Email
           </Button>
         </div>
