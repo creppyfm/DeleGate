@@ -1,5 +1,6 @@
 package com.creppyfm.server.authentication;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.IOException;
 
+@CrossOrigin
 @RestController
 @AllArgsConstructor
 @Tag(name = "OAuth2 Controller")
