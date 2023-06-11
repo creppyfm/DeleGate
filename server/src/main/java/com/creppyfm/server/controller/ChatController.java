@@ -33,7 +33,7 @@ public class ChatController {
 
         System.out.println("\n\nUser Id: "+userId+"\n\n");
         System.out.println("\n\nTask Id: "+id+"\n\n");
-        System.out.println("\n\nPrompt: "+jsonNode.get("incoming").asText()+"\n\n");
+        System.out.println("\n\nPrompt: "+jsonNode.get("prompt").asText()+"\n\n");
         incomingObject.setUserId(userId);
         incomingObject.setTaskId(id);
         incomingObject.setChatMessage(new ChatMessage(
