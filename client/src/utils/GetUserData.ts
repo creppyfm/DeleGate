@@ -50,7 +50,9 @@ export async function useGetUserDataIfExists() {
         setUser({ ...data, loggedIn: true }); // finally, log in user
       }
     } catch (error) {
-      console.log(error);
+      if (import.meta.env.DEV) {
+        console.log("Dev console: ", error);
+      }
     }
   }
 }
