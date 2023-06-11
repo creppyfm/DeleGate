@@ -96,6 +96,12 @@ git clone https://github.com/creppyfm/DeleGate.git
    mvn clean install
 ```
 
+4. Start the server.
+
+```sh
+   mvn clean spring-boot:run
+```
+
 ### TODO: Add .env instructions
 
 <!-- MARKDOWN LINKS & IMAGES -->
