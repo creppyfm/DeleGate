@@ -18,7 +18,7 @@ public class HomeController {
 */
     @GetMapping("/")
     public RedirectView redirectToExternalUrl() {
-        String externalUrl = "https://creppyfm.github.io/DeleGate/";
+        String externalUrl = "http://localhost:5173/";
         return new RedirectView(externalUrl);
     }
 }
