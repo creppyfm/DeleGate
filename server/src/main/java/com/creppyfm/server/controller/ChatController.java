@@ -22,8 +22,8 @@ public class ChatController {
     }
 
     @PostMapping("/chat")
-    public ResponseEntity<Void> processChatMessage(@RequestBody IncomingChatDataTransferObject incoming) throws IOException, InterruptedException {
-        chatService.processMessage(incoming);
+    public ResponseEntity<Void> processChatMessage(@SessionAttribute("userId") String userId, @RequestBody IncomingChatDataTransferObject incoming) throws IOException, InterruptedException {
+        chatService.processMessage(incoming, userId);
         return ResponseEntity.ok().build();
     }
 
