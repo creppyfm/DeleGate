@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .and()
                         .successHandler(new OAuth2LoginSuccessHandler()))
                 .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                         .invalidSessionUrl("/")
                         .maximumSessions(1))
                 .logout()
