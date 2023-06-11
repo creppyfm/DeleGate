@@ -30,12 +30,17 @@ public class ChatController {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(incoming);
         IncomingChatDataTransferObject incomingObject = new IncomingChatDataTransferObject();
-                incomingObject.setUserId(userId);
-                incomingObject.setTaskId(id);
-                incomingObject.setChatMessage(new ChatMessage(
-                        "user",
-                        jsonNode.get("prompt").asText()
-                ));
+
+        System.out.println("\n\nUser Id: "+userId+"\n\n");
+        System.out.println("\n\nTask Id: "+id+"\n\n");
+        System.out.println("\n\nPrompt: "+jsonNode.get("incoming").asText()+"\n\n");
+        incomingObject.setUserId(userId);
+        incomingObject.setTaskId(id);
+        incomingObject.setChatMessage(new ChatMessage(
+                "user",
+                jsonNode.get("prompt").asText()
+        ));
+
         chatService.processMessage(incomingObject, userId);
         return ResponseEntity.ok().build();
     }
