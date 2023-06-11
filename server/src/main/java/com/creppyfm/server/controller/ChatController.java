@@ -7,8 +7,11 @@ import com.creppyfm.server.service.ChatService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.header.Header;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -40,10 +43,12 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
-    @CrossOrigin(origins = "https://creppyfm.github.io", methods = RequestMethod.GET)
     @GetMapping("/stream")
-    public SseEmitter stream() {
-        return chatService.attachEmitter();
+    public ResponseEntity<SseEmitter> stream() {
+        SseEmitter emitter = chatService.attachEmitter();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "https://creppyfm.github.io");
+        return new ResponseEntity<>(emitter, headers, HttpStatus.OK);
     }
 }
 
