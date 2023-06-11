@@ -35,7 +35,8 @@ export function TaskPage() {
 
   async function handleSubmit() {
     if (prompt.length === 0) return;
-
+    // console.log(prompt);
+    // console.log(JSON.stringify({ prompt }));
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_SERVER_URI}/chat/${id}`,
@@ -46,19 +47,26 @@ export function TaskPage() {
           body: JSON.stringify({ prompt }),
         }
       );
-      console.log("Response is: ", response);
+      // console.log("Response is: ", response);
       if (response.ok) {
-        setConversation([...conversation, { role: "user", content: prompt }]);
-        handleStream();
+        const newConversation: ChatMessage[] = [
+          ...conversation,
+          { role: "user", content: prompt },
+        ];
+        setConversation(newConversation);
+        handleStream(newConversation);
       }
     } catch (error) {
-      console.log(error);
+      if (import.meta.env.DEV) {
+        console.log("\x1b[93mDev console: \x1b[0m", error);
+      }
     }
   }
 
-  function handleStream() {
+  function handleStream(currentRenderedConversation: ChatMessage[]) {
     setStreaming(true);
     setPrompt("");
+    const chatBox = document.querySelector("[data-chat-box]") as HTMLDivElement;
     const stream = new EventSource(
       `${import.meta.env.VITE_BACKEND_SERVER_URI}/stream`,
       { withCredentials: true }
@@ -68,7 +76,7 @@ export function TaskPage() {
       if (data.finishReason === "stop") {
         setStreaming(false);
         setConversation([
-          ...conversation,
+          ...currentRenderedConversation,
           { role: "assistant", content: tempMessage.current },
         ]);
         tempMessage.current = "";
@@ -76,12 +84,12 @@ export function TaskPage() {
       }
       tempMessage.current = tempMessage.current + data.content;
       setStreamBucket(tempMessage.current);
+      chatBox.scrollTop = chatBox.scrollHeight;
     };
   }
 
   useEffect(() => {}, []);
   // What are good requirements to look at?
-  // create function to scroll
 
   const fetchedTask = project?.taskList.find((task) => task.id === id) as Task;
 
@@ -96,7 +104,7 @@ export function TaskPage() {
       <h1 className="text-light text-center my-4">{fetchedTask.title}</h1>
       <div className={styles.box}>
         <h2 className="border-bottom">Task Assistant</h2>
-        <div className={styles.chat}>
+        <div className={styles.chat} data-chat-box>
           {conversation.map((chat) => {
             return (
               <Message key={uuidv4()} role={chat.role} content={chat.content} />
@@ -117,7 +125,7 @@ export function TaskPage() {
           <Button
             onClick={handleSubmit}
             variant="primary"
-            disabled={streaming}
+            // disabled={streaming}
             className={`align-self-end mt-2 ${styles.send}`}
           >
             <span className="fs-3 text-light">Send</span>{" "}
