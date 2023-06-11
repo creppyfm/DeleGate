@@ -51,7 +51,7 @@ export async function useGetUserDataIfExists() {
       }
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.log("Dev console: ", error);
+        console.log("\x1b[93mDev console: \x1b[0m", error);
       }
     }
   }

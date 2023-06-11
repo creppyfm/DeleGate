@@ -43,7 +43,9 @@ export function NewProjectForm({
         setErrorOnPost(true);
       }
     } catch (error) {
-      console.log(error);
+      if (import.meta.env.DEV) {
+        console.log("\x1b[93mDev console: \x1b[0m", error);
+      }
       setLoading(false);
       setErrorOnPost(true);
     }

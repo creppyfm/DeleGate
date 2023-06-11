@@ -73,9 +73,11 @@ export async function useUpdateProjectData() {
         redirect(`${import.meta.env.BASE_URL}/dashboard`);
       }
     } catch (error) {
+      if (import.meta.env.DEV) {
+        console.log("\x1b[93mDev console: \x1b[0m", error);
+      }
       setProject(null);
       redirect(`${import.meta.env.BASE_URL}/dashboard`);
-      console.log(error);
     }
   } else {
     setProject(null);
