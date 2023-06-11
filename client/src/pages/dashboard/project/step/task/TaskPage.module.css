@@ -18,8 +18,21 @@
 .chat {
   overflow: auto;
   min-height: 20rem;
-  height: calc(100vh - 27rem);
+  height: calc(100vh - 40rem);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+.input {
+  height: 10rem;
+  resize: none;
+  padding-right: 2rem;
+}
+
+.send {
+  bottom: 14px;
+  right: 14px;
+  width: fit-content;
 }
