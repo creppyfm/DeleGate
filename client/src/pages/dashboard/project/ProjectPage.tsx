@@ -126,7 +126,7 @@ export function ProjectPage() {
             </ListGroup.Item>
             {project?.taskList.map((task) => {
               return (
-                <ListGroup.Item className="p-0" action>
+                <ListGroup.Item key={task.id} className="p-0" action>
                   <NavLink
                     to={`${import.meta.env.BASE_URL}/dashboard/task/${task.id}`}
                     className="text-decoration-none"
