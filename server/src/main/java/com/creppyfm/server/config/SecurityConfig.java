@@ -28,6 +28,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .requiresChannel()
+                .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+                .requiresSecure()
+                .and()
                 .csrf().disable()
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/login/**").permitAll() // REMOVE '/**' WHEN NOT TESTING, ADD '/*' WHEN TESTING
