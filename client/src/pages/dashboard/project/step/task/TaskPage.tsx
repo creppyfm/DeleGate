@@ -3,7 +3,7 @@ import { Task, useProjectContext } from "../../../../../utils/GetProjectData";
 import { Button, Container, Form } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import styles from "./TaskPage.module.css";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Message from "./Message";
 import { v4 as uuidv4 } from "uuid";
 
@@ -17,9 +17,10 @@ export function TaskPage() {
   const { project } = useProjectContext();
   const task = project?.taskList.find((taskListItem) => taskListItem.id === id);
   const [conversation, setConversation] = useState<ChatMessage[]>([
+    { role: "assistant", content: "Ready to get stuff done? I can help!" },
     {
       role: "assistant",
-      content: `It looks like we need to get this done: 
+      content: `I grabbed this from the task description: 
     ${task?.description}`,
     },
     { role: "assistant", content: "How can I assist?" },
@@ -35,8 +36,6 @@ export function TaskPage() {
 
   async function handleSubmit() {
     if (prompt.length === 0) return;
-    // console.log(prompt);
-    // console.log(JSON.stringify({ prompt }));
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_SERVER_URI}/chat/${id}`,
@@ -47,7 +46,6 @@ export function TaskPage() {
           body: JSON.stringify({ prompt }),
         }
       );
-      // console.log("Response is: ", response);
       if (response.ok) {
         const newConversation: ChatMessage[] = [
           ...conversation,
@@ -83,13 +81,19 @@ export function TaskPage() {
         return stream.close();
       }
       tempMessage.current = tempMessage.current + data.content;
+      console.log(tempMessage.current);
       setStreamBucket(tempMessage.current);
       chatBox.scrollTop = chatBox.scrollHeight;
     };
-  }
 
-  useEffect(() => {}, []);
-  // What are good requirements to look at?
+    stream.onerror = (event) => {
+      if (import.meta.env.DEV) {
+        console.log("\x1b[93mDev console: \x1b[0m", event);
+        console.log("\x1b[93mDev console: \x1b[0m", "Closing stream...");
+      }
+      stream.close();
+    };
+  }
 
   const fetchedTask = project?.taskList.find((task) => task.id === id) as Task;
 
@@ -125,7 +129,7 @@ export function TaskPage() {
           <Button
             onClick={handleSubmit}
             variant="primary"
-            // disabled={streaming}
+            disabled={streaming}
             className={`align-self-end mt-2 ${styles.send}`}
           >
             <span className="fs-3 text-light">Send</span>{" "}
