@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/**").permitAll() // REMOVE '/**' WHEN NOT TESTING, ADD '/*' WHEN TESTING
+                        .requestMatchers("/login/**").permitAll() // REMOVE '/**' WHEN NOT TESTING, ADD '/*' WHEN TESTING
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2Login -> oauth2Login
                         // .loginPage("/login") <- need to add url to react login
