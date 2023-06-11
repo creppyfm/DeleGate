@@ -2,10 +2,13 @@ package com.creppyfm.server.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+@CrossOrigin
 @RestController
 @AllArgsConstructor
 @Tag(name = "Home Controller")
@@ -18,7 +21,7 @@ public class HomeController {
 */
     @GetMapping("/")
     public RedirectView redirectToExternalUrl() {
-        String externalUrl = "http://localhost:5173/";
+        String externalUrl = "https://creppyfm.github.io/DeleGate/";
         return new RedirectView(externalUrl);
     }
 }
