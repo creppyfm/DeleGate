@@ -25,16 +25,16 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    @PostMapping("/chat")
-    public ResponseEntity<Void> processChatMessage(@SessionAttribute("userId") String userId, @RequestBody String incoming) throws IOException, InterruptedException {
+    @PostMapping("/chat/{id}")
+    public ResponseEntity<Void> processChatMessage(@SessionAttribute("userId") String userId, @PathVariable("id") String id, @RequestBody String incoming) throws IOException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(incoming);
         IncomingChatDataTransferObject incomingObject = new IncomingChatDataTransferObject();
-                incomingObject.setUserId(jsonNode.get("userId").asText());
-                incomingObject.setTaskId(jsonNode.get("taskId").asText());
+                incomingObject.setUserId(userId);
+                incomingObject.setTaskId(id);
                 incomingObject.setChatMessage(new ChatMessage(
-                        incomingObject.getChatMessage().getRole(),
-                        incomingObject.getChatMessage().getContent()
+                        "user",
+                        jsonNode.get("prompt").asText()
                 ));
         chatService.processMessage(incomingObject, userId);
         return ResponseEntity.ok().build();
