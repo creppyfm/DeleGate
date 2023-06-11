@@ -27,8 +27,7 @@ public class ChatService {
         this.taskRepository = taskRepository;
     }
 
-    public void processMessage(IncomingChatDataTransferObject incoming) throws InterruptedException, IOException {
-        String userId = incoming.getUserId();
+    public void processMessage(IncomingChatDataTransferObject incoming, String userId) throws InterruptedException, IOException {
         Task task = taskRepository.findTaskById(incoming.getTaskId());
         String prompt = "Read the following prompt, as well as the task description below, and respond accordingly. Here is the prompt: " +
                 incoming.getChatMessage().getContent() + "\n";
@@ -40,14 +39,12 @@ public class ChatService {
         if (conversation != null) {
             conversation.getMessages().add(promptMessage);
             conversation.getMessages().add(taskMessage);
-            //conversationRepository.save(conversation);
         } else {
             List<ChatMessage> newMessageList = new ArrayList<>();
             newMessageList.add(promptMessage);
             newMessageList.add(taskMessage);
             conversation = new Conversation(userId, newMessageList);
 
-//            conversationRepository.save(conversation);
         }
         callOpenAIChat(conversation);
     }
