@@ -45,7 +45,6 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
-    @CrossOrigin(origins = "https://creppyfm.github.io", methods = RequestMethod.GET)
     @GetMapping("/stream")
     public SseEmitter stream() {
         return chatService.attachEmitter();
