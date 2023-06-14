@@ -9,8 +9,8 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "serve": "vite --port $PORT preview",
-    "start": "vite --port $PORT preview"
+    "serve": "vite --host 0.0.0.0 --port $PORT preview",
+    "start": "vite --host 0.0.0.0 --port $PORT preview"
   },
   "dependencies": {
     "bootstrap": "^5.2.3",
