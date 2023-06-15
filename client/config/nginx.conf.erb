@@ -34,6 +34,7 @@ http {
 		keepalive_timeout 5;
 		client_max_body_size <%= ENV['NGINX_CLIENT_MAX_BODY_SIZE'] || 1 %>M;
 
-		root /app/public; # path to your app
+		root /; # updated path to / since subdirectory 'client' is technically the root
+		index index.html; # added this line
 	}
 }
