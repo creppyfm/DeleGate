@@ -26,16 +26,16 @@ export function Header() {
         <Container fluid>
           <Navbar.Brand className="ms-2" href="#home">
             <Image
-              src={`${import.meta.env.BASE_URL}/brand_dark_trans_thin.png`}
+              src={`${import.meta.env.BASE_URL}brand_dark_trans_thin.png`}
               fluid
             />
           </Navbar.Brand>
           <Nav className="me-auto">
-            <NavLink to={import.meta.env.BASE_URL + "/"} className="nav-link">
+            <NavLink to={import.meta.env.BASE_URL} className="nav-link">
               Home
             </NavLink>
             <NavLink
-              to={import.meta.env.BASE_URL + "/about-us"}
+              to={import.meta.env.BASE_URL + "about-us"}
               className="nav-link"
             >
               About Us
@@ -55,7 +55,7 @@ export function Header() {
           )}
           {user.loggedIn && (
             <NavLink
-              to={import.meta.env.BASE_URL + "/dashboard"}
+              to={import.meta.env.BASE_URL + "dashboard"}
               className="btn btn-outline-success me-3"
             >
               Dashboard
@@ -71,7 +71,7 @@ export function Header() {
               Logout
             </Button>
           ) : (
-            <LinkContainer to={import.meta.env.BASE_URL + "/login"}>
+            <LinkContainer to={import.meta.env.BASE_URL + "login"}>
               <Button variant="outline-warning" className="me-2">
                 Login
               </Button>

@@ -22,7 +22,7 @@ export function AboutUsPage() {
           leading weekly data structures and algorithms classes, hosting project
           standups, and mentoring fellow developers, thus fostering a thriving
           community of tech enthusiasts."
-        imageURL={`${import.meta.env.BASE_URL}/kenson.jpg`}
+        imageURL={`${import.meta.env.BASE_URL}kenson.jpg`}
       />
       <FeaturetteDivider />
       <Featurette
@@ -39,7 +39,7 @@ export function AboutUsPage() {
           creativity, business acumen, and technical prowess, making him an
           integral part of our dynamic team."
         reversed
-        imageURL={`${import.meta.env.BASE_URL}/foli.jpg`}
+        imageURL={`${import.meta.env.BASE_URL}foli.jpg`}
       />
       <FeaturetteDivider />
       <Row as="section">

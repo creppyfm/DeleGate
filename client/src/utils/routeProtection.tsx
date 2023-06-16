@@ -14,7 +14,7 @@ export function ProtectedRoute({ user, children }: ProtectedRouteProps) {
   }
   return (
     <Navigate
-      to={import.meta.env.BASE_URL + "/login"}
+      to={import.meta.env.BASE_URL + "login"}
       state={{ from: location }}
       replace
     />

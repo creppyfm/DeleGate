@@ -53,7 +53,7 @@ export function ProjectPage() {
     >
       <Row className="text-start">
         <NavLink
-          to={import.meta.env.BASE_URL + "/dashboard"}
+          to={import.meta.env.BASE_URL + "dashboard"}
           className="text-success text-decoration-none fs-3"
         >
           <i className="bi bi-chevron-left" /> Dashboard
@@ -98,7 +98,7 @@ export function ProjectPage() {
                   return (
                     <ListGroup.Item className="p-0" key={id}>
                       <NavLink
-                        to={`${import.meta.env.BASE_URL}/dashboard/step/${id}`}
+                        to={`${import.meta.env.BASE_URL}dashboard/step/${id}`}
                         className="text-decoration-none"
                       >
                         <div className="w-100 h-100 p-2 ps-3">{title}</div>
@@ -130,7 +130,7 @@ export function ProjectPage() {
               return (
                 <ListGroup.Item key={task.id} className="p-0" action>
                   <NavLink
-                    to={`${import.meta.env.BASE_URL}/dashboard/task/${task.id}`}
+                    to={`${import.meta.env.BASE_URL}dashboard/task/${task.id}`}
                     className="text-decoration-none"
                   >
                     <div className="w-100 h-100 p-2 ps-3">{task.title}</div>
