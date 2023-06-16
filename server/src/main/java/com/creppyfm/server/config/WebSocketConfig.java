@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat")
-                .setAllowedOrigins("https://creppyfm.github.io/DeleGate/")
+                .setAllowedOrigins("https://delegate-ar.herokuapp.com/")
                 .addInterceptors(new HandshakeInterceptor() {
                     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
                         // This will be invoked before the handshake process begins
