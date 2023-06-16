@@ -26,7 +26,7 @@ public class HomeController {
     @GetMapping("/")
     public RedirectView redirectToExternalUrl() {
 
-        String externalUrl = "https://delegate-ar.herokuapp.com/";
+        String externalUrl = "https://delegate-ai.herokuapp.com/";
         return new RedirectView(externalUrl);
     }
 }
