@@ -100,7 +100,7 @@ export function TaskPage() {
   return (
     <Container className="my-4">
       <NavLink
-        to={`${import.meta.env.BASE_URL}/dashboard/step/${fetchedTask.stepId}`}
+        to={`${import.meta.env.BASE_URL}dashboard/step/${fetchedTask.stepId}`}
         className="text-success text-decoration-none mt-4 fs-3"
       >
         <i className="bi bi-chevron-left" /> Step

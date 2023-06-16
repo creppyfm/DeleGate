@@ -76,7 +76,7 @@ export function StepPage() {
     >
       <Row className="text-start">
         <NavLink
-          to={`${import.meta.env.BASE_URL}/dashboard/project/${step.projectId}`}
+          to={`${import.meta.env.BASE_URL}dashboard/project/${step.projectId}`}
           className="text-success text-decoration-none fs-3"
         >
           <i className="bi bi-chevron-left" /> Project
@@ -121,7 +121,7 @@ export function StepPage() {
                               <NavLink
                                 to={`${
                                   import.meta.env.BASE_URL
-                                }/dashboard/task/${task.id}`}
+                                }dashboard/task/${task.id}`}
                               >
                                 <Button
                                   variant="success"

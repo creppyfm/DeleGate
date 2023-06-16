@@ -70,17 +70,17 @@ export async function useUpdateProjectData() {
         setProject(data);
       } else {
         setProject(null);
-        redirect(`${import.meta.env.BASE_URL}/dashboard`);
+        redirect(`${import.meta.env.BASE_URL}dashboard`);
       }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.log("\x1b[93mDev console: \x1b[0m", error);
       }
       setProject(null);
-      redirect(`${import.meta.env.BASE_URL}/dashboard`);
+      redirect(`${import.meta.env.BASE_URL}dashboard`);
     }
   } else {
     setProject(null);
-    redirect(`${import.meta.env.BASE_URL}/dashboard`);
+    redirect(`${import.meta.env.BASE_URL}dashboard`);
   }
 }
