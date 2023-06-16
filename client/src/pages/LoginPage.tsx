@@ -6,7 +6,10 @@ export function LoginPage() {
   useGetUserDataIfExists();
   return (
     <Card as="main" bg="dark" className="m-auto">
-      <Card.Img variant="top" src="/DeleGate/logo_with_brand_dark_thin.png" />
+      <Card.Img
+        variant="top"
+        src={import.meta.env.BASE_URL + "logo_with_brand_dark_thin.png"}
+      />
       <Card.Body>
         <Card.Title className="text-light text-center">
           Please Sign In
