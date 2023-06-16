@@ -9,7 +9,7 @@ export function Main() {
         subHeading="All driven by AI"
         // content="Imagine some incredible prose here."
         reversed={false}
-        imageURL={import.meta.env.BASE_URL + "/project_view.png"}
+        imageURL={import.meta.env.BASE_URL + "project_view.png"}
       />
       <FeaturetteDivider />
       <Featurette
@@ -17,7 +17,7 @@ export function Main() {
         subHeading="To maximize productivity"
         // content="Imagine some incredible prose here."
         reversed={true}
-        imageURL={import.meta.env.BASE_URL + "/task_view.png"}
+        imageURL={import.meta.env.BASE_URL + "task_view.png"}
       />
       {/* <FeaturetteDivider />
       <Featurette

@@ -1,4 +1,4 @@
-import { Nav, NavLink } from "react-bootstrap";
+import { Nav } from "react-bootstrap";
 
 export function Footer() {
   return (
@@ -14,13 +14,13 @@ export function Footer() {
           </Nav.Link>
         </Nav.Item>
         <Nav.Item as="li">
-          <NavLink
+          <Nav.Link
             href="https://tinyurl.com/foliresume"
             target="_blank"
             className="text-info ps-0"
           >
             Foli Creppy
-          </NavLink>
+          </Nav.Link>
         </Nav.Item>
         <Nav.Item as="li">
           <Nav.Link
@@ -40,13 +40,13 @@ export function Footer() {
           </Nav.Link>
         </Nav.Item>
         <Nav.Item as="li">
-          <NavLink
+          <Nav.Link
             href="https://kensonjohnson.com"
             target="_blank"
             className="text-info ps-0"
           >
             Kenson Johnson
-          </NavLink>
+          </Nav.Link>
         </Nav.Item>
         <Nav.Item as="li">
           <Nav.Link
