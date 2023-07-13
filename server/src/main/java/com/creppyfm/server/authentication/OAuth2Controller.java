@@ -33,13 +33,13 @@ public class OAuth2Controller {
     /*
     * Modify to point to deployed server url
     * */
-    private final static String authorizationRequestBaseUri = "https://delegate.herokuapp.com/auth/";
+    private final static String authorizationRequestBaseUri = "https://delegate.herokuapp.com/login/oauth2/code";
 
     private ClientRegistration getRegistration(String provider) {
         return this.clientRegistrationRepository.findByRegistrationId(provider);
     }
 
-    @GetMapping("/auth/{provider}")
+    @GetMapping("/login/oauth2/code/{provider}")
     public void login(@PathVariable String provider, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         ClientRegistration clientRegistration = getRegistration(provider);
